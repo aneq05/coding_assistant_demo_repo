@@ -1583,7 +1583,7 @@ Goal-based execution can carry work across multiple steps while respecting expli
 Current level:
 
 ```text
-Level 1 → Level 2
+Level 2 — Workflow-aware
 ```
 
 ---
