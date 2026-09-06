@@ -1,6 +1,6 @@
 ---
 name: prepare-pull-request
-description: Safely deliver a completed, validated repository change on a dedicated branch as a draft pull request; never use it to merge or bypass validation.
+description: Safely deliver a completed, validated repository change on a dedicated branch as a ready-for-review pull request; never use it to merge or bypass validation.
 ---
 
 # Prepare pull request
@@ -8,6 +8,14 @@ description: Safely deliver a completed, validated repository change on a dedica
 Use after a meaningful completed change is ready for GitHub review. Do not use
 for unfinished or failing work, unresolved conflicts, inseparable unrelated
 changes, or potential secrets.
+
+Invoking this Skill pre-authorizes normal delivery actions: branch creation or
+switching, explicit staging, committing, pushing, creating or updating a PR,
+recording the session, pushing its worklog commit, and marking the PR ready for
+review. Do not request conversational confirmation for those actions. Stop for
+validation failure, secrets, ambiguous remotes, unrelated branch conflicts,
+architecture or significant dependency decisions, destructive Git behavior, or
+an environment-enforced approval prompt. Final merge remains human-controlled.
 
 1. Inspect the branch, status, complete diff, remotes, and default branch.
    Never commit task changes directly to `main` or `master`. From a default
@@ -28,12 +36,16 @@ changes, or potential secrets.
 6. Create a draft PR to the default branch when an authenticated mechanism is
    available. Include Summary, Why, Validation, Scope, AI-assisted workflow,
    and Review notes; state human review is required. Do not invent issue
-   references. If drafts are unsupported, create a normal PR with that review
-   requirement stated. Never merge, enable auto-merge, or approve the PR.
+   references. If a PR for the branch already exists, update it rather than
+   creating another. If drafts are unsupported, create a normal PR with that
+   review requirement stated. Never merge, enable auto-merge, or approve the PR.
 7. After the PR exists, use `record-ai-session` once with actual branch,
    commit, validation, and PR facts. Inspect its diff, commit only
    `AI_WORKLOG.md` separately, push it to the same branch, and verify the PR
    includes it. Do not duplicate its logging workflow here.
+8. Mark a successfully completed PR ready for review after the final worklog
+   commit is pushed. Leave it draft only when work remains incomplete,
+   validation is incomplete, or the user explicitly requests a draft.
 
 If authenticated push or PR creation is unavailable, report the limitation
 after completing only the safe local steps. Do not claim end-to-end delivery.

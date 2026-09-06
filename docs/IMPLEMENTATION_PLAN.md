@@ -172,7 +172,7 @@ Current phase:
 
 Current harness maturity:
 
-**Level 3 — Tool-connected**
+**Level 2 — Workflow-aware**
 
 The repository currently contains a minimal Python engineering foundation.
 
@@ -213,11 +213,14 @@ No actual coffee-tracking functionality has been implemented yet.
 - [x] deterministic validation commands
 - [ ] automatic AI session logging
 - [x] repository Skills
-- [x] safe Git delivery and draft pull-request workflow
-- [ ] engineering knowledge base
+- [x] safe Git delivery and ready-for-review pull-request workflow
+- [x] Python engineering guidance
+- [x] testing strategy
 - [ ] reusable validation workflow
-- [ ] reusable feature-development workflow
-- [x] GitHub MCP
+- [x] reusable TDD feature-development workflow
+- [x] review-feedback validation workflow
+- [x] authenticated GitHub PR delivery
+- [ ] GitHub MCP
 - [ ] GitHub Actions CI
 - [ ] independent AI pull-request review
 - [ ] Figma MCP
@@ -235,6 +238,7 @@ No actual coffee-tracking functionality has been implemented yet.
 - [x] Phase 2 — Engineering foundation
 - [x] Phase 3 — Reusable AI session logging
 - [x] Phase 3.5 — Safe Git delivery and pull-request automation
+- [x] Phase 3.75 — Engineering workflow and review-feedback automation
 
 ## Product MVP
 
@@ -507,12 +511,12 @@ Explicit user instructions override automatic logging behavior.
 
 ## Acceptance criteria
 
-- [ ] two historical sessions are accurately recorded
-- [ ] exactly one repository Skill exists
-- [ ] `AGENTS.md` contains only a concise routing rule
-- [ ] detailed logging behavior lives in the Skill
-- [ ] the Skill successfully logs its own creation session
-- [ ] no product code changes occur during this phase
+- [x] two historical sessions are accurately recorded
+- [x] `record-ai-session` was established as the first repository Skill
+- [x] `AGENTS.md` contains only a concise routing rule
+- [x] detailed logging behavior lives in the Skill
+- [x] the Skill successfully logs its own creation session
+- [x] no product code changes occurred during this phase
 
 ---
 
@@ -524,13 +528,13 @@ Status: **COMPLETE**
 
 Create `prepare-pull-request`, the second repository Skill, to safely deliver
 completed validated changes through a dedicated branch, explicit staging,
-commit, push, draft pull request, and one factual session-log update.
+commit, push, ready-for-review pull request, and one factual session-log update.
 
 ## Requirements
 
 - never commit task changes directly to the default branch
 - validate before committing and stage only intended files
-- create a draft PR with review-ready scope and validation evidence
+- create a ready-for-review PR with review-ready scope and validation evidence
 - never auto-merge, force-push, or rewrite history
 - keep independent AI review as a future separate workflow
 
@@ -540,6 +544,27 @@ commit, push, draft pull request, and one factual session-log update.
 implementation agent → prepare-pull-request → draft PR → independent review
 agent → finding validation → human merge
 ```
+
+---
+
+# Phase 3.75 — Engineering workflow and review-feedback automation
+
+Status: **COMPLETE**
+
+## Goal
+
+Add concise Python and testing knowledge, test-first feature development,
+critical review-feedback validation, and ready-for-review Git delivery.
+
+## Delivered
+
+- `docs/engineering/python-guidelines.md`
+- `docs/engineering/testing-strategy.md`
+- `develop-feature-tdd`
+- `validate-review-feedback`
+- ready-for-review delivery after the final worklog commit
+
+Independent first-pass AI review remains a future, separate capability.
 
 ---
 
