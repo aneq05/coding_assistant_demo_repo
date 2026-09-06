@@ -48,4 +48,5 @@ an environment-enforced approval prompt. Final merge remains human-controlled.
    validation is incomplete, or the user explicitly requests a draft.
 
 If authenticated push or PR creation is unavailable, report the limitation
-after completing only the safe local steps. Do not claim end-to-end delivery.
+after recording any material local commit or delivery attempt through
+`record-ai-session`. Do not claim end-to-end delivery.

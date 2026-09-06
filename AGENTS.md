@@ -52,3 +52,10 @@ actual Git and PR outcome.
 For scoped product features or behavioral changes, use `develop-feature-tdd`
 when appropriate. For actionable PR review feedback, use
 `validate-review-feedback` before applying reviewer suggestions.
+
+## Pull request validation
+
+Before a pull request is considered ready for human merge, use
+`validate-pull-request`. Use `validate-review-feedback` first when actionable
+review feedback remains unresolved. A CLEAR result does not merge the PR;
+final merge remains a human decision.

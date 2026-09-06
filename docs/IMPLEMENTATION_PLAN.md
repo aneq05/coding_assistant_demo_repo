@@ -239,6 +239,7 @@ No actual coffee-tracking functionality has been implemented yet.
 - [x] Phase 3 — Reusable AI session logging
 - [x] Phase 3.5 — Safe Git delivery and pull-request automation
 - [x] Phase 3.75 — Engineering workflow and review-feedback automation
+- [ ] Phase 3.8 — Pull-request quality gate
 
 ## Product MVP
 
@@ -541,7 +542,7 @@ commit, push, ready-for-review pull request, and one factual session-log update.
 ## Future review direction
 
 ```text
-implementation agent → prepare-pull-request → draft PR → independent review
+implementation agent → prepare-pull-request → ready-for-review PR → independent review
 agent → finding validation → human merge
 ```
 
@@ -565,6 +566,17 @@ critical review-feedback validation, and ready-for-review Git delivery.
 - ready-for-review delivery after the final worklog commit
 
 Independent first-pass AI review remains a future, separate capability.
+
+---
+
+# Phase 3.8 — Pull-request quality gate
+
+Status: **IN PROGRESS**
+
+## Goal
+
+Add `validate-pull-request` to check PR metadata, diff scope, validation
+evidence, review-thread state, and final pre-merge readiness.
 
 ---
 
@@ -840,7 +852,9 @@ High
 
 ## Prerequisite
 
-Only create these files if Phase 7 provides evidence that they improve agent behavior.
+Phase 3.75 already established Python and testing guidance based on observed
+need. Phase 7 should evaluate whether the remaining guidance would improve
+agent behavior before adding it.
 
 Possible structure:
 
@@ -1191,7 +1205,7 @@ Do not invent findings merely to produce review output.
 
 ---
 
-# Phase 14 — AI review-feedback validation
+# Phase 14 — Independent review feedback validation
 
 Status: **PLANNED**
 
@@ -1210,6 +1224,10 @@ Escalate to GPT-6 Astra only for genuinely difficult disagreements.
 ## Goal
 
 Prevent automation bias.
+
+The generic `validate-review-feedback` capability was introduced in Phase 3.75
+and validated against GitHub Copilot feedback. This phase applies that
+established workflow specifically to the independent AI reviewer from Phase 13.
 
 For every review finding classify:
 
