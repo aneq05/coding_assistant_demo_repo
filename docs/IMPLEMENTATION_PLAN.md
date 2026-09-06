@@ -168,11 +168,11 @@ A Skill should not exist merely as an alias for deterministic commands.
 
 Current phase:
 
-**Phase 3 — Harness baseline and reusable session logging**
+**Phase 3.5 — Safe Git delivery and pull-request automation**
 
 Current harness maturity:
 
-**Level 1 → Level 2**
+**Level 2 — Workflow-aware**
 
 The repository currently contains a minimal Python engineering foundation.
 
@@ -212,7 +212,7 @@ No actual coffee-tracking functionality has been implemented yet.
 - [x] human architecture approval
 - [x] deterministic validation commands
 - [ ] automatic AI session logging
-- [ ] repository Skills
+- [x] repository Skills
 - [ ] engineering knowledge base
 - [ ] reusable validation workflow
 - [ ] reusable feature-development workflow
@@ -232,7 +232,8 @@ No actual coffee-tracking functionality has been implemented yet.
 - [x] Phase 0 — Repository initialization
 - [x] Phase 1 — Initial architecture exploration
 - [x] Phase 2 — Engineering foundation
-- [ ] Phase 3 — Reusable AI session logging
+- [x] Phase 3 — Reusable AI session logging
+- [ ] Phase 3.5 — Safe Git delivery and pull-request automation
 
 ## Product MVP
 
@@ -435,7 +436,7 @@ Historical friction and environment-specific issues belong in `AI_WORKLOG.md`, n
 
 # Phase 3 — Harness baseline and reusable session logging
 
-Status: **NEXT**
+Status: **COMPLETE**
 
 ## AI setup
 
@@ -461,13 +462,13 @@ This repetition is sufficient to justify extracting the behavior from task promp
 
 ## Planned work
 
-- [ ] backfill the architecture-planning session
-- [ ] backfill the engineering-foundation session
-- [ ] create `record-ai-session`
-- [ ] add a minimal routing rule to `AGENTS.md`
-- [ ] use the new Skill to record the session in which it was created
-- [ ] verify existing historical worklog entries remain unchanged
-- [ ] ensure future meaningful sessions can be logged consistently
+- [x] backfill the architecture-planning session
+- [x] backfill the engineering-foundation session
+- [x] create `record-ai-session`
+- [x] add a minimal routing rule to `AGENTS.md`
+- [x] use the new Skill to record the session in which it was created
+- [x] verify existing historical worklog entries remain unchanged
+- [x] ensure future meaningful sessions can be logged consistently
 
 ## Planned Skill
 
@@ -511,6 +512,33 @@ Explicit user instructions override automatic logging behavior.
 - [ ] detailed logging behavior lives in the Skill
 - [ ] the Skill successfully logs its own creation session
 - [ ] no product code changes occur during this phase
+
+---
+
+# Phase 3.5 — Safe Git delivery and pull-request automation
+
+Status: **IN PROGRESS**
+
+## Goal
+
+Create `prepare-pull-request`, the second repository Skill, to safely deliver
+completed validated changes through a dedicated branch, explicit staging,
+commit, push, draft pull request, and one factual session-log update.
+
+## Requirements
+
+- never commit task changes directly to the default branch
+- validate before committing and stage only intended files
+- create a draft PR with review-ready scope and validation evidence
+- never auto-merge, force-push, or rewrite history
+- keep independent AI review as a future separate workflow
+
+## Future review direction
+
+```text
+implementation agent → prepare-pull-request → draft PR → independent review
+agent → finding validation → human merge
+```
 
 ---
 

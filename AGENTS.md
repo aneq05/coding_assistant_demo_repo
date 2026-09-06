@@ -34,3 +34,12 @@ repository, architecture, harness, validation, or external integrations, use
 the `record-ai-session` Skill to append an accurate entry to `AI_WORKLOG.md`.
 Do not log trivial interactions, invent missing metadata, or override explicit
 user instructions.
+
+## Git delivery
+
+Completed validated changes that should be published for review must use the
+`prepare-pull-request` Skill. Do not commit task changes directly to the
+default branch; pull requests remain human-controlled and must not be
+automatically merged. When this Skill is used, let it invoke
+`record-ai-session` after the PR exists so the session is logged once with the
+actual Git and PR outcome.
