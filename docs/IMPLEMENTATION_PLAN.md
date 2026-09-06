@@ -168,11 +168,11 @@ A Skill should not exist merely as an alias for deterministic commands.
 
 Current phase:
 
-**Phase 3.5 — Safe Git delivery and pull-request automation**
+**Phase 4 — First product feature: drink**
 
 Current harness maturity:
 
-**Level 2 — Workflow-aware**
+**Level 3 — Tool-connected**
 
 The repository currently contains a minimal Python engineering foundation.
 
@@ -213,10 +213,11 @@ No actual coffee-tracking functionality has been implemented yet.
 - [x] deterministic validation commands
 - [ ] automatic AI session logging
 - [x] repository Skills
+- [x] safe Git delivery and draft pull-request workflow
 - [ ] engineering knowledge base
 - [ ] reusable validation workflow
 - [ ] reusable feature-development workflow
-- [ ] GitHub MCP
+- [x] GitHub MCP
 - [ ] GitHub Actions CI
 - [ ] independent AI pull-request review
 - [ ] Figma MCP
@@ -233,7 +234,7 @@ No actual coffee-tracking functionality has been implemented yet.
 - [x] Phase 1 — Initial architecture exploration
 - [x] Phase 2 — Engineering foundation
 - [x] Phase 3 — Reusable AI session logging
-- [ ] Phase 3.5 — Safe Git delivery and pull-request automation
+- [x] Phase 3.5 — Safe Git delivery and pull-request automation
 
 ## Product MVP
 
@@ -517,7 +518,7 @@ Explicit user instructions override automatic logging behavior.
 
 # Phase 3.5 — Safe Git delivery and pull-request automation
 
-Status: **IN PROGRESS**
+Status: **COMPLETE**
 
 ## Goal
 
