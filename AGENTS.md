@@ -21,3 +21,16 @@ Before completing a code change, run:
 3. `uv run --extra dev mypy`
 
 All checks must pass.
+
+## Repository context
+
+- Project roadmap: `docs/IMPLEMENTATION_PLAN.md`
+- AI-assisted development history: `AI_WORKLOG.md`
+
+## AI session logging
+
+After completed non-trivial AI-assisted work that materially changes the
+repository, architecture, harness, validation, or external integrations, use
+the `record-ai-session` Skill to append an accurate entry to `AI_WORKLOG.md`.
+Do not log trivial interactions, invent missing metadata, or override explicit
+user instructions.
