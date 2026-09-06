@@ -291,3 +291,81 @@ behavior toward a workflow-aware harness.
 
 Repeated instructions that represent stable, meaningful workflow behavior are
 good candidates for extraction into reusable harness capabilities.
+
+## 2026-09-06 — Safe Git delivery and pull-request automation
+
+### Harness
+
+Tool: Codex
+Model: GPT-5.6 Terra
+Reasoning: Medium
+Mode: Implementation
+Task type: Git delivery harness improvement
+Risk level: low-medium
+
+### Model selection
+
+This task concerned repository workflow configuration, Git lifecycle,
+pull-request preparation, and reusable agent instructions. It required careful
+sequencing and safety checks but did not require complex product implementation
+or the strongest available model.
+
+### Goal
+
+Introduce a reusable, safety-bounded workflow that converts completed
+validated local changes into review-ready GitHub pull requests.
+
+### AI responsibility
+
+- Inspected repository state, Git history, remotes, and available GitHub
+  capabilities.
+- Created and validated the `prepare-pull-request` Skill.
+- Updated repository routing and roadmap documentation.
+- Created, committed, and pushed `chore/pr-automation`.
+- Created draft PR #1 and verified that later commits were pushed to it.
+
+### Human responsibility
+
+The human decided to automate Git delivery, approved branch-based delivery,
+retained final review and merge authority, and selected the model and
+reasoning level.
+
+### Outcome
+
+The repository gained a dedicated-branch, validation-gated delivery workflow
+with explicit staging, push, draft-PR creation, and one worklog update. Draft
+PR #1 is open at
+`https://github.com/aneq05/coding_assistant_demo_repo/pull/1`; it remains
+human-controlled. Application and test code remained unchanged.
+
+### Files changed
+
+- `AGENTS.md`
+- `docs/IMPLEMENTATION_PLAN.md`
+- `.agents/skills/prepare-pull-request/SKILL.md`
+- `AI_WORKLOG.md`
+
+### Validation
+
+- `quick_validate.py .agents/skills/prepare-pull-request` — passed.
+- Complete and staged diffs were inspected.
+- `git diff --check` — passed.
+- The branch was pushed and draft PR #1 was created successfully.
+
+No code validation was run because this session changed only harness and
+documentation files.
+
+### Friction / failure
+
+The local GitHub CLI could not read its configuration in the sandbox. The
+authenticated GitHub connector was available and completed draft-PR creation.
+
+### Harness change
+
+Git delivery moved from manual human commit/push steps into a reusable,
+validation-gated repository workflow.
+
+### Lesson learned
+
+Automation is safer when delivery, review, and merge remain separate stages
+with different permission boundaries.
