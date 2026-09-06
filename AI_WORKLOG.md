@@ -588,3 +588,92 @@ unknown mergeability and cannot return `CLEAR` for a known unmergeable PR.
 
 Final pull-request readiness must include GitHub's mergeability state, not
 only branch, validation, and review metadata.
+
+## 2026-09-07 — First product feature through TDD
+
+### Harness
+
+Tool: Codex
+Model: GPT-5.6 Sol
+Reasoning: Medium
+Mode: Implementation
+Task type: first TDD product feature
+Risk level: medium
+
+### Model selection
+
+GPT-5.6 Sol with Medium reasoning matches the repository's routing for normal
+implementation and the Phase 4 roadmap choice.
+
+### Goal
+
+Implement `cdd drink <drink>` for espresso, americano, and cappuccino with
+deterministic caffeine values, clear unsupported-input behavior, and no
+persistence.
+
+### AI responsibility
+
+- Synchronized from the latest merged `main` and created
+  `feature/drink-command`.
+- Derived observable CLI and domain acceptance criteria.
+- Wrote domain and CLI tests before production behavior, confirmed RED, then
+  implemented the minimal CLI-to-domain change and confirmed GREEN.
+- Removed three ignored Python cache artifacts from Git tracking.
+- Ran the complete local quality gate, inspected the diff, updated the roadmap,
+  and created draft PR #2.
+
+### Human responsibility
+
+The human specified the supported drinks, caffeine constants, feature scope,
+architecture boundary, and TDD/delivery workflows, and retains final merge
+authority.
+
+### Outcome
+
+`cdd drink` now reports espresso at 80 mg, americano at 120 mg, and cappuccino
+at 75 mg. Unsupported drinks exit unsuccessfully with a clear error. Phase 4
+is complete and Phase 5 remains planned.
+
+### Files changed
+
+- `src/cdd/domain.py`
+- `src/cdd/cli.py`
+- `tests/test_domain.py`
+- `tests/test_cli.py`
+- `docs/IMPLEMENTATION_PLAN.md`
+- `src/cdd/__pycache__/__init__.cpython-312.pyc` (removed from tracking)
+- `src/cdd/__pycache__/cli.cpython-312.pyc` (removed from tracking)
+- `tests/__pycache__/test_cli.cpython-312-pytest-9.1.1.pyc` (removed from tracking)
+- `AI_WORKLOG.md`
+
+### Validation
+
+- RED: `tests/test_cli.py` produced four expected failures because `drink` was
+  unrecognized or lacked the required unsupported-drink error; the existing
+  help test passed.
+- RED: `tests/test_domain.py` failed collection because the required
+  `cdd.domain` module had not yet been implemented.
+- GREEN: `uv run --extra dev pytest tests/test_domain.py tests/test_cli.py -q`
+  passed with 9 tests.
+- `uv run --extra dev pytest` passed with 9 tests.
+- `uv run --extra dev ruff check .` passed.
+- `uv run --extra dev mypy` passed with no issues in 5 source files.
+- Supported-drink smoke tests printed the specified names and caffeine values;
+  unsupported `latte` exited 2; `cdd --help` succeeded.
+- `git diff --check` passed, and the complete staged diff was inspected.
+
+### Friction / failure
+
+The first targeted test attempt could not initialize uv's user cache under the
+sandbox. The same commands ran successfully with the host environment; the
+cache error was not counted as RED.
+
+### Harness change
+
+This was the first product feature implemented through `develop-feature-tdd`.
+The Skill was sufficient, and no workflow changes were needed.
+
+### Lesson learned
+
+Separating domain and CLI tests made the RED evidence distinguish missing
+business behavior from missing command parsing while preserving a small design.
