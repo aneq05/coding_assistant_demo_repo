@@ -369,3 +369,85 @@ validation-gated repository workflow.
 
 Automation is safer when delivery, review, and merge remain separate stages
 with different permission boundaries.
+
+## 2026-09-06 — Engineering workflow, TDD and review-feedback automation
+
+### Harness
+
+Tool: Codex
+Model: GPT-5.6 Sol
+Reasoning: Medium
+Mode: Implementation
+Task type: engineering workflow and review-feedback automation
+Risk level: medium
+
+### Model selection
+
+This task modified interacting engineering workflows, project-specific
+guidance, and GitHub review feedback. It required stronger implementation and
+integration reasoning than simple documentation work, but not the most
+expensive model.
+
+### Goal
+
+Prepare the repository for Phase 4 with reusable test-first development and
+critical review-feedback validation workflows.
+
+### AI responsibility
+
+- Inspected PR #1, its complete diff, Copilot review, and review thread.
+- Refined `prepare-pull-request` for workflow-level delivery authorization and
+  ready-for-review completion.
+- Added Python and testing guidance plus `develop-feature-tdd` and
+  `validate-review-feedback`.
+- Classified and corrected the valid roadmap findings, replied to, and resolved
+  the addressed Copilot thread.
+- Validated the Skills and pushed the corrections to PR #1.
+
+### Human responsibility
+
+The human chose TDD as the development methodology, chose to automate normal
+Git delivery, retained architecture, scope, and merge authority, and retains
+the final PR merge decision.
+
+### Outcome
+
+The repository gained reusable test-first feature development and critical
+review-feedback validation workflows. PR #1 now contains the justified
+corrections; no Phase 4 product behavior was implemented.
+
+### Files changed
+
+- `.agents/skills/prepare-pull-request/SKILL.md`
+- `.agents/skills/develop-feature-tdd/SKILL.md`
+- `.agents/skills/validate-review-feedback/SKILL.md`
+- `docs/engineering/python-guidelines.md`
+- `docs/engineering/testing-strategy.md`
+- `AGENTS.md`
+- `docs/IMPLEMENTATION_PLAN.md`
+- `AI_WORKLOG.md`
+
+### Validation
+
+- `quick_validate.py` passed for `prepare-pull-request`,
+  `develop-feature-tdd`, and `validate-review-feedback`.
+- Complete and staged diffs were inspected.
+- `git diff --check` passed.
+- PR #1 review data and the final pushed branch were verified.
+
+No code validation was run because this session changed only harness and
+documentation files.
+
+### Friction / failure
+
+None observed.
+
+### Harness change
+
+The repository gained a reusable test-first development workflow and a
+separate critical feedback-validation workflow.
+
+### Lesson learned
+
+Implementation, delivery, review, and review-feedback validation should remain
+separate capabilities so one agent output is not treated as self-validating.
