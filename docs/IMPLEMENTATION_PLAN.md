@@ -2,14 +2,11 @@
 
 ## Purpose
 
-Coffee-Driven Development (CDD) is intentionally a small and slightly
-ridiculous Python CLI.
+Coffee-Driven Development (CDD) is intentionally a small and slightly ridiculous Python CLI.
 
 The product itself is deliberately simple.
 
-The primary purpose of this repository is to progressively build,
-test and demonstrate an AI-assisted engineering harness suitable for
-a Forward Deployed Engineer workflow.
+Its primary purpose is to serve as a controlled sandbox for building, testing and demonstrating an AI-assisted engineering harness suitable for Forward Deployed Engineer workflows.
 
 The repository should demonstrate how AI is used for:
 
@@ -22,27 +19,93 @@ The repository should demonstrate how AI is used for:
 - GitHub integration,
 - pull-request review,
 - external knowledge work through MCP,
-- CI validation,
+- deterministic validation,
+- CI,
 - bounded autonomous execution,
 - human approval at important decision boundaries.
 
-The harness should evolve based on observed repetition, friction and
-real project needs rather than being fully designed upfront.
+The application should remain small enough that its product behavior can be explained in approximately two minutes.
+
+The interesting part of the project is the engineering workflow around it.
+
+The harness should evolve based on observed repetition, friction and actual project needs rather than being fully designed upfront.
+
+---
+
+# Core project principles
+
+## Keep the product small
+
+Do not expand the application merely to make the repository look more complex.
+
+Product complexity should only be introduced when it creates a useful engineering scenario for demonstrating the harness.
+
+## Prefer deterministic behavior
+
+Business rules should be deterministic and independently testable.
+
+AI is primarily part of the development workflow, not the application runtime.
+
+## Avoid premature abstractions
+
+Do not introduce:
+
+- service layers,
+- repository interfaces,
+- dependency injection frameworks,
+- plugin systems,
+- ORMs,
+- distributed infrastructure,
+
+unless a concrete requirement justifies them.
+
+## Separate responsibilities
+
+Maintain clear boundaries between:
+
+```text
+CLI / presentation
+        ↓
+domain logic
+        ↓
+storage / external systems
+```
+
+## Human decisions remain explicit
+
+AI may:
+
+- inspect,
+- recommend,
+- implement,
+- test,
+- review,
+- document.
+
+Humans remain responsible for:
+
+- product scope,
+- architecture approval,
+- significant dependency changes,
+- permission-sensitive actions,
+- disputed review findings,
+- final pull-request merge.
 
 ---
 
 # AI model routing policy
 
-Do not use the strongest model by default.
+Do not use the strongest available model by default.
 
-Choose the lowest-cost model that can reliably perform the task.
+Prefer the lowest-cost model that can reliably complete the task.
 
 Escalate based on:
 
 - ambiguity,
 - architectural impact,
-- difficulty,
+- implementation difficulty,
 - risk,
+- cross-cutting reasoning requirements,
 - observed failure of a cheaper model.
 
 Current available models:
@@ -54,18 +117,50 @@ Current available models:
 - GPT-5.5
 - GPT-5.4 Mini
 
-Default project routing:
+Default routing:
 
 | Task type | Preferred model | Reasoning |
 | --- | --- | --- |
-| Simple documentation / worklog | GPT-5.6 Luna | Low |
-| Planning / lightweight harness configuration | GPT-5.6 Terra | Medium |
+| Worklog / simple documentation | GPT-5.6 Luna | Low |
+| Lightweight planning / harness configuration | GPT-5.6 Terra | Medium |
 | Normal implementation | GPT-5.6 Sol | Medium |
-| Architecture / difficult implementation | GPT-5.6 Sol | High |
+| Architecture / difficult engineering | GPT-5.6 Sol | High |
 | Independent critical review | GPT-6 Astra | High |
 | Final whole-repository audit | GPT-6 Astra | Highest useful setting |
 
 Model selection should be recorded in `AI_WORKLOG.md`.
+
+The goal is not to demonstrate that the strongest model can solve every task.
+
+The goal is to demonstrate deliberate model routing.
+
+---
+
+# Validation strategy
+
+Canonical local validation is cross-platform and uses `uv` directly.
+
+Before completing meaningful code changes, run:
+
+```bash
+uv run --extra dev pytest
+uv run --extra dev ruff check .
+uv run --extra dev mypy
+```
+
+These commands are intentionally explicit.
+
+The project does not depend on GNU Make.
+
+A future reusable validation Skill may orchestrate these commands together with higher-level reasoning such as:
+
+- selecting relevant targeted tests,
+- inspecting the diff,
+- identifying unrelated changes,
+- detecting regressions,
+- summarizing remaining risks.
+
+A Skill should not exist merely as an alias for deterministic commands.
 
 ---
 
@@ -75,94 +170,58 @@ Current phase:
 
 **Phase 3 — Harness baseline and reusable session logging**
 
-The repository currently contains only the engineering foundation.
-The core product functionality and most of the AI harness are still intentionally
-not implemented.
+Current harness maturity:
+
+**Level 1 → Level 2**
+
+The repository currently contains a minimal Python engineering foundation.
+
+No actual coffee-tracking functionality has been implemented yet.
 
 ## Completed
 
 - [x] Phase 0 — Repository initialization
 - [x] Phase 1 — Initial architecture exploration
 - [x] Phase 2 — Engineering foundation
-- [x] Create project implementation roadmap
-
-Current repository capabilities:
-
-- [x] Python 3.12+ project configured
+- [x] Project implementation roadmap
+- [x] Python 3.12+ environment
 - [x] `src` package layout
-- [x] `cdd` CLI entry point
+- [x] `cdd` console entry point
 - [x] `cdd --help`
-- [x] pytest configured
-- [x] ruff configured
-- [x] mypy configured
+- [x] pytest configuration
+- [x] ruff configuration
+- [x] mypy configuration
 - [x] initial `AGENTS.md`
+- [x] explicit validation rules in `AGENTS.md`
 - [x] initial `AI_WORKLOG.md`
-- [x] model-selection strategy started
+- [x] initial model-routing policy
+- [x] cross-platform validation strategy
 
-Product functionality implemented so far:
+## Product functionality implemented
 
 - [ ] coffee tracking
-- [ ] persistent history
+- [ ] persistent coffee history
 - [ ] developer status
 - [ ] Git activity
 - [ ] refactor-risk scoring
 
-AI harness capabilities implemented so far:
+## AI harness capabilities implemented
 
 - [x] repository-level agent instructions
-- [x] model/reasoning selection recorded manually
+- [x] explicit model / reasoning selection
+- [x] human architecture approval
+- [x] deterministic validation commands
 - [ ] automatic AI session logging
 - [ ] repository Skills
 - [ ] engineering knowledge base
-- [ ] testing workflow Skill
-- [ ] feature-development workflow
+- [ ] reusable validation workflow
+- [ ] reusable feature-development workflow
 - [ ] GitHub MCP
-- [ ] independent AI PR review
+- [ ] GitHub Actions CI
+- [ ] independent AI pull-request review
 - [ ] Figma MCP
 - [ ] Goal-based delegation
 - [ ] presentation-generation workflow
-
----
-
-# Immediate next steps
-
-## Phase 3 — Harness baseline
-
-- [ ] Backfill the two historical `AI_WORKLOG.md` entries
-- [ ] Create first repository Skill: `record-ai-session`
-- [ ] Add a minimal routing rule to `AGENTS.md`
-- [ ] Verify that the Skill records the current session correctly
-- [ ] Ensure future meaningful AI sessions are logged automatically
-- [ ] Decide whether the current Make-based quality gate should remain
-      or be replaced/supplemented with a cross-platform command
-
-## Phase 4 — First actual product feature
-
-- [ ] Implement `cdd drink <drink>`
-- [ ] Add espresso
-- [ ] Add americano
-- [ ] Add cappuccino
-- [ ] Keep caffeine calculation independent from CLI rendering
-- [ ] Add first meaningful domain tests
-- [ ] Observe whether testing instructions start becoming repetitive
-
-## Phase 5 — Persistence
-
-- [ ] Add drink-event model
-- [ ] Persist timestamp, drink type and caffeine amount
-- [ ] Implement JSON/JSONL local storage
-- [ ] Make storage path injectable
-- [ ] Add filesystem-isolated tests
-- [ ] Ensure tests never modify the real user home directory
-
-## Phase 6 — Status and history
-
-- [ ] Implement `cdd history`
-- [ ] Implement `cdd status`
-- [ ] Calculate caffeine consumed today
-- [ ] Add deterministic developer states
-- [ ] Keep status calculation as pure domain logic
-- [ ] Add humorous terminal presentation
 
 ---
 
@@ -171,7 +230,7 @@ AI harness capabilities implemented so far:
 ## Foundation
 
 - [x] Phase 0 — Repository initialization
-- [x] Phase 1 — Architecture exploration
+- [x] Phase 1 — Initial architecture exploration
 - [x] Phase 2 — Engineering foundation
 - [ ] Phase 3 — Reusable AI session logging
 
@@ -185,13 +244,13 @@ AI harness capabilities implemented so far:
 
 - [ ] Phase 7 — Harness retrospective
 - [ ] Phase 8 — Repository engineering knowledge
-- [ ] Phase 9 — Unit-testing Skill
+- [ ] Phase 9 — Reusable engineering Skills
 
 ## GitHub engineering workflow
 
 - [ ] Phase 10 — GitHub Actions CI
 - [ ] Phase 11 — GitHub MCP integration
-- [ ] Phase 12 — Git activity feature through a GitHub Issue
+- [ ] Phase 12 — Git activity feature through GitHub Issue
 - [ ] Phase 13 — Independent AI pull-request review
 - [ ] Phase 14 — AI review-feedback validation
 
@@ -202,30 +261,1343 @@ AI harness capabilities implemented so far:
 
 ## Interview preparation
 
-- [ ] Phase 17 — Reserved live-demo feature: Late-Night Refactor Risk
-- [ ] Phase 18 — Generate interview presentation from project evidence
+- [ ] Phase 17 — Reserved live-demo feature
+- [ ] Phase 18 — Generate interview presentation
 - [ ] Phase 19 — Final critical harness audit
+
+---
+
+# Phase 0 — Repository initialization
+
+Status: **COMPLETE**
 
 ## Goal
 
-Create the initial repository manually before delegating meaningful work
-to AI.
+Create the repository manually before delegating meaningful work to AI.
 
-## Human-created files
+## Initial files
 
 - `README.md`
 - `AGENTS.md`
 - `AI_WORKLOG.md`
 - `.gitignore`
 
-## Repository purpose
+## Human decision
 
-The application was deliberately defined as a small Python CLI so that
-the engineering workflow around it remains the main focus.
+The application was deliberately chosen to be small and memorable.
 
-Initial intended product capabilities:
+The initial product concept:
 
 ```text
 cdd drink espresso
 cdd status
 cdd history
+```
+
+The application acts as a sandbox for AI engineering workflows rather than being the primary technical achievement.
+
+---
+
+# Phase 1 — Initial architecture exploration
+
+Status: **COMPLETE**
+
+## AI setup
+
+Tool: Codex  
+Model: GPT-5.6 Terra  
+Reasoning: Medium  
+Mode: Plan
+
+## Goal
+
+Propose the smallest reasonable v0.1 architecture without implementing code.
+
+## Architecture direction
+
+```text
+src/
+└── cdd/
+    ├── __init__.py
+    ├── cli.py
+    ├── domain.py
+    └── storage.py
+
+tests/
+```
+
+## Decisions
+
+- Python 3.12+
+- `src` layout
+- standard-library CLI
+- zero runtime dependencies where practical
+- typed Python
+- pure domain logic
+- local persistence
+- pytest
+- ruff
+- mypy
+
+## Explicit non-goals
+
+Do not introduce:
+
+- web API
+- frontend
+- Docker
+- cloud infrastructure
+- database server
+- ORM
+- service layer
+- repository interface
+- plugin architecture
+
+## Human gate
+
+Architecture was proposed by AI.
+
+Final acceptance remained a human decision.
+
+Historical session details belong in `AI_WORKLOG.md`.
+
+---
+
+# Phase 2 — Engineering foundation
+
+Status: **COMPLETE**
+
+## AI setup
+
+Tool: Codex  
+Model: GPT-5.6 Sol  
+Reasoning: Medium  
+Mode: Implementation
+
+## Goal
+
+Create the minimal Python engineering foundation without implementing product functionality.
+
+## Implemented
+
+- `pyproject.toml`
+- `src/cdd/__init__.py`
+- `src/cdd/cli.py`
+- `tests/test_cli.py`
+- `uv.lock`
+
+## CLI capability
+
+```bash
+cdd --help
+```
+
+## Tooling
+
+- Hatchling
+- uv
+- pytest
+- ruff
+- mypy
+- argparse
+
+Runtime dependencies:
+
+```text
+none
+```
+
+## Validation
+
+Canonical validation:
+
+```bash
+uv run --extra dev pytest
+uv run --extra dev ruff check .
+uv run --extra dev mypy
+```
+
+## Current architecture
+
+```text
+CLI boundary
+     ↓
+future domain logic
+     ↓
+future local storage
+```
+
+No product behavior is implemented yet.
+
+Historical friction and environment-specific issues belong in `AI_WORKLOG.md`, not in the roadmap.
+
+---
+
+# Phase 3 — Harness baseline and reusable session logging
+
+Status: **NEXT**
+
+## AI setup
+
+Preferred model:
+
+GPT-5.6 Terra
+
+Reasoning:
+
+Medium
+
+## Goal
+
+Introduce the first reusable harness capability based on an actually observed repeated workflow.
+
+The repeated workflow is AI session documentation.
+
+## Why now
+
+The first two meaningful Codex sessions both required manually specified AI worklog instructions.
+
+This repetition is sufficient to justify extracting the behavior from task prompts.
+
+## Planned work
+
+- [ ] backfill the architecture-planning session
+- [ ] backfill the engineering-foundation session
+- [ ] create `record-ai-session`
+- [ ] add a minimal routing rule to `AGENTS.md`
+- [ ] use the new Skill to record the session in which it was created
+- [ ] verify existing historical worklog entries remain unchanged
+- [ ] ensure future meaningful sessions can be logged consistently
+
+## Planned Skill
+
+```text
+.agents/
+└── skills/
+    └── record-ai-session/
+        └── SKILL.md
+```
+
+## Skill responsibility
+
+The Skill should:
+
+- record actual session metadata
+- distinguish AI execution from human decisions
+- record validation actually performed
+- record actual friction
+- record actual harness changes
+- append instead of overwrite
+- preserve chronological history
+- never invent missing metadata
+
+Unknown metadata should be recorded as:
+
+```text
+not recorded
+```
+
+## Human gate
+
+The human may decide that an interaction is too trivial to log.
+
+Explicit user instructions override automatic logging behavior.
+
+## Acceptance criteria
+
+- [ ] two historical sessions are accurately recorded
+- [ ] exactly one repository Skill exists
+- [ ] `AGENTS.md` contains only a concise routing rule
+- [ ] detailed logging behavior lives in the Skill
+- [ ] the Skill successfully logs its own creation session
+- [ ] no product code changes occur during this phase
+
+---
+
+# Phase 4 — First product feature: drink
+
+Status: **PLANNED**
+
+## AI setup
+
+Preferred model:
+
+GPT-5.6 Sol
+
+Reasoning:
+
+Medium
+
+## Goal
+
+Implement:
+
+```bash
+cdd drink <drink>
+```
+
+Initial drinks:
+
+- espresso
+- americano
+- cappuccino
+
+Example:
+
+```text
+$ cdd drink espresso
+
+Espresso
+Estimated caffeine: 80 mg
+```
+
+## Architecture
+
+Introduce domain logic only when required.
+
+Expected direction:
+
+```text
+CLI
+ ↓
+domain logic
+```
+
+Persistence is not introduced yet.
+
+## Requirements
+
+- typed domain model
+- deterministic caffeine values
+- domain independent from CLI rendering
+- clear unsupported-drink behavior
+- meaningful unit tests
+- no new runtime dependency unless justified
+
+## Harness observation
+
+During implementation, observe whether the following become repetitive:
+
+- test instructions
+- validation sequence
+- implementation workflow
+- diff inspection
+
+Do not create additional Skills solely after one occurrence.
+
+---
+
+# Phase 5 — Local persistence
+
+Status: **PLANNED**
+
+## AI setup
+
+Preferred model:
+
+GPT-5.6 Sol
+
+Reasoning:
+
+Medium
+
+## Goal
+
+Persist coffee events locally.
+
+Each event should contain:
+
+```text
+timestamp
+drink type
+caffeine amount
+```
+
+## Persistence direction
+
+Use JSONL unless implementation reveals a concrete reason to reconsider.
+
+Expected production location:
+
+```text
+~/.cdd/
+```
+
+Tests must use temporary paths.
+
+Tests must never modify the real user home directory.
+
+## Architecture
+
+```text
+CLI
+ ↓
+domain
+ ↓
+storage
+```
+
+Storage must not contain business logic.
+
+Domain calculations must not read files directly.
+
+## Human gate
+
+Changing the persistence strategy requires explicit approval.
+
+---
+
+# Phase 6 — Status and history
+
+Status: **PLANNED**
+
+## AI setup
+
+Preferred model:
+
+GPT-5.6 Sol
+
+Reasoning:
+
+Medium
+
+## Commands
+
+```bash
+cdd history
+cdd status
+```
+
+## Status output
+
+Should include:
+
+- drinks today
+- caffeine today
+- developer state
+
+Initial deterministic states:
+
+```text
+0 mg
+NO SIGNAL
+
+1–100 mg
+BOOTING
+
+101–250 mg
+PRODUCTIVE
+
+251–400 mg
+TURBO MODE
+
+400+ mg
+ARCHITECTURE PRIVILEGES REVOKED
+```
+
+## Architecture
+
+Developer-state calculation must be pure domain logic.
+
+It must not depend on:
+
+- CLI rendering
+- filesystem
+- terminal formatting
+
+---
+
+# Milestone A — Product MVP
+
+Reached when:
+
+- [ ] `cdd drink` works
+- [ ] coffee history persists locally
+- [ ] `cdd history` works
+- [ ] `cdd status` works
+- [ ] meaningful domain tests exist
+- [ ] pytest passes
+- [ ] ruff passes
+- [ ] mypy passes
+
+At this point the application itself is considered sufficient.
+
+Further work should primarily improve the AI engineering harness rather than expand product scope.
+
+---
+
+# Phase 7 — Harness retrospective
+
+Status: **PLANNED**
+
+## AI setup
+
+Preferred model:
+
+GPT-5.6 Sol
+
+Reasoning:
+
+High
+
+Escalation:
+
+GPT-6 Astra / High only if analysis becomes genuinely difficult or ambiguous.
+
+## Goal
+
+Evaluate the actual development history before introducing additional harness complexity.
+
+Analyze:
+
+- instructions repeatedly included in prompts
+- repeated validation behavior
+- repeated test expectations
+- recurring friction
+- inconsistent agent decisions
+- missing persistent repository context
+- unnecessary instructions
+
+Classify each finding into:
+
+1. `AGENTS.md`
+2. repository engineering knowledge
+3. reusable Skill candidate
+4. deterministic command / script
+5. task-specific information that should remain outside the harness
+
+Do not implement changes during the first retrospective pass.
+
+---
+
+# Phase 8 — Repository engineering knowledge
+
+Status: **PLANNED**
+
+## AI setup
+
+Preferred model:
+
+GPT-5.6 Sol
+
+Reasoning:
+
+High
+
+## Prerequisite
+
+Only create these files if Phase 7 provides evidence that they improve agent behavior.
+
+Possible structure:
+
+```text
+docs/
+└── engineering/
+    ├── python-guidelines.md
+    ├── testing-strategy.md
+    ├── architecture-guidelines.md
+    └── review-guidelines.md
+```
+
+## Python guidelines
+
+Potential topics:
+
+- typing
+- dependency policy
+- error handling
+- module boundaries
+- avoiding unnecessary abstraction
+
+## Testing strategy
+
+Potential topics:
+
+- behavioral testing
+- happy paths
+- boundary conditions
+- invalid input
+- regression tests
+- filesystem isolation
+- deterministic tests
+
+## Architecture guidelines
+
+Potential topics:
+
+- CLI/domain separation
+- storage/domain separation
+- simplicity constraint
+
+## Review guidelines
+
+Potential topics:
+
+- correctness
+- requirements
+- regressions
+- edge cases
+- tests
+- unrelated changes
+
+## AGENTS.md role
+
+After engineering documentation exists, `AGENTS.md` should primarily route agents to relevant knowledge instead of duplicating it.
+
+---
+
+# Phase 9 — Reusable engineering workflows
+
+Status: **PLANNED**
+
+## AI setup
+
+Preferred model:
+
+GPT-5.6 Terra or GPT-5.6 Sol
+
+Reasoning:
+
+Medium
+
+## Rule
+
+Create only workflows justified by actual repetition observed during earlier phases.
+
+Possible candidates:
+
+```text
+validate-change
+write-unit-tests
+implement-feature
+investigate-bug
+```
+
+Not all candidates must be implemented.
+
+## Example: validate-change
+
+A useful Skill may:
+
+```text
+inspect changed files
+        ↓
+identify affected scope
+        ↓
+run targeted tests
+        ↓
+run full pytest
+        ↓
+run ruff
+        ↓
+run mypy
+        ↓
+inspect diff
+        ↓
+identify unrelated changes
+        ↓
+report validation status
+```
+
+The Skill must add reasoning around validation.
+
+It must not merely alias deterministic commands.
+
+## Example: write-unit-tests
+
+Potential workflow:
+
+```text
+read testing strategy
+↓
+inspect behavior
+↓
+identify cases
+↓
+write tests
+↓
+run targeted tests
+↓
+run full quality gate
+↓
+summarize gaps
+```
+
+## Example: implement-feature
+
+Potential workflow:
+
+```text
+read requirement
+↓
+inspect repository
+↓
+plan
+↓
+human approval when needed
+↓
+implement
+↓
+test
+↓
+validate
+↓
+inspect diff
+```
+
+---
+
+# Phase 10 — GitHub Actions CI
+
+Status: **PLANNED**
+
+## AI setup
+
+Preferred model:
+
+GPT-5.6 Terra
+
+Reasoning:
+
+Medium
+
+## Goal
+
+Create minimal CI on:
+
+- pushes
+- pull requests
+
+Run:
+
+```text
+pytest
+ruff
+mypy
+```
+
+## Requirements
+
+- use the same environment as local development
+- no secrets required
+- avoid duplicated configuration
+- keep workflow small
+- CI must provide deterministic feedback to agents and humans
+
+---
+
+# Phase 11 — GitHub MCP integration
+
+Status: **PLANNED**
+
+## AI setup
+
+Preferred model:
+
+GPT-5.6 Terra
+
+Reasoning:
+
+Medium
+
+## First step
+
+Verify integration in read-only mode.
+
+The agent should:
+
+- inspect repository
+- inspect issues
+- inspect pull requests
+- inspect available GitHub capabilities
+- distinguish read operations from write operations
+
+Do not create or modify anything during the initial verification.
+
+## Goal
+
+Move real engineering context into the harness.
+
+Instead of:
+
+```text
+copy GitHub Issue
+↓
+paste into prompt
+```
+
+prefer:
+
+```text
+GitHub Issue
+↓
+GitHub MCP
+↓
+Codex
+```
+
+---
+
+# Phase 12 — Git activity feature through GitHub workflow
+
+Status: **PLANNED**
+
+## Feature
+
+Add local Git activity to developer status.
+
+Report:
+
+- number of commits today
+- latest commit time
+
+Outside a Git repository:
+
+fail gracefully.
+
+## AI setup
+
+Planning:
+
+GPT-5.6 Sol / High
+
+Implementation:
+
+GPT-5.6 Sol / Medium
+
+## Workflow
+
+```text
+GitHub Issue
+↓
+Codex reads requirement
+↓
+repository inspection
+↓
+implementation plan
+↓
+human approval
+↓
+implementation
+↓
+tests
+↓
+validation
+↓
+self-review
+↓
+pull request
+```
+
+## Human gate
+
+Do not merge automatically.
+
+---
+
+# Phase 13 — Independent AI pull-request review
+
+Status: **PLANNED**
+
+## AI setup
+
+Preferred model:
+
+GPT-6 Astra
+
+Reasoning:
+
+High
+
+## Goal
+
+Use a separate Codex session as an independent reviewer.
+
+Reviewer reads:
+
+- original issue
+- PR description
+- complete diff
+- repository guidelines
+- tests
+
+Reviewer must not modify code.
+
+Focus on:
+
+- requirement compliance
+- correctness
+- boundary conditions
+- regressions
+- test quality
+- architecture consistency
+- unnecessary complexity
+
+Do not invent findings merely to produce review output.
+
+---
+
+# Phase 14 — AI review-feedback validation
+
+Status: **PLANNED**
+
+## AI setup
+
+Preferred model:
+
+GPT-5.6 Sol
+
+Reasoning:
+
+High
+
+Escalate to GPT-6 Astra only for genuinely difficult disagreements.
+
+## Goal
+
+Prevent automation bias.
+
+For every review finding classify:
+
+```text
+valid
+partially valid
+not valid
+```
+
+Verify against:
+
+- original issue
+- implementation
+- repository guidelines
+- tests
+
+Only then modify the implementation.
+
+## Principle
+
+AI review is evidence, not authority.
+
+---
+
+# Phase 15 — Figma MCP knowledge workflow
+
+Status: **PLANNED**
+
+## AI setup
+
+Preferred model:
+
+GPT-5.6 Terra
+
+Reasoning:
+
+Medium
+
+## Goal
+
+Use Figma for knowledge work and workflow documentation.
+
+Do not build unnecessary product UI.
+
+Create a simple harness diagram showing:
+
+```text
+GitHub Issue
+↓
+Codex analysis
+↓
+implementation plan
+↓
+human approval
+↓
+implementation
+↓
+validation
+↓
+GitHub pull request
+↓
+independent AI review
+↓
+CI
+↓
+human merge
+```
+
+Also show persistent harness context:
+
+- `AGENTS.md`
+- repository engineering documentation
+- Skills
+- `AI_WORKLOG.md`
+- GitHub MCP
+- Figma MCP
+
+The diagram should be explainable in under one minute.
+
+---
+
+# Phase 16 — Bounded Goal-based delegation
+
+Status: **PLANNED**
+
+## AI setup
+
+Preferred model:
+
+GPT-5.6 Sol
+
+Reasoning:
+
+Medium or High depending on the task.
+
+## Prerequisites
+
+Only introduce Goal-based delegation after:
+
+- repository instructions are stable
+- useful Skills exist
+- CI works
+- GitHub MCP works
+- validation is reliable
+- human permission boundaries are explicit
+
+Example bounded goal:
+
+```text
+Take GitHub issue #X from requirement analysis to a review-ready pull request.
+
+Run repository validation.
+
+Do not merge.
+```
+
+## Human gate
+
+Final merge remains human-controlled.
+
+---
+
+# Phase 17 — Reserved interview demo feature
+
+Status: **RESERVED**
+
+Do not implement until the interview demo is being prepared.
+
+## Feature
+
+Late-Night Refactor Risk
+
+Example:
+
+```text
+Refactor risk: 82%
+
+Contributing factors:
+☕ High caffeine
+🌙 Late-night commits
+
+Recommendation:
+DO NOT TOUCH THE ARCHITECTURE.
+```
+
+## Rules
+
+Risk increases when:
+
+- caffeine > 250 mg
+- commits occur after 22:00
+- both conditions occur together
+
+## Requirements
+
+- deterministic score
+- score between 0 and 100
+- contributing factors shown
+- exact boundaries documented
+- tests
+- no additional runtime dependency
+
+## Live-demo model
+
+GPT-5.6 Sol
+
+Reasoning:
+
+Medium
+
+## Why
+
+By this point the feature should be well-scoped.
+
+The mature harness should already provide:
+
+- repository context
+- engineering instructions
+- Skills
+- validation
+- GitHub access
+
+The live prompt should therefore be intentionally short.
+
+Example:
+
+```text
+Use GitHub MCP to read issue #X.
+
+Use the repository's standard feature-development workflow.
+
+Start with requirement analysis and an implementation plan.
+
+Stop for my approval before editing.
+```
+
+The short prompt is part of the demonstration.
+
+---
+
+# Phase 18 — Interview presentation generation
+
+Status: **PLANNED**
+
+## AI setup
+
+Preferred model:
+
+GPT-5.6 Terra
+
+Reasoning:
+
+Medium
+
+## Goal
+
+Generate a concise interview presentation from actual project evidence.
+
+Inputs should include:
+
+- `README.md`
+- `IMPLEMENTATION_PLAN.md`
+- `AI_WORKLOG.md`
+- `AGENTS.md`
+- repository Skills
+- model-usage history
+- GitHub Issues
+- pull requests
+- review history
+- CI evidence
+- Figma workflow diagram
+
+## Presentation focus
+
+The presentation should emphasize:
+
+1. how the harness started,
+2. how repeated problems were identified,
+3. how persistent instructions were introduced,
+4. how repeated workflows became Skills,
+5. how models were routed deliberately,
+6. how GitHub and Figma were connected,
+7. how validation became deterministic,
+8. where human approval remains necessary,
+9. how the mature harness reduces prompt length.
+
+The Coffee-Driven Development application remains the memorable but secondary element.
+
+---
+
+# Phase 19 — Final harness audit
+
+Status: **PLANNED**
+
+## AI setup
+
+Preferred model:
+
+GPT-6 Astra
+
+Reasoning:
+
+Highest useful setting available.
+
+## Goal
+
+Perform a critical read-only audit before the interview.
+
+Evaluate:
+
+- `AGENTS.md`
+- repository engineering knowledge
+- Skill justification
+- model-routing decisions
+- human/AI responsibility boundaries
+- GitHub permissions
+- independent review quality
+- CI
+- worklog credibility
+- unnecessary complexity
+- presentation theatre
+- likely interviewer challenges
+
+Return:
+
+- five strongest aspects
+- five weakest aspects
+- likely interview questions
+- concrete cleanup recommendations
+
+Do not modify files during the first audit pass.
+
+---
+
+# Continuous process — AI worklog
+
+Status:
+
+**ACTIVE AFTER PHASE 3**
+
+Meaningful AI-assisted work should be recorded through:
+
+```text
+record-ai-session
+```
+
+Log entries should record:
+
+- date
+- tool
+- model
+- reasoning level
+- mode
+- task type
+- goal
+- AI responsibility
+- human responsibility
+- outcome
+- files changed
+- validation
+- actual friction
+- actual harness changes
+- lesson learned
+
+Do not invent missing metadata.
+
+If metadata is unavailable:
+
+```text
+not recorded
+```
+
+Do not log trivial interactions.
+
+---
+
+# Harness maturity model
+
+## Level 0 — Prompt-driven
+
+Most behavior is described repeatedly in task prompts.
+
+## Level 1 — Repository-aware
+
+Persistent project rules live in `AGENTS.md`.
+
+## Level 2 — Workflow-aware
+
+Repeated engineering behavior is extracted into reusable Skills.
+
+## Level 3 — Tool-connected
+
+Codex accesses real external context through systems such as:
+
+- GitHub MCP
+- Figma MCP
+
+## Level 4 — Self-validating
+
+The workflow receives deterministic feedback from:
+
+- pytest
+- ruff
+- mypy
+- GitHub Actions
+
+## Level 5 — Bounded autonomous
+
+Goal-based execution can carry work across multiple steps while respecting explicit human approval boundaries.
+
+Current level:
+
+```text
+Level 1 → Level 2
+```
+
+---
+
+# Human approval gates
+
+AI should not independently decide:
+
+- project-scope expansion
+- architecture changes
+- significant dependency additions
+- persistence-strategy changes
+- acceptance of disputed review feedback
+- destructive external operations
+- final pull-request merge
+
+The purpose of the harness is not unlimited autonomy.
+
+The goal is useful, inspectable and bounded autonomy.
+
+---
+
+# Target final harness
+
+```text
+                         HUMAN
+                           │
+              intent / decisions / gates
+                           │
+                           ▼
+                        CODEX
+                           │
+          ┌────────────────┼────────────────┐
+          │                │                │
+      AGENTS.md          Skills       repository docs
+          │                │                │
+          └────────────────┼────────────────┘
+                           │
+                 ┌─────────┴─────────┐
+                 │                   │
+             GitHub MCP          Figma MCP
+                 │                   │
+          Issues / PRs / CI     knowledge work
+                 │                   │
+                 └─────────┬─────────┘
+                           │
+                     implementation
+                           │
+                 deterministic validation
+                           │
+                pytest / ruff / mypy
+                           │
+                          CI
+                           │
+                 independent review
+                           │
+                     human merge
+```
+
+The model is only one component of the harness.
+
+The complete harness consists of:
+
+- model selection,
+- persistent repository context,
+- reusable workflows,
+- tools and integrations,
+- deterministic validation,
+- permission boundaries,
+- human decisions,
+- evidence of what actually happened.
