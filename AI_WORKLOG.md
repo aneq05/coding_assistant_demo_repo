@@ -451,3 +451,77 @@ separate critical feedback-validation workflow.
 
 Implementation, delivery, review, and review-feedback validation should remain
 separate capabilities so one agent output is not treated as self-validating.
+
+## 2026-09-07 — Pull-request quality gate
+
+### Harness
+
+Tool: Codex
+Model: GPT-5.6 Terra
+Reasoning: Medium
+Mode: Implementation
+Task type: pull-request quality-gate improvement
+Risk level: low-medium
+
+### Model selection
+
+This task focused on repository workflow validation, review state, and PR
+metadata consistency. It required structured reasoning and careful GitHub
+inspection, but not product implementation or the strongest available model.
+
+### Goal
+
+Introduce a reusable final PR validation capability and clean up the current
+harness PR before Phase 4.
+
+### AI responsibility
+
+- Inspected PR #1 metadata, complete diff, review submissions, and threads.
+- Corrected delivery, roadmap, and future-phase terminology based on validated
+  review findings.
+- Updated PR #1 title and description to match its final scope.
+- Created and validated `validate-pull-request` and applied its readiness
+  checks to PR #1.
+
+### Human responsibility
+
+The human chose to add a pre-merge quality gate, retained final merge
+authority, and approved the validation criteria through the task request.
+
+### Outcome
+
+PR #1 gained consistent metadata, resolved review findings, and a reusable
+pre-merge readiness workflow. No Phase 4 product behavior was implemented.
+
+### Files changed
+
+- `.agents/skills/prepare-pull-request/SKILL.md`
+- `.agents/skills/validate-pull-request/SKILL.md`
+- `AGENTS.md`
+- `docs/IMPLEMENTATION_PLAN.md`
+- `AI_WORKLOG.md`
+
+### Validation
+
+- `quick_validate.py` passed for `prepare-pull-request` and
+  `validate-pull-request`.
+- Complete and staged diffs were inspected.
+- `git diff --check` passed.
+- PR metadata and review-thread state were inspected directly through GitHub.
+
+No code validation was run because this session changed only harness and
+documentation files.
+
+### Friction / failure
+
+None observed.
+
+### Harness change
+
+Pull requests now have a reusable readiness check after delivery and
+review-feedback processing.
+
+### Lesson learned
+
+Automation needs validation not only for code, but also for workflow state,
+metadata, review resolution, and repository consistency.
