@@ -168,15 +168,15 @@ A Skill should not exist merely as an alias for deterministic commands.
 
 Current phase:
 
-**Phase 4 — First product feature: drink**
+**Phase 5 — Local persistence**
 
 Current harness maturity:
 
 **Level 2 — Workflow-aware**
 
-The repository currently contains a minimal Python engineering foundation.
-
-No actual coffee-tracking functionality has been implemented yet.
+The repository contains a minimal Python engineering foundation and the
+deterministic `cdd drink` command. Persistent coffee tracking has not been
+implemented yet.
 
 ## Completed
 
@@ -196,9 +196,11 @@ No actual coffee-tracking functionality has been implemented yet.
 - [x] initial `AI_WORKLOG.md`
 - [x] initial model-routing policy
 - [x] cross-platform validation strategy
+- [x] Phase 4 — `cdd drink`
 
 ## Product functionality implemented
 
+- [x] deterministic drink information
 - [ ] coffee tracking
 - [ ] persistent coffee history
 - [ ] developer status
@@ -243,7 +245,7 @@ No actual coffee-tracking functionality has been implemented yet.
 
 ## Product MVP
 
-- [ ] Phase 4 — `cdd drink`
+- [x] Phase 4 — `cdd drink`
 - [ ] Phase 5 — Local persistence
 - [ ] Phase 6 — `cdd status` and `cdd history`
 
@@ -582,7 +584,7 @@ evidence, review-thread state, and final pre-merge readiness.
 
 # Phase 4 — First product feature: drink
 
-Status: **PLANNED**
+Status: **COMPLETE**
 
 ## AI setup
 
@@ -777,7 +779,7 @@ It must not depend on:
 
 Reached when:
 
-- [ ] `cdd drink` works
+- [x] `cdd drink` works
 - [ ] coffee history persists locally
 - [ ] `cdd history` works
 - [ ] `cdd status` works
