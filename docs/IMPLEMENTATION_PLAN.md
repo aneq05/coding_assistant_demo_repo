@@ -168,11 +168,11 @@ A Skill should not exist merely as an alias for deterministic commands.
 
 Current phase:
 
-**Phase 3 — Harness baseline and reusable session logging**
+**Phase 4 — First product feature: drink**
 
 Current harness maturity:
 
-**Level 1 → Level 2**
+**Level 2 — Workflow-aware**
 
 The repository currently contains a minimal Python engineering foundation.
 
@@ -212,10 +212,14 @@ No actual coffee-tracking functionality has been implemented yet.
 - [x] human architecture approval
 - [x] deterministic validation commands
 - [ ] automatic AI session logging
-- [ ] repository Skills
-- [ ] engineering knowledge base
+- [x] repository Skills
+- [x] safe Git delivery and ready-for-review pull-request workflow
+- [x] Python engineering guidance
+- [x] testing strategy
 - [ ] reusable validation workflow
-- [ ] reusable feature-development workflow
+- [x] reusable TDD feature-development workflow
+- [x] review-feedback validation workflow
+- [x] authenticated GitHub PR delivery
 - [ ] GitHub MCP
 - [ ] GitHub Actions CI
 - [ ] independent AI pull-request review
@@ -232,7 +236,10 @@ No actual coffee-tracking functionality has been implemented yet.
 - [x] Phase 0 — Repository initialization
 - [x] Phase 1 — Initial architecture exploration
 - [x] Phase 2 — Engineering foundation
-- [ ] Phase 3 — Reusable AI session logging
+- [x] Phase 3 — Reusable AI session logging
+- [x] Phase 3.5 — Safe Git delivery and pull-request automation
+- [x] Phase 3.75 — Engineering workflow and review-feedback automation
+- [x] Phase 3.8 — Pull-request quality gate
 
 ## Product MVP
 
@@ -435,7 +442,7 @@ Historical friction and environment-specific issues belong in `AI_WORKLOG.md`, n
 
 # Phase 3 — Harness baseline and reusable session logging
 
-Status: **NEXT**
+Status: **COMPLETE**
 
 ## AI setup
 
@@ -461,13 +468,13 @@ This repetition is sufficient to justify extracting the behavior from task promp
 
 ## Planned work
 
-- [ ] backfill the architecture-planning session
-- [ ] backfill the engineering-foundation session
-- [ ] create `record-ai-session`
-- [ ] add a minimal routing rule to `AGENTS.md`
-- [ ] use the new Skill to record the session in which it was created
-- [ ] verify existing historical worklog entries remain unchanged
-- [ ] ensure future meaningful sessions can be logged consistently
+- [x] backfill the architecture-planning session
+- [x] backfill the engineering-foundation session
+- [x] create `record-ai-session`
+- [x] add a minimal routing rule to `AGENTS.md`
+- [x] use the new Skill to record the session in which it was created
+- [x] verify existing historical worklog entries remain unchanged
+- [x] ensure future meaningful sessions can be logged consistently
 
 ## Planned Skill
 
@@ -505,12 +512,71 @@ Explicit user instructions override automatic logging behavior.
 
 ## Acceptance criteria
 
-- [ ] two historical sessions are accurately recorded
-- [ ] exactly one repository Skill exists
-- [ ] `AGENTS.md` contains only a concise routing rule
-- [ ] detailed logging behavior lives in the Skill
-- [ ] the Skill successfully logs its own creation session
-- [ ] no product code changes occur during this phase
+- [x] two historical sessions are accurately recorded
+- [x] `record-ai-session` was established as the first repository Skill
+- [x] `AGENTS.md` contains only a concise routing rule
+- [x] detailed logging behavior lives in the Skill
+- [x] the Skill successfully logs its own creation session
+- [x] no product code changes occurred during this phase
+
+---
+
+# Phase 3.5 — Safe Git delivery and pull-request automation
+
+Status: **COMPLETE**
+
+## Goal
+
+Create `prepare-pull-request`, the second repository Skill, to safely deliver
+completed validated changes through a dedicated branch, explicit staging,
+commit, push, ready-for-review pull request, and one factual session-log update.
+
+## Requirements
+
+- never commit task changes directly to the default branch
+- validate before committing and stage only intended files
+- create a ready-for-review PR with review-ready scope and validation evidence
+- never auto-merge, force-push, or rewrite history
+- keep independent AI review as a future separate workflow
+
+## Future review direction
+
+```text
+implementation agent → prepare-pull-request → ready-for-review PR → independent review
+agent → finding validation → human merge
+```
+
+---
+
+# Phase 3.75 — Engineering workflow and review-feedback automation
+
+Status: **COMPLETE**
+
+## Goal
+
+Add concise Python and testing knowledge, test-first feature development,
+critical review-feedback validation, and ready-for-review Git delivery.
+
+## Delivered
+
+- `docs/engineering/python-guidelines.md`
+- `docs/engineering/testing-strategy.md`
+- `develop-feature-tdd`
+- `validate-review-feedback`
+- ready-for-review delivery after the final worklog commit
+
+Independent first-pass AI review remains a future, separate capability.
+
+---
+
+# Phase 3.8 — Pull-request quality gate
+
+Status: **COMPLETE**
+
+## Goal
+
+Add `validate-pull-request` to check PR metadata, diff scope, validation
+evidence, review-thread state, and final pre-merge readiness.
 
 ---
 
@@ -786,7 +852,9 @@ High
 
 ## Prerequisite
 
-Only create these files if Phase 7 provides evidence that they improve agent behavior.
+Phase 3.75 already established Python and testing guidance based on observed
+need. Phase 7 should evaluate whether the remaining guidance would improve
+agent behavior before adding it.
 
 Possible structure:
 
@@ -1137,7 +1205,7 @@ Do not invent findings merely to produce review output.
 
 ---
 
-# Phase 14 — AI review-feedback validation
+# Phase 14 — Independent review feedback validation
 
 Status: **PLANNED**
 
@@ -1156,6 +1224,10 @@ Escalate to GPT-6 Astra only for genuinely difficult disagreements.
 ## Goal
 
 Prevent automation bias.
+
+The generic `validate-review-feedback` capability was introduced in Phase 3.75
+and validated against GitHub Copilot feedback. This phase applies that
+established workflow specifically to the independent AI reviewer from Phase 13.
 
 For every review finding classify:
 
@@ -1529,7 +1601,7 @@ Goal-based execution can carry work across multiple steps while respecting expli
 Current level:
 
 ```text
-Level 1 → Level 2
+Level 2 — Workflow-aware
 ```
 
 ---

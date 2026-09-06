@@ -34,3 +34,28 @@ repository, architecture, harness, validation, or external integrations, use
 the `record-ai-session` Skill to append an accurate entry to `AI_WORKLOG.md`.
 Do not log trivial interactions, invent missing metadata, or override explicit
 user instructions.
+
+## Git delivery
+
+Completed validated changes that should be published for review must use the
+`prepare-pull-request` Skill. Do not commit task changes directly to the
+default branch; pull requests remain human-controlled and must not be
+automatically merged. A successful PR should finish ready for review. When this Skill is used, let it invoke
+`record-ai-session` after the PR exists so the session is logged once with the
+actual Git and PR outcome.
+
+## Engineering guidance
+
+- Python conventions: `docs/engineering/python-guidelines.md`
+- Testing strategy: `docs/engineering/testing-strategy.md`
+
+For scoped product features or behavioral changes, use `develop-feature-tdd`
+when appropriate. For actionable PR review feedback, use
+`validate-review-feedback` before applying reviewer suggestions.
+
+## Pull request validation
+
+Before a pull request is considered ready for human merge, use
+`validate-pull-request`. Use `validate-review-feedback` first when actionable
+review feedback remains unresolved. A CLEAR result does not merge the PR;
+final merge remains a human decision.
