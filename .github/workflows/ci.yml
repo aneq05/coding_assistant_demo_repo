@@ -39,6 +39,16 @@ jobs:
       - name: Prepare reports
         run: |
           mkdir -p reports
+          cat > reports/pytest.xml <<'EOF'
+          <?xml version="1.0" encoding="utf-8"?>
+          <testsuites name="pytest" tests="1" failures="0" errors="1">
+            <testsuite name="pytest" tests="1" failures="0" errors="1">
+              <testcase name="pytest report generation">
+                <error message="pytest did not produce a JUnit report" />
+              </testcase>
+            </testsuite>
+          </testsuites>
+          EOF
           : > reports/ruff.txt
           : > reports/mypy.txt
 
