@@ -525,3 +525,66 @@ review-feedback processing.
 
 Automation needs validation not only for code, but also for workflow state,
 metadata, review resolution, and repository consistency.
+
+## 2026-09-07 — Mergeability review-feedback correction
+
+### Harness
+
+Tool: Codex
+Model: GPT-5
+Reasoning: not recorded
+Mode: Implementation
+Task type: pull-request review-feedback validation
+Risk level: low
+
+### Model selection
+
+Not recorded.
+
+### Goal
+
+Validate and address the latest Codex finding on PR #1 about the pull-request
+quality gate's missing mergeability/conflict check.
+
+### AI responsibility
+
+- Read PR #1 metadata, review submissions, and review threads.
+- Classified the finding as valid and made the minimal Skill correction.
+- Validated the changed Skill and inspected its diff before delivery.
+
+### Human responsibility
+
+The human requested the feedback workflow and retains final merge authority.
+
+### Outcome
+
+The quality gate now blocks confirmed unmergeable or conflicted PRs, reports
+unknown mergeability explicitly, and requires mergeability alignment for
+`CLEAR`. No product behavior or Phase 4 work was added.
+
+### Files changed
+
+- `.agents/skills/validate-pull-request/SKILL.md`
+- `AI_WORKLOG.md`
+
+### Validation
+
+- `quick_validate.py .agents/skills/validate-pull-request` passed.
+- `git diff --check` passed.
+- PR #1 metadata showed `mergeable: true` before the correction.
+
+No code validation was run because this session changed only harness files.
+
+### Friction / failure
+
+None observed.
+
+### Harness change
+
+The pull-request quality gate now distinguishes confirmed merge conflicts from
+unknown mergeability and cannot return `CLEAR` for a known unmergeable PR.
+
+### Lesson learned
+
+Final pull-request readiness must include GitHub's mergeability state, not
+only branch, validation, and review metadata.

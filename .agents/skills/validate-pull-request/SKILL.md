@@ -10,7 +10,10 @@ merge. This is a quality gate, not a code reviewer, test-runner, delivery
 workflow, or merge workflow.
 
 1. Inspect PR metadata: open status, correct base, non-default head branch,
-   ready-for-review state, unmerged status, and auto-merge where detectable.
+   ready-for-review state, unmerged status, auto-merge where detectable, and
+   GitHub mergeability/conflict state. A confirmed unmergeable or conflicted PR
+   is `BLOCKED`; when mergeability is unavailable or unknown, report that
+   explicitly rather than treating the check as PASS.
 2. Inspect title and body for concise, accurate scope, rationale, only actual
    validation evidence, excluded scope, and relevant review information.
 3. Inspect the complete diff for unrelated files, generated artifacts, secrets,
@@ -20,9 +23,11 @@ workflow, or merge workflow.
    or documentation PRs, confirm relevant Skill and diff validation actually
    occurred. Never fabricate validation.
 5. Read review submissions, comments, and threads. Classify readiness as
-   `BLOCKED` for unresolved actionable feedback or failing required validation;
-   `NEEDS_ATTENTION` for non-blocking metadata or consistency issues; otherwise
-   `CLEAR` when metadata, scope, validation, and review state align.
+   `BLOCKED` for a confirmed unmergeable or conflicted PR, unresolved actionable
+   feedback, or failing required validation; `NEEDS_ATTENTION` for unknown
+   mergeability or non-blocking metadata or consistency issues; otherwise
+   `CLEAR` when metadata, scope, validation, review state, and mergeability
+   align.
 6. Route unresolved actionable feedback to `validate-review-feedback`; do not
    reimplement it, resolve threads without verification, or alter code merely
    to satisfy this checklist. Return a concise PASS checklist and reasons for
