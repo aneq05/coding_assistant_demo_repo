@@ -239,7 +239,7 @@ No actual coffee-tracking functionality has been implemented yet.
 - [x] Phase 3 — Reusable AI session logging
 - [x] Phase 3.5 — Safe Git delivery and pull-request automation
 - [x] Phase 3.75 — Engineering workflow and review-feedback automation
-- [ ] Phase 3.8 — Pull-request quality gate
+- [x] Phase 3.8 — Pull-request quality gate
 
 ## Product MVP
 
@@ -571,7 +571,7 @@ Independent first-pass AI review remains a future, separate capability.
 
 # Phase 3.8 — Pull-request quality gate
 
-Status: **IN PROGRESS**
+Status: **COMPLETE**
 
 ## Goal
 
