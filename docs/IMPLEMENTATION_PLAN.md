@@ -229,7 +229,7 @@ implemented yet.
 - [x] authenticated GitHub PR delivery
 - [ ] GitHub MCP
 - [x] GitHub Actions CI
-- [ ] context-aware Copilot Code Review
+- [ ] Context-aware Copilot Code Review
 - [ ] independent AI pull-request review
 - [ ] Figma MCP
 - [ ] Goal-based delegation
