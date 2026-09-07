@@ -168,7 +168,7 @@ A Skill should not exist merely as an alias for deterministic commands.
 
 Current product phase:
 
-**Phase 6 — `cdd status` and `cdd history` (not started)**
+**Product MVP complete — next phase is Phase 7 harness retrospective**
 
 Current harness phase:
 
@@ -179,9 +179,9 @@ Current harness maturity:
 
 **Level 2 — Workflow-aware**
 
-The repository contains a minimal Python engineering foundation and a
-deterministic `cdd drink` command that appends coffee events to local JSONL
-history. Status and history presentation have not been implemented yet.
+The repository contains a small typed coffee-tracking CLI with local JSONL
+history, status, recent statistics, Rich presentation, and an optional
+interactive mode.
 
 ## Completed
 
@@ -203,13 +203,15 @@ history. Status and history presentation have not been implemented yet.
 - [x] cross-platform validation strategy
 - [x] Phase 4 — `cdd drink`
 - [x] Phase 5 — Local persistence
+- [x] Phase 6 — Status and history
+- [x] Phase 6.5 — Statistics, Rich presentation, and interactive mode
 
 ## Product functionality implemented
 
 - [x] deterministic drink information
 - [x] coffee tracking
 - [x] persistent coffee history
-- [ ] developer status
+- [x] developer status
 - [ ] Git activity
 - [ ] refactor-risk scoring
 
@@ -256,7 +258,8 @@ history. Status and history presentation have not been implemented yet.
 
 - [x] Phase 4 — `cdd drink`
 - [x] Phase 5 — Local persistence
-- [ ] Phase 6 — `cdd status` and `cdd history`
+- [x] Phase 6 — `cdd status` and `cdd history`
+- [x] Phase 6.5 — Statistics, Rich presentation, and interactive mode
 
 ## Harness evolution
 
@@ -698,7 +701,7 @@ independent GitHub Actions validation for the current pull-request HEAD.
 - [x] CI step-summary generation is verified
 - [x] `pytest.xml`, `ruff.txt`, and `mypy.txt` are verified in the uploaded artifact
 
-Phase 5 remains planned and has not started.
+Phase 5 is complete.
 
 ---
 
@@ -763,9 +766,9 @@ real failing GitHub Actions run from current-head evidence.
 
 ## Remaining operational evidence
 
-The configuration is not available on the default branch until this pull
-request is merged. Exercise it only against a naturally occurring CI failure;
-do not manufacture a failure to claim completion.
+The configuration is available on the default branch but has not yet been
+exercised. Exercise it only against a naturally occurring CI failure; do not
+manufacture a failure to claim completion.
 
 ---
 
@@ -844,7 +847,7 @@ Changing the persistence strategy requires explicit approval.
 
 # Phase 6 — Status and history
 
-Status: **PLANNED**
+Status: **COMPLETE**
 
 ## AI setup
 
@@ -883,7 +886,7 @@ BOOTING
 101–250 mg
 PRODUCTIVE
 
-251–400 mg
+251–399 mg
 TURBO MODE
 
 400+ mg
@@ -900,6 +903,46 @@ It must not depend on:
 - filesystem
 - terminal formatting
 
+## Completion evidence
+
+- `cdd history` reads JSONL records, defaults to 20 entries, and presents the
+  newest entries first in local time.
+- `cdd status` reports local-calendar-day coffee count, caffeine, and the
+  deterministic developer state.
+- malformed history is reported explicitly rather than silently skipped.
+- timezone boundaries, empty history, and every state threshold are covered by
+  focused tests.
+
+---
+
+# Phase 6.5 — Statistics, Rich presentation, and interactive mode
+
+Status: **COMPLETE**
+
+## Goal
+
+Complete the product MVP with readable terminal presentation, deterministic
+recent statistics, and an optional interactive path over the same behavior.
+
+## Commands
+
+```bash
+cdd stats --days 7
+cdd interactive
+```
+
+## Completion evidence
+
+- Rich is the only runtime dependency and is limited to presentation.
+- statistics use the last N local calendar days including today, include zero
+  days in the average, break favorite-drink ties alphabetically, and render a
+  deterministic capped Unicode bar.
+- interactive mode exposes add, status, history, stats, and exit without
+  duplicating domain rules or storage semantics.
+- invalid selections and Ctrl+C / EOF exit paths are handled without a
+  traceback.
+- automated tests, ruff, and mypy pass.
+
 ---
 
 # Milestone A — Product MVP
@@ -907,13 +950,13 @@ It must not depend on:
 Reached when:
 
 - [x] `cdd drink` works
-- [ ] coffee history persists locally
-- [ ] `cdd history` works
-- [ ] `cdd status` works
-- [ ] meaningful domain tests exist
-- [ ] pytest passes
-- [ ] ruff passes
-- [ ] mypy passes
+- [x] coffee history persists locally
+- [x] `cdd history` works
+- [x] `cdd status` works
+- [x] meaningful domain tests exist
+- [x] pytest passes
+- [x] ruff passes
+- [x] mypy passes
 
 At this point the application itself is considered sufficient.
 

@@ -1,12 +1,15 @@
 """Tests for the initial CLI boundary."""
 
 import json
-from datetime import datetime
+from collections.abc import Iterator
+from datetime import UTC, datetime, timedelta, timezone
 from pathlib import Path
 
 import pytest
 
 from cdd.cli import main
+from cdd.domain import CoffeeEvent
+from cdd.storage import append_event
 
 
 @pytest.mark.parametrize(
@@ -78,3 +81,251 @@ def test_help_exits_successfully(capsys: pytest.CaptureFixture[str]) -> None:
 
     assert result.value.code == 0
     assert "Coffee-Driven Development" in capsys.readouterr().out
+
+
+def test_history_displays_newest_events_first_in_local_time(
+    capsys: pytest.CaptureFixture[str],
+    tmp_path: Path,
+) -> None:
+    history_path = tmp_path / "history.jsonl"
+    append_event(
+        CoffeeEvent(datetime(2026, 9, 7, 10, 0, tzinfo=UTC), "espresso", 80),
+        history_path,
+    )
+    append_event(
+        CoffeeEvent(datetime(2026, 9, 7, 12, 30, tzinfo=UTC), "americano", 120),
+        history_path,
+    )
+    local_now = datetime(
+        2026,
+        9,
+        7,
+        15,
+        0,
+        tzinfo=timezone(timedelta(hours=2)),
+    )
+
+    assert main(["history"], history_path=history_path, now=local_now) == 0
+
+    output = capsys.readouterr().out
+    assert output.index("Americano") < output.index("Espresso")
+    assert "2026-09-07 14:30" in output
+
+
+def test_history_limit_and_empty_history_are_explicit(
+    capsys: pytest.CaptureFixture[str],
+    tmp_path: Path,
+) -> None:
+    history_path = tmp_path / "history.jsonl"
+    append_event(
+        CoffeeEvent(datetime(2026, 9, 7, 10, 0, tzinfo=UTC), "espresso", 80),
+        history_path,
+    )
+    append_event(
+        CoffeeEvent(datetime(2026, 9, 7, 11, 0, tzinfo=UTC), "americano", 120),
+        history_path,
+    )
+
+    assert main(["history", "--limit", "1"], history_path=history_path) == 0
+    output = capsys.readouterr().out
+    assert "Americano" in output
+    assert "Espresso" not in output
+
+    assert main(["history"], history_path=tmp_path / "missing.jsonl") == 0
+    assert "No coffee recorded yet." in capsys.readouterr().out
+
+
+@pytest.mark.parametrize(
+    "command",
+    [
+        ["history", "--limit", "0"],
+        ["stats", "--days", "-1"],
+        ["stats", "--days", "coffee"],
+    ],
+)
+def test_numeric_options_require_positive_integers(
+    command: list[str],
+    capsys: pytest.CaptureFixture[str],
+    tmp_path: Path,
+) -> None:
+    with pytest.raises(SystemExit) as result:
+        main(command, history_path=tmp_path / "history.jsonl")
+
+    assert result.value.code != 0
+    assert "positive integer" in capsys.readouterr().err
+
+
+def test_status_reports_explicit_empty_history_semantics(
+    capsys: pytest.CaptureFixture[str],
+    tmp_path: Path,
+) -> None:
+    now = datetime(2026, 9, 7, 12, 0, tzinfo=UTC)
+
+    assert main(["status"], history_path=tmp_path / "missing.jsonl", now=now) == 0
+
+    output = capsys.readouterr().out
+    assert "Coffee-Driven Development" in output
+    assert "Coffees today" in output and "0" in output
+    assert "Caffeine today" in output and "0 mg" in output
+    assert "NO SIGNAL" in output
+
+
+def test_status_uses_only_events_on_the_local_day(
+    capsys: pytest.CaptureFixture[str],
+    tmp_path: Path,
+) -> None:
+    history_path = tmp_path / "history.jsonl"
+    append_event(
+        CoffeeEvent(datetime(2026, 9, 6, 21, 0, tzinfo=UTC), "espresso", 80),
+        history_path,
+    )
+    append_event(
+        CoffeeEvent(datetime(2026, 9, 6, 22, 0, tzinfo=UTC), "americano", 120),
+        history_path,
+    )
+    now = datetime(2026, 9, 7, 8, 0, tzinfo=timezone(timedelta(hours=2)))
+
+    assert main(["status"], history_path=history_path, now=now) == 0
+
+    output = capsys.readouterr().out
+    assert "1" in output
+    assert "120 mg" in output
+    assert "PRODUCTIVE" in output
+
+
+def test_stats_reports_numeric_results_favorite_and_daily_bars(
+    capsys: pytest.CaptureFixture[str],
+    tmp_path: Path,
+) -> None:
+    history_path = tmp_path / "history.jsonl"
+    events = [
+        CoffeeEvent(datetime(2026, 9, 5, 9, 0, tzinfo=UTC), "espresso", 80),
+        CoffeeEvent(datetime(2026, 9, 7, 9, 0, tzinfo=UTC), "americano", 120),
+    ]
+    for event in events:
+        append_event(event, history_path)
+
+    assert main(
+        ["stats", "--days", "3"],
+        history_path=history_path,
+        now=datetime(2026, 9, 7, 12, 0, tzinfo=UTC),
+    ) == 0
+
+    output = capsys.readouterr().out
+    assert "Total coffees" in output and "2" in output
+    assert "Total caffeine" in output and "200 mg" in output
+    assert "Average per day" in output and "67 mg" in output
+    assert "Favorite drink" in output and "Americano" in output
+    assert "Sep 06" in output and "0 mg" in output
+    assert "█" in output
+
+
+def test_stats_empty_history_has_no_favorite(
+    capsys: pytest.CaptureFixture[str],
+    tmp_path: Path,
+) -> None:
+    assert main(
+        ["stats"],
+        history_path=tmp_path / "missing.jsonl",
+        now=datetime(2026, 9, 7, tzinfo=UTC),
+    ) == 0
+
+    output = capsys.readouterr().out
+    assert "No data" in output
+    assert "Favorite drink" in output and "None" in output
+
+
+def test_malformed_history_is_a_clean_cli_error(
+    capsys: pytest.CaptureFixture[str],
+    tmp_path: Path,
+) -> None:
+    history_path = tmp_path / "history.jsonl"
+    history_path.write_text("not json\n", encoding="utf-8")
+
+    with pytest.raises(SystemExit) as result:
+        main(["status"], history_path=history_path)
+
+    assert result.value.code != 0
+    assert "Could not read coffee history" in capsys.readouterr().err
+
+
+def test_interactive_reuses_add_and_status_behavior(
+    capsys: pytest.CaptureFixture[str],
+    tmp_path: Path,
+) -> None:
+    responses: Iterator[str] = iter(["1", "espresso", "2", "5"])
+
+    assert main(
+        ["interactive"],
+        history_path=tmp_path / "history.jsonl",
+        now=datetime(2026, 9, 7, 12, 0, tzinfo=UTC),
+        input_fn=lambda _prompt: next(responses),
+    ) == 0
+
+    output = capsys.readouterr().out
+    assert "Coffee recorded" in output
+    assert "80 mg" in output
+    assert "BOOTING" in output
+    assert "Goodbye" in output
+
+
+def test_interactive_handles_invalid_input_and_keyboard_interrupt(
+    capsys: pytest.CaptureFixture[str],
+    tmp_path: Path,
+) -> None:
+    responses: Iterator[str] = iter(["invalid", "5"])
+    assert main(
+        ["interactive"],
+        history_path=tmp_path / "history.jsonl",
+        input_fn=lambda _prompt: next(responses),
+    ) == 0
+    assert "Invalid selection" in capsys.readouterr().out
+
+    def interrupt(_prompt: str) -> str:
+        raise KeyboardInterrupt
+
+    assert main(
+        ["interactive"],
+        history_path=tmp_path / "history.jsonl",
+        input_fn=interrupt,
+    ) == 0
+    assert "Goodbye" in capsys.readouterr().out
+
+
+def test_interactive_exposes_history_and_stats(
+    capsys: pytest.CaptureFixture[str],
+    tmp_path: Path,
+) -> None:
+    responses: Iterator[str] = iter(["3", "4", "5"])
+
+    assert main(
+        ["interactive"],
+        history_path=tmp_path / "missing.jsonl",
+        now=datetime(2026, 9, 7, tzinfo=UTC),
+        input_fn=lambda _prompt: next(responses),
+    ) == 0
+
+    output = capsys.readouterr().out
+    assert "No coffee recorded yet." in output
+    assert "Coffee Statistics" in output
+    assert "Goodbye" in output
+
+
+def test_interactive_exits_cleanly_when_drink_prompt_reaches_eof(
+    capsys: pytest.CaptureFixture[str],
+    tmp_path: Path,
+) -> None:
+    calls = iter(["1"])
+
+    def respond(_prompt: str) -> str:
+        try:
+            return next(calls)
+        except StopIteration as error:
+            raise EOFError from error
+
+    assert main(
+        ["interactive"],
+        history_path=tmp_path / "history.jsonl",
+        input_fn=respond,
+    ) == 0
+    assert "Goodbye" in capsys.readouterr().out

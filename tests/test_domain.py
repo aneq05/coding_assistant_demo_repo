@@ -7,8 +7,11 @@ import pytest
 from cdd.domain import (
     CoffeeEvent,
     UnsupportedDrinkError,
+    calculate_stats,
     create_coffee_event,
+    developer_state,
     get_drink,
+    summarize_today,
 )
 
 
@@ -75,3 +78,90 @@ def test_create_coffee_event_rejects_naive_timestamp() -> None:
 
     with pytest.raises(ValueError, match="timestamp must be timezone-aware"):
         create_coffee_event(get_drink("espresso"), timestamp=timestamp)
+
+
+@pytest.mark.parametrize(
+    ("caffeine_mg", "expected"),
+    [
+        (0, "NO SIGNAL"),
+        (1, "BOOTING"),
+        (100, "BOOTING"),
+        (101, "PRODUCTIVE"),
+        (250, "PRODUCTIVE"),
+        (251, "TURBO MODE"),
+        (399, "TURBO MODE"),
+        (400, "ARCHITECTURE PRIVILEGES REVOKED"),
+    ],
+)
+def test_developer_state_uses_exact_caffeine_boundaries(
+    caffeine_mg: int,
+    expected: str,
+) -> None:
+    assert developer_state(caffeine_mg) == expected
+
+
+def test_summarize_today_uses_the_supplied_local_calendar_day() -> None:
+    local_timezone = timezone(timedelta(hours=2))
+    now = datetime(2026, 9, 7, 9, 0, tzinfo=local_timezone)
+    events = [
+        CoffeeEvent(datetime(2026, 9, 6, 21, 59, tzinfo=UTC), "espresso", 80),
+        CoffeeEvent(datetime(2026, 9, 6, 22, 0, tzinfo=UTC), "americano", 120),
+        CoffeeEvent(datetime(2026, 9, 7, 7, 0, tzinfo=UTC), "cappuccino", 75),
+    ]
+
+    summary = summarize_today(events, now=now)
+
+    assert summary.coffees == 2
+    assert summary.caffeine_mg == 195
+    assert summary.developer_state == "PRODUCTIVE"
+
+
+def test_summarize_today_has_explicit_empty_history_semantics() -> None:
+    summary = summarize_today([], now=datetime(2026, 9, 7, tzinfo=UTC))
+
+    assert summary.coffees == 0
+    assert summary.caffeine_mg == 0
+    assert summary.developer_state == "NO SIGNAL"
+
+
+def test_calculate_stats_includes_zero_days_and_excludes_older_events() -> None:
+    now = datetime(2026, 9, 7, 12, 0, tzinfo=UTC)
+    events = [
+        CoffeeEvent(datetime(2026, 9, 4, 23, 59, tzinfo=UTC), "espresso", 80),
+        CoffeeEvent(datetime(2026, 9, 5, 8, 0, tzinfo=UTC), "americano", 120),
+        CoffeeEvent(datetime(2026, 9, 7, 8, 0, tzinfo=UTC), "espresso", 80),
+    ]
+
+    stats = calculate_stats(events, days=3, now=now)
+
+    assert stats.total_coffees == 2
+    assert stats.total_caffeine_mg == 200
+    assert stats.average_caffeine_mg == pytest.approx(200 / 3)
+    assert stats.favorite_drink == "americano"
+    assert [(day.day.isoformat(), day.caffeine_mg) for day in stats.daily] == [
+        ("2026-09-05", 120),
+        ("2026-09-06", 0),
+        ("2026-09-07", 80),
+    ]
+
+
+def test_calculate_stats_breaks_favorite_ties_alphabetically() -> None:
+    now = datetime(2026, 9, 7, 12, 0, tzinfo=UTC)
+    events = [
+        CoffeeEvent(now, "espresso", 80),
+        CoffeeEvent(now, "americano", 120),
+    ]
+
+    stats = calculate_stats(events, days=7, now=now)
+
+    assert stats.favorite_drink == "americano"
+
+
+def test_calculate_stats_has_explicit_no_data_semantics() -> None:
+    stats = calculate_stats([], days=7, now=datetime(2026, 9, 7, tzinfo=UTC))
+
+    assert stats.total_coffees == 0
+    assert stats.total_caffeine_mg == 0
+    assert stats.average_caffeine_mg == 0
+    assert stats.favorite_drink is None
+    assert len(stats.daily) == 7
