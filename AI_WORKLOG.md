@@ -1187,3 +1187,64 @@ workflow. No product code or GitHub Issue was created.
 
 A truthful no-write fallback lets an Issue-authoring workflow remain useful
 without assuming external mutation capability.
+
+## 2026-09-07 â€” Feature Issue template
+
+### Harness
+
+Tool: Codex
+Model: not recorded
+Reasoning: not recorded
+Mode: Implementation
+Task type: GitHub Issue template
+Risk level: low
+
+### Goal
+
+Add one concise GitHub Issue Form for scoped feature requests that matches the
+repository's feature-Issue workflow.
+
+### AI responsibility
+
+- Synchronized after merged PR #7, reviewed the roadmap and GitHub's Issue
+  Form syntax, and added `feature.yml`.
+- Validated the YAML with a temporary parser, opened PR #8, and did not create
+  a GitHub Issue.
+
+### Human responsibility
+
+The human specified the fields, prohibited product and Skill changes, and
+retains review and final-merge authority.
+
+### Outcome
+
+The form requires a short description plus Goal, Requirements, Acceptance
+criteria, Constraints, and Out of scope; implementation notes are optional.
+
+### Files changed
+
+- `.github/ISSUE_TEMPLATE/feature.yml`
+- `AI_WORKLOG.md`
+
+### Validation
+
+- `npx.cmd --yes js-yaml .github/ISSUE_TEMPLATE/feature.yml` parsed the YAML successfully.
+- GitHub's official Issue Form syntax documentation was reviewed.
+- `git diff --check` passed for the template change.
+
+### Friction / failure
+
+The local `uv` cache could not initialize because of a Windows cache-path
+collision, and the configured Python environment was unavailable. A temporary
+non-project YAML parser provided the required validation without changing
+dependencies.
+
+### Harness change
+
+Added the repository's first feature Issue Form. No product code, repository
+Skill, or GitHub Issue was created.
+
+### Lesson learned
+
+Issue Forms can enforce concise feature scope for humans while preserving the
+same headings used by an automation workflow.
