@@ -9,7 +9,7 @@ import pytest
 
 from cdd.cli import main
 from cdd.domain import CoffeeEvent
-from cdd.storage import append_event
+from cdd.storage import append_event, read_events
 
 
 @pytest.mark.parametrize(
@@ -329,3 +329,29 @@ def test_interactive_exits_cleanly_when_drink_prompt_reaches_eof(
         input_fn=respond,
     ) == 0
     assert "Goodbye" in capsys.readouterr().out
+
+
+def test_interactive_refreshes_the_clock_for_each_added_drink(
+    tmp_path: Path,
+) -> None:
+    history_path = tmp_path / "history.jsonl"
+    responses: Iterator[str] = iter(["1", "espresso", "1", "americano", "5"])
+    times: Iterator[datetime] = iter(
+        [
+            datetime(2026, 9, 7, 23, 59, tzinfo=UTC),
+            datetime(2026, 9, 8, 0, 1, tzinfo=UTC),
+        ]
+    )
+
+    assert main(
+        ["interactive"],
+        history_path=history_path,
+        clock=lambda: next(times),
+        to_local=lambda timestamp: timestamp,
+        input_fn=lambda _prompt: next(responses),
+    ) == 0
+
+    assert [event.timestamp for event in read_events(history_path)] == [
+        datetime(2026, 9, 7, 23, 59, tzinfo=UTC),
+        datetime(2026, 9, 8, 0, 1, tzinfo=UTC),
+    ]

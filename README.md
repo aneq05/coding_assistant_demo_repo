@@ -40,8 +40,8 @@ Favorite drink      Espresso
 
 Daily caffeine
 
-Mon  Sep 01   ███████       200 mg
-Tue  Sep 02   █████████     280 mg
+Mon  Sep 01   █████         200 mg
+Tue  Sep 02   ███████       280 mg
 ```
 
 An empty day has explicit status:

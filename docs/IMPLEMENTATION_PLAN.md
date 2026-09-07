@@ -947,6 +947,8 @@ cdd interactive
 
 # Milestone A — Product MVP
 
+Status: **COMPLETE**
+
 Reached when:
 
 - [x] `cdd drink` works

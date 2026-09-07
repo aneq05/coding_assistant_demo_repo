@@ -124,6 +124,24 @@ def test_summarize_today_has_explicit_empty_history_semantics() -> None:
     assert summary.developer_state == "NO SIGNAL"
 
 
+def test_summarize_today_uses_the_supplied_dst_aware_localizer() -> None:
+    fixed_winter_offset = timezone(timedelta(hours=-5))
+    now = datetime(2026, 7, 1, 12, 0, tzinfo=fixed_winter_offset)
+    event = CoffeeEvent(
+        datetime(2026, 7, 1, 4, 30, tzinfo=UTC),
+        "espresso",
+        80,
+    )
+
+    def summer_local_time(timestamp: datetime) -> datetime:
+        return timestamp.astimezone(timezone(timedelta(hours=-4)))
+
+    summary = summarize_today([event], now=now, to_local=summer_local_time)
+
+    assert summary.coffees == 1
+    assert summary.caffeine_mg == 80
+
+
 def test_calculate_stats_includes_zero_days_and_excludes_older_events() -> None:
     now = datetime(2026, 9, 7, 12, 0, tzinfo=UTC)
     events = [

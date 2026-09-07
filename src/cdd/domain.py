@@ -1,9 +1,11 @@
 """Domain behavior for supported coffee drinks."""
 
 from collections import Counter
-from collections.abc import Sequence
+from collections.abc import Callable, Sequence
 from dataclasses import dataclass
 from datetime import UTC, date, datetime, timedelta, tzinfo
+
+LocalTimeConverter = Callable[[datetime], datetime]
 
 
 @dataclass(frozen=True)
@@ -108,14 +110,15 @@ def summarize_today(
     events: Sequence[CoffeeEvent],
     *,
     now: datetime,
+    to_local: LocalTimeConverter | None = None,
 ) -> TodaySummary:
     """Summarize events occurring on the supplied local date."""
     local_timezone = _timezone_from(now)
-    today = now.date()
+    today = _localize(now, to_local, local_timezone).date()
     today_events = [
         event
         for event in events
-        if event.timestamp.astimezone(local_timezone).date() == today
+        if _localize(event.timestamp, to_local, local_timezone).date() == today
     ]
     caffeine_mg = sum(event.caffeine_mg for event in today_events)
     return TodaySummary(
@@ -130,18 +133,20 @@ def calculate_stats(
     *,
     days: int,
     now: datetime,
+    to_local: LocalTimeConverter | None = None,
 ) -> CoffeeStats:
     """Calculate coffee statistics for recent local calendar days."""
     if days <= 0:
         raise ValueError("days must be positive")
 
     local_timezone = _timezone_from(now)
-    first_day = now.date() - timedelta(days=days - 1)
+    local_now = _localize(now, to_local, local_timezone)
+    first_day = local_now.date() - timedelta(days=days - 1)
     daily_totals = {first_day + timedelta(days=offset): 0 for offset in range(days)}
     included_events: list[CoffeeEvent] = []
 
     for event in events:
-        event_day = event.timestamp.astimezone(local_timezone).date()
+        event_day = _localize(event.timestamp, to_local, local_timezone).date()
         if event_day in daily_totals:
             daily_totals[event_day] += event.caffeine_mg
             included_events.append(event)
@@ -173,3 +178,17 @@ def _timezone_from(timestamp: datetime) -> tzinfo:
     if timestamp.tzinfo is None or timestamp.utcoffset() is None:
         raise ValueError("now must be timezone-aware")
     return timestamp.tzinfo
+
+
+def _localize(
+    timestamp: datetime,
+    to_local: LocalTimeConverter | None,
+    fallback_timezone: tzinfo,
+) -> datetime:
+    localized = (
+        to_local(timestamp)
+        if to_local is not None
+        else timestamp.astimezone(fallback_timezone)
+    )
+    _timezone_from(localized)
+    return localized

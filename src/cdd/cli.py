@@ -3,12 +3,13 @@
 import argparse
 import sys
 from collections.abc import Callable, Sequence
-from datetime import datetime, tzinfo
+from datetime import UTC, datetime, tzinfo
 from pathlib import Path
 
 from rich.console import Console
 
 from cdd.domain import (
+    LocalTimeConverter,
     UnsupportedDrinkError,
     calculate_stats,
     create_coffee_event,
@@ -25,6 +26,7 @@ from cdd.presentation import (
 from cdd.storage import InvalidHistoryError, append_event, read_events
 
 InputFunction = Callable[[str], str]
+Clock = Callable[[], datetime]
 
 
 def _configure_stdio() -> None:
@@ -76,6 +78,8 @@ def main(
     *,
     history_path: Path | None = None,
     now: datetime | None = None,
+    clock: Clock | None = None,
+    to_local: LocalTimeConverter | None = None,
     console: Console | None = None,
     input_fn: InputFunction = input,
 ) -> int:
@@ -83,7 +87,7 @@ def main(
     parser = build_parser()
     arguments = parser.parse_args(argv)
     output = console or _default_console()
-    local_now = now or datetime.now().astimezone()
+    current_time, localize = _time_context(now, clock, to_local)
 
     if arguments.command == "drink":
         try:
@@ -93,7 +97,7 @@ def main(
 
         try:
             append_event(
-                create_coffee_event(drink, timestamp=local_now),
+                create_coffee_event(drink, timestamp=current_time()),
                 history_path,
             )
         except OSError as error:
@@ -104,7 +108,8 @@ def main(
         _run_interactive(
             output,
             history_path=history_path,
-            now=local_now,
+            clock=current_time,
+            to_local=localize,
             input_fn=input_fn,
         )
     elif arguments.command is not None:
@@ -114,16 +119,22 @@ def main(
                     output,
                     history_path=history_path,
                     limit=arguments.limit,
-                    now=local_now,
+                    to_local=localize,
                 )
             elif arguments.command == "status":
-                _show_status(output, history_path=history_path, now=local_now)
+                _show_status(
+                    output,
+                    history_path=history_path,
+                    now=current_time(),
+                    to_local=localize,
+                )
             elif arguments.command == "stats":
                 _show_stats(
                     output,
                     history_path=history_path,
                     days=arguments.days,
-                    now=local_now,
+                    now=current_time(),
+                    to_local=localize,
                 )
         except (InvalidHistoryError, OSError) as error:
             parser.error(f"Could not read coffee history: {error}")
@@ -146,14 +157,13 @@ def _show_history(
     *,
     history_path: Path | None,
     limit: int,
-    now: datetime,
+    to_local: LocalTimeConverter,
 ) -> None:
     events = read_events(history_path)
-    local_timezone = _aware_timezone(now)
     render_history(
         console,
         list(reversed(events[-limit:])),
-        local_timezone=local_timezone,
+        to_local=to_local,
     )
 
 
@@ -162,8 +172,12 @@ def _show_status(
     *,
     history_path: Path | None,
     now: datetime,
+    to_local: LocalTimeConverter,
 ) -> None:
-    render_status(console, summarize_today(read_events(history_path), now=now))
+    render_status(
+        console,
+        summarize_today(read_events(history_path), now=now, to_local=to_local),
+    )
 
 
 def _show_stats(
@@ -172,10 +186,16 @@ def _show_stats(
     history_path: Path | None,
     days: int,
     now: datetime,
+    to_local: LocalTimeConverter,
 ) -> None:
     render_stats(
         console,
-        calculate_stats(read_events(history_path), days=days, now=now),
+        calculate_stats(
+            read_events(history_path),
+            days=days,
+            now=now,
+            to_local=to_local,
+        ),
     )
 
 
@@ -183,7 +203,8 @@ def _run_interactive(
     console: Console,
     *,
     history_path: Path | None,
-    now: datetime,
+    clock: Clock,
+    to_local: LocalTimeConverter,
     input_fn: InputFunction,
 ) -> None:
     while True:
@@ -198,18 +219,39 @@ def _run_interactive(
             console.print("Goodbye.")
             return
         if selection in {"1", "add", "drink"}:
-            if not _interactive_add(console, history_path, now, input_fn):
+            if not _interactive_add(
+                console,
+                history_path,
+                clock(),
+                input_fn,
+            ):
                 console.print("Goodbye.")
                 return
             continue
 
         try:
             if selection in {"2", "status"}:
-                _show_status(console, history_path=history_path, now=now)
+                _show_status(
+                    console,
+                    history_path=history_path,
+                    now=clock(),
+                    to_local=to_local,
+                )
             elif selection in {"3", "history"}:
-                _show_history(console, history_path=history_path, limit=20, now=now)
+                _show_history(
+                    console,
+                    history_path=history_path,
+                    limit=20,
+                    to_local=to_local,
+                )
             elif selection in {"4", "stats"}:
-                _show_stats(console, history_path=history_path, days=7, now=now)
+                _show_stats(
+                    console,
+                    history_path=history_path,
+                    days=7,
+                    now=clock(),
+                    to_local=to_local,
+                )
             else:
                 console.print("Invalid selection. Choose 1–5.")
         except (InvalidHistoryError, OSError) as error:
@@ -245,6 +287,35 @@ def _aware_timezone(timestamp: datetime) -> tzinfo:
     if timestamp.tzinfo is None or timestamp.utcoffset() is None:
         raise ValueError("now must be timezone-aware")
     return timestamp.tzinfo
+
+
+def _system_clock() -> datetime:
+    return datetime.now(UTC)
+
+
+def _system_local_time(timestamp: datetime) -> datetime:
+    return timestamp.astimezone()
+
+
+def _time_context(
+    now: datetime | None,
+    clock: Clock | None,
+    to_local: LocalTimeConverter | None,
+) -> tuple[Clock, LocalTimeConverter]:
+    if now is None:
+        return clock or _system_clock, to_local or _system_local_time
+    if clock is not None:
+        raise ValueError("now and clock cannot both be supplied")
+
+    local_timezone = _aware_timezone(now)
+
+    def fixed_clock() -> datetime:
+        return now
+
+    def fixed_local_time(timestamp: datetime) -> datetime:
+        return timestamp.astimezone(local_timezone)
+
+    return fixed_clock, to_local or fixed_local_time
 
 
 if __name__ == "__main__":

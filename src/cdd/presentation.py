@@ -1,12 +1,17 @@
 """Rich terminal presentation for Coffee-Driven Development."""
 
-from datetime import tzinfo
 from math import ceil
 
 from rich.console import Console
 from rich.table import Table
 
-from cdd.domain import CoffeeEvent, CoffeeStats, Drink, TodaySummary
+from cdd.domain import (
+    CoffeeEvent,
+    CoffeeStats,
+    Drink,
+    LocalTimeConverter,
+    TodaySummary,
+)
 
 
 def caffeine_bar(caffeine_mg: int) -> str:
@@ -35,7 +40,7 @@ def render_history(
     console: Console,
     events: list[CoffeeEvent],
     *,
-    local_timezone: tzinfo,
+    to_local: LocalTimeConverter,
 ) -> None:
     """Render coffee events in their supplied display order."""
     if not events:
@@ -47,7 +52,7 @@ def render_history(
     table.add_column("Drink")
     table.add_column("Caffeine", justify="right")
     for event in events:
-        local_time = event.timestamp.astimezone(local_timezone)
+        local_time = to_local(event.timestamp)
         table.add_row(
             local_time.strftime("%Y-%m-%d %H:%M"),
             event.drink.title(),

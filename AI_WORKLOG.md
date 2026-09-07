@@ -1014,3 +1014,116 @@ merge control.
 
 A custom CI agent can be installed safely before its first real use when its
 availability and exercise status are recorded separately from format evidence.
+
+## 2026-09-07 — Product MVP completion
+
+### Harness
+
+Tool: Codex and Cursor
+Model: GPT-5.6 Sol for Codex; not recorded for Cursor
+Reasoning: Medium for Codex; not recorded for Cursor
+Mode: Implementation
+Task type: product MVP completion
+Risk level: medium
+
+### Model selection
+
+GPT-5.6 Sol with Medium reasoning was selected for a clear multi-file product
+implementation with deterministic acceptance criteria. After Codex usage limits
+were reached, part of the work continued through Cursor; its model and reasoning
+level were not recorded. The same repository validation and pull-request
+workflow remained in use across the tool handoff.
+
+### Goal
+
+Complete the Coffee-Driven Development MVP with persisted history reading,
+local-day status, recent statistics, Rich terminal presentation, and an
+interactive mode over the same product behavior.
+
+### AI responsibility
+
+- Synchronized from merged PR #5, created `feature/status-history-stats`, and
+  translated Phase 6 and 6.5 into focused storage, domain, CLI, presentation,
+  and interaction tests.
+- Implemented the typed JSONL reader, pure status/statistics calculations,
+  Rich presentation, direct commands, and interactive orchestration. Work was
+  split between Codex and Cursor after the Codex usage limit was reached.
+- Audited PR #6, classified two Codex review findings as valid, and added
+  per-action clock refresh plus rule-aware per-timestamp local conversion with
+  deterministic injection seams.
+- Completed the README, roadmap, and model-usage evidence and ran local
+  validation, package build, and isolated command smoke tests.
+
+### Human responsibility
+
+The human specified the product behavior, approved Rich as the only new runtime
+dependency, directed the tool handoff and finalization, retained architecture
+and scope authority, and retains the final merge decision.
+
+### Outcome
+
+`cdd history`, `cdd status`, `cdd stats`, and `cdd interactive` now reuse the
+existing JSONL history and pure domain calculations. Phase 6, Phase 6.5, and
+Milestone A are complete. Git activity, Refactor Risk, MCP/Figma work, and the
+independent-review phase remain incomplete.
+
+### Files changed
+
+- `.gitignore`
+- `README.md`
+- `docs/IMPLEMENTATION_PLAN.md`
+- `docs/ai/model-usage.md`
+- `pyproject.toml`
+- `uv.lock`
+- `src/cdd/cli.py`
+- `src/cdd/domain.py`
+- `src/cdd/presentation.py`
+- `src/cdd/storage.py`
+- `tests/test_cli.py`
+- `tests/test_domain.py`
+- `tests/test_presentation.py`
+- `tests/test_storage.py`
+- `AI_WORKLOG.md`
+
+### Validation
+
+- Initial RED: domain/storage tests failed collection because `calculate_stats`
+  and `InvalidHistoryError` did not exist; presentation tests failed collection
+  because `cdd.presentation` did not exist.
+- Review RED: focused DST-localization and interactive-clock tests failed with
+  unsupported `to_local` and `clock` arguments on reviewed head `2ba3fe3`.
+- Review GREEN: both focused regression tests passed after the corrections.
+- `uv run --extra dev pytest` passed with 63 tests.
+- `uv run --extra dev ruff check .` passed.
+- `uv run --extra dev mypy` passed with no issues in 9 source files.
+- `git diff --check` passed.
+- `uv build` produced and inspected a source distribution and wheel containing
+  all five package modules and the `cdd` entry point.
+- An isolated temporary-history smoke test passed for all three drinks, status,
+  history, seven-day stats, and interactive add/status/history/stats/exit.
+- GitHub Actions passed for the pre-finalization PR head `2ba3fe3`; the final
+  correction head did not yet exist when this entry was written, so no later CI
+  result is claimed here.
+
+### Friction / failure
+
+- Codex usage limits required a handoff to Cursor during implementation.
+- The workstation's default pytest temporary root was inaccessible; the
+  repository-local pytest base directory avoided real-home access.
+- An early Windows CP1250 smoke test could not encode Unicode chart blocks. The
+  UTF-8 console configuration corrected it, and the final smoke test passed.
+- Copilot could not review PR #6 because the requesting user had reached its
+  review quota.
+
+### Harness change
+
+No Skill was added or changed. Pytest now uses a repository-local ignored base
+directory, temporary Phase 6 paths are ignored, and `docs/ai/model-usage.md`
+summarizes recorded tool/model routing. The CI Triage Agent was not needed
+because current-head CI was green before the final corrections.
+
+### Lesson learned
+
+Time-sensitive local-calendar behavior needs both an injectable clock and an
+injectable local-time conversion boundary: one prevents stale interactive time,
+and the other preserves operating-system DST rules without adding a dependency.
