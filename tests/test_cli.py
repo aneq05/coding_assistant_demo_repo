@@ -1,5 +1,9 @@
 """Tests for the initial CLI boundary."""
 
+import json
+from datetime import datetime
+from pathlib import Path
+
 import pytest
 
 from cdd.cli import main
@@ -18,23 +22,35 @@ def test_drink_displays_supported_drink_information(
     display_name: str,
     caffeine_mg: int,
     capsys: pytest.CaptureFixture[str],
+    tmp_path: Path,
 ) -> None:
-    """The drink command renders deterministic caffeine information."""
-    assert main(["drink", drink]) == 0
+    """The drink command renders and persists deterministic drink information."""
+    history_path = tmp_path / "history.jsonl"
+
+    assert main(["drink", drink], history_path=history_path) == 0
     assert capsys.readouterr().out == (
         f"{display_name}\nEstimated caffeine: {caffeine_mg} mg\n"
     )
+    records = [json.loads(line) for line in history_path.read_text().splitlines()]
+    assert len(records) == 1
+    assert records[0]["drink"] == drink
+    assert records[0]["caffeine_mg"] == caffeine_mg
+    assert datetime.fromisoformat(records[0]["timestamp"]).tzinfo is not None
 
 
 def test_drink_rejects_unsupported_drink(
     capsys: pytest.CaptureFixture[str],
+    tmp_path: Path,
 ) -> None:
     """The drink command exits unsuccessfully for an unknown drink."""
+    history_path = tmp_path / "history.jsonl"
+
     with pytest.raises(SystemExit) as result:
-        main(["drink", "latte"])
+        main(["drink", "latte"], history_path=history_path)
 
     assert result.value.code != 0
     assert "Unsupported drink: latte" in capsys.readouterr().err
+    assert not history_path.exists()
 
 
 def test_help_exits_successfully(capsys: pytest.CaptureFixture[str]) -> None:

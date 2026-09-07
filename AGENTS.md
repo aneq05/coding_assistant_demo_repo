@@ -59,6 +59,9 @@ For scoped product features or behavioral changes, use `develop-feature-tdd`
 when appropriate. For actionable PR review feedback, use
 `validate-review-feedback` before applying reviewer suggestions.
 
+When current-head CI fails and its root cause is not obvious, manually select
+the repository's `ci-triage` custom agent before applying a correction.
+
 ## Pull request validation
 
 Before a pull request is considered ready for human merge, use
