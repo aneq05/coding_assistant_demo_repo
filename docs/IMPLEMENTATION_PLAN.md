@@ -168,19 +168,20 @@ A Skill should not exist merely as an alias for deterministic commands.
 
 Current product phase:
 
-**Phase 5 — Local persistence (not started)**
+**Phase 6 — `cdd status` and `cdd history` (not started)**
 
 Current harness phase:
 
-**Phase 4.6 — Context-aware Copilot Code Review (complete)**
+**Phase 4.7 — GitHub CI Triage Agent (configuration implemented; operational
+exercise pending)**
 
 Current harness maturity:
 
 **Level 2 — Workflow-aware**
 
-The repository contains a minimal Python engineering foundation and the
-deterministic `cdd drink` command. Persistent coffee tracking has not been
-implemented yet.
+The repository contains a minimal Python engineering foundation and a
+deterministic `cdd drink` command that appends coffee events to local JSONL
+history. Status and history presentation have not been implemented yet.
 
 ## Completed
 
@@ -201,12 +202,13 @@ implemented yet.
 - [x] initial model-routing policy
 - [x] cross-platform validation strategy
 - [x] Phase 4 — `cdd drink`
+- [x] Phase 5 — Local persistence
 
 ## Product functionality implemented
 
 - [x] deterministic drink information
-- [ ] coffee tracking
-- [ ] persistent coffee history
+- [x] coffee tracking
+- [x] persistent coffee history
 - [ ] developer status
 - [ ] Git activity
 - [ ] refactor-risk scoring
@@ -230,6 +232,7 @@ implemented yet.
 - [ ] GitHub MCP
 - [x] GitHub Actions CI
 - [x] Context-aware Copilot Code Review
+- [x] repository CI-triage agent configuration (operational exercise pending)
 - [ ] independent AI pull-request review
 - [ ] Figma MCP
 - [ ] Goal-based delegation
@@ -252,7 +255,7 @@ implemented yet.
 ## Product MVP
 
 - [x] Phase 4 — `cdd drink`
-- [ ] Phase 5 — Local persistence
+- [x] Phase 5 — Local persistence
 - [ ] Phase 6 — `cdd status` and `cdd history`
 
 ## Harness evolution
@@ -265,6 +268,7 @@ implemented yet.
 
 - [x] Phase 4.5 — CI and repository synchronization
 - [x] Phase 4.6 — Context-aware Copilot Code Review
+- [ ] Phase 4.7 — GitHub CI Triage Agent operational exercise
 - [ ] Phase 10 — GitHub Actions CI
 - [ ] Phase 11 — GitHub MCP integration
 - [ ] Phase 12 — Git activity feature through GitHub Issue
@@ -736,13 +740,38 @@ changing Coffee-Driven Development product behavior.
 GitHub MCP integration remains planned; this phase did not establish broad MCP
 usage or attribution.
 
-Phase 5 remains planned and has not started.
+---
+
+# Phase 4.7 — GitHub CI Triage Agent
+
+Status: **CONFIGURATION IMPLEMENTED — OPERATIONAL EXERCISE PENDING**
+
+## Goal
+
+Provide a manually selected, repository-scoped custom agent for diagnosing a
+real failing GitHub Actions run from current-head evidence.
+
+## Implemented configuration
+
+- `.github/agents/ci-triage.agent.md` uses GitHub's documented custom-agent
+  location, filename suffix, YAML frontmatter, and tool aliases.
+- Automatic model invocation is disabled; a human must select the agent.
+- The agent classifies the primary failure, reports evidence, and recommends
+  only the smallest justified correction.
+- The agent cannot weaken validation, merge, force-push, or silently choose
+  among ambiguous or materially different fixes.
+
+## Remaining operational evidence
+
+The configuration is not available on the default branch until this pull
+request is merged. Exercise it only against a naturally occurring CI failure;
+do not manufacture a failure to claim completion.
 
 ---
 
 # Phase 5 — Local persistence
 
-Status: **PLANNED**
+Status: **COMPLETE**
 
 ## AI setup
 
@@ -780,6 +809,10 @@ Tests must use temporary paths.
 
 Tests must never modify the real user home directory.
 
+Production appends one JSON object per line to `~/.cdd/history.jsonl`. Tests
+inject an explicit path through the internal CLI entry point, avoiding both a
+dependency-injection framework and environment-variable mutation.
+
 ## Architecture
 
 ```text
@@ -797,6 +830,15 @@ Domain calculations must not read files directly.
 ## Human gate
 
 Changing the persistence strategy requires explicit approval.
+
+## Completion evidence
+
+- successful espresso, americano, and cappuccino commands append typed coffee
+  events with UTC ISO timestamps, drink types, and caffeine amounts
+- unsupported drinks do not append events
+- existing CLI output is preserved
+- parent directories are created when absent
+- storage tests use temporary paths and independently parse every JSON line
 
 ---
 

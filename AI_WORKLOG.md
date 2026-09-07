@@ -913,3 +913,104 @@ review systems that expose timestamps but not reviewed commit SHAs.
 
 When external systems omit exact provenance, a bounded temporal rule can
 preserve safety only when it also proves the branch did not move afterward.
+
+## 2026-09-07 — Local persistence and CI triage-agent foundation
+
+### Harness
+
+Tool: Codex
+Model: GPT-5.6 Sol
+Reasoning: Medium
+Mode: Implementation
+Task type: product development + bounded harness extension
+Risk level: medium
+
+### Model selection
+
+GPT-5.6 Sol with Medium reasoning was selected because the iteration combined
+a normal typed Python feature with a bounded, documentation-sensitive GitHub
+agent configuration and did not require an architecture change.
+
+### Goal
+
+Complete Phase 5 with append-only local JSONL coffee-event persistence and add
+the Phase 4.7 repository CI-triage agent configuration for future natural CI
+failures.
+
+### AI responsibility
+
+- Verified Phase 4.6 was merged, synchronized local and remote `main` at
+  `c15b8b6`, and created `feature/local-persistence-and-ci-triage`.
+- Verified the current GitHub custom-agent profile format and built-in
+  least-privilege repository context from official GitHub documentation.
+- Added a manually selected CI-triage profile without broad credentials or
+  merge authority.
+- Drove Phase 5 through a real test-first cycle, then added the typed event,
+  JSONL storage, CLI orchestration, tests, and roadmap updates.
+- Created draft PR #5 from feature commit `c253286`.
+
+### Human responsibility
+
+The human approved JSONL and the CLI/domain/storage boundaries, defined the
+agent safety and scope constraints, retains authority over architecture,
+dependencies, disputed review feedback, and final merge, and must merge the
+PR before the custom agent can become available from the default branch.
+
+### Outcome
+
+Successful drink commands append one event to `~/.cdd/history.jsonl` with an
+aware UTC ISO 8601 timestamp, drink type, and caffeine amount. Unsupported
+drinks append nothing and the existing human-readable output is unchanged.
+The CI-triage configuration is created and schema-checked but was not exercised
+or claimed available on the default branch.
+
+### Files changed
+
+- `.github/agents/ci-triage.agent.md`
+- `AGENTS.md`
+- `docs/IMPLEMENTATION_PLAN.md`
+- `src/cdd/cli.py`
+- `src/cdd/domain.py`
+- `src/cdd/storage.py`
+- `tests/test_cli.py`
+- `tests/test_domain.py`
+- `tests/test_storage.py`
+- `AI_WORKLOG.md`
+
+### Validation
+
+- RED: the focused suite failed to collect because the not-yet-implemented
+  `CoffeeEvent` persistence contract was absent.
+- GREEN: the focused suite passed all 14 domain, storage, and CLI tests.
+- `uv run --extra dev pytest --basetemp=.pytest-phase5-full` passed with 14
+  tests.
+- `uv run --extra dev ruff check .` passed.
+- `uv run --extra dev mypy` passed with no issues in 7 source files.
+- `git diff --check` passed.
+- An isolated-path CLI smoke test produced three independently parseable JSON
+  lines for espresso, americano, and cappuccino; unsupported latte appended no
+  event.
+- Official-schema inspection passed for the custom-agent path, suffix,
+  frontmatter, and tool aliases; no supported local automated validator was
+  available.
+
+Current-head CI and review evidence remain to be collected after this worklog
+commit creates the final PR head.
+
+### Friction / failure
+
+The exact pytest command could not access the workstation's pre-existing
+`%TEMP%\pytest-of-ankap` directory. A task-scoped `--basetemp` changed only
+pytest temporary-file placement and allowed the complete suite to pass.
+
+### Harness change
+
+The repository now includes a manually invoked, narrowly bounded CI-failure
+diagnostic profile. It uses built-in read-only GitHub MCP repository access and
+explicitly preserves tests, linting, typing, workflow safeguards, and human
+merge control.
+
+### Lesson learned
+
+A custom CI agent can be installed safely before its first real use when its
+availability and exercise status are recorded separately from format evidence.

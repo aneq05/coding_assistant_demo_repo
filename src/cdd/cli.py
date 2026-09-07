@@ -2,8 +2,10 @@
 
 import argparse
 from collections.abc import Sequence
+from pathlib import Path
 
-from cdd.domain import UnsupportedDrinkError, get_drink
+from cdd.domain import UnsupportedDrinkError, create_coffee_event, get_drink
+from cdd.storage import append_event
 
 
 def build_parser() -> argparse.ArgumentParser:
@@ -21,7 +23,11 @@ def build_parser() -> argparse.ArgumentParser:
     return parser
 
 
-def main(argv: Sequence[str] | None = None) -> int:
+def main(
+    argv: Sequence[str] | None = None,
+    *,
+    history_path: Path | None = None,
+) -> int:
     """Run the CLI and return its exit status."""
     parser = build_parser()
     arguments = parser.parse_args(argv)
@@ -31,6 +37,11 @@ def main(argv: Sequence[str] | None = None) -> int:
             drink = get_drink(arguments.drink)
         except UnsupportedDrinkError as error:
             parser.error(str(error))
+
+        try:
+            append_event(create_coffee_event(drink), history_path)
+        except OSError as error:
+            parser.error(f"Could not persist coffee event: {error}")
 
         print(drink.name)
         print(f"Estimated caffeine: {drink.caffeine_mg} mg")
