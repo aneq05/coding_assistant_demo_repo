@@ -3,6 +3,7 @@
 from math import ceil
 
 from rich.console import Console
+from rich.panel import Panel
 from rich.table import Table
 
 from cdd.domain import (
@@ -12,6 +13,7 @@ from cdd.domain import (
     LocalTimeConverter,
     TodaySummary,
 )
+from cdd.git_activity import GitActivity
 
 
 def caffeine_bar(caffeine_mg: int) -> str:
@@ -61,13 +63,30 @@ def render_history(
     console.print(table)
 
 
-def render_status(console: Console, summary: TodaySummary) -> None:
-    """Render today's coffee status."""
-    console.print("Coffee-Driven Development")
-    console.print("─────────────────────────")
-    console.print(f"Coffees today:      {_format_coffee_count(summary.coffees)}")
-    console.print(f"Caffeine today:     {summary.caffeine_mg} mg")
-    console.print(f"Developer state:    {summary.developer_state}")
+def render_status(
+    console: Console,
+    summary: TodaySummary,
+    git_activity: GitActivity,
+) -> None:
+    """Render coffee and local Git status in one compact report."""
+    report = Table.grid(expand=True, padding=(0, 1))
+    report.add_column(style="bold")
+    report.add_column(justify="right")
+    report.add_row("[bold]Coffee[/bold]", "")
+    report.add_row("Coffees today", _format_coffee_count(summary.coffees))
+    report.add_row("Caffeine today", f"{summary.caffeine_mg} mg")
+    report.add_row("Developer state", summary.developer_state)
+    report.add_row("", "")
+    report.add_row("[bold]Git activity[/bold]", "")
+    report.add_row("Commits today", str(git_activity.commits_today))
+    latest_commit = (
+        git_activity.latest_commit.strftime("%Y-%m-%d %H:%M")
+        if git_activity.latest_commit is not None
+        else "None"
+    )
+    report.add_row("Latest commit", latest_commit)
+    report.add_row("Activity level", git_activity.activity_level)
+    console.print(Panel(report, title="Coffee-Driven Development"))
 
 
 def render_stats(console: Console, stats: CoffeeStats) -> None:
