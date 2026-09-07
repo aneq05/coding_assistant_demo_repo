@@ -1248,3 +1248,70 @@ Skill, or GitHub Issue was created.
 
 Issue Forms can enforce concise feature scope for humans while preserving the
 same headings used by an automation workflow.
+
+## 2026-09-07 — README product and harness overview
+
+### Harness
+
+Tool: Codex
+Model: not recorded
+Reasoning: not recorded
+Mode: Implementation
+Task type: documentation
+Risk level: low
+
+### Goal
+
+Make the README present Coffee-Driven Development as both a small Python CLI
+and an AI-assisted engineering harness sandbox while preserving product usage
+examples.
+
+### AI responsibility
+
+- Synchronized the repository and inspected the current product and harness
+  evidence.
+- Updated the README with the requested purpose, architecture, workflow,
+  capabilities, evidence links, and future-demo boundary.
+- Created and pushed branch `docs/readme-harness-overview`, commit `0346618`,
+  and pull request #10.
+
+### Human responsibility
+
+The human specified the README scope, required truthful MCP boundaries, and
+retains review and final-merge authority.
+
+### Outcome
+
+The README is concise and skimmable, distinguishes terminal presentation from
+the CLI/domain/storage path, and does not claim GitHub MCP or Figma MCP is
+connected.
+
+### Files changed
+
+- `README.md`
+- `AI_WORKLOG.md`
+
+### Validation
+
+- `git diff --check` passed.
+- `uv run --extra dev pytest` passed: 65 tests.
+- `uv run --extra dev ruff check .` passed.
+- `uv run --extra dev mypy` passed.
+- PR #10 was created for human review; no merge was performed.
+
+### Friction / failure
+
+The sandbox initially blocked Git fetch and uv cache/Python-environment access;
+approved escalation completed synchronization and validation. An unrelated
+untracked Feature Delivery Agent file was preserved and excluded from the PR.
+
+### Harness change
+
+No harness behavior changed; the README now provides a concise entry point to
+the existing harness evidence.
+
+### Lesson learned
+
+README claims about integrations should follow the repository's recorded
+evidence and explicitly separate authenticated CLI/API capability from an
+unconnected MCP tool surface.
