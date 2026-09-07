@@ -1248,3 +1248,61 @@ Skill, or GitHub Issue was created.
 
 Issue Forms can enforce concise feature scope for humans while preserving the
 same headings used by an automation workflow.
+
+## 2026-09-07 — Feature delivery custom agent
+
+### Harness
+
+Tool: Codex
+Model: not recorded
+Reasoning: not recorded
+Mode: Implementation
+Task type: GitHub custom-agent configuration
+Risk level: low
+
+### Goal
+
+Add one manually invocable custom agent that takes an already-scoped GitHub
+Issue through the repository harness to a review-ready pull request.
+
+### AI responsibility
+
+- Synchronized the repository, inspected the existing custom-agent format, and
+  added the concise `feature-delivery` profile.
+- Validated its frontmatter, required workflow references, safeguards, and
+  whitespace; created PR #11 from `chore/feature-delivery-agent`.
+
+### Human responsibility
+
+The human specified the agent's purpose, workflow boundaries, and final-review
+authority.
+
+### Outcome
+
+PR #11 contains the new profile at commit `6e09ac0`; no product code changed.
+
+### Files changed
+
+- `.github/agents/feature-delivery.agent.md`
+- `AI_WORKLOG.md`
+
+### Validation
+
+- Custom-agent frontmatter and required workflow/safeguard references passed
+  the local configuration check.
+- `git diff --check` passed.
+
+### Friction / failure
+
+The shared working tree was switched to other local branches during delivery;
+the dedicated task branch was restored before staging and publication.
+
+### Harness change
+
+Added a manually invocable GitHub custom agent that delegates synchronization,
+TDD, delivery, and session logging to the repository Skills.
+
+### Lesson learned
+
+A compact custom-agent profile can preserve workflow authority by referencing
+the existing Skills instead of duplicating their operational instructions.
