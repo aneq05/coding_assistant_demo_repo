@@ -1249,7 +1249,190 @@ Skill, or GitHub Issue was created.
 Issue Forms can enforce concise feature scope for humans while preserving the
 same headings used by an automation workflow.
 
-## 2026-09-07 — README product and harness overview
+## 2026-09-07 — Git activity roadmap clarification
+
+### Harness
+
+Tool: Codex
+Model: not recorded
+Reasoning: not recorded
+Mode: Implementation
+Task type: roadmap documentation
+Risk level: low
+
+### Goal
+
+Define the planned Git activity feature precisely and reconcile roadmap status
+with current repository evidence, without implementing product behavior.
+
+### AI responsibility
+
+- Synchronized the default branch, inspected the roadmap, GitHub Actions
+  workflow, repository Skills, feature Issue Form, and GitHub capability audit.
+- Updated only `docs/IMPLEMENTATION_PLAN.md`, committed `41755e8`, and opened
+  draft PR #9.
+
+### Human responsibility
+
+The human defined the Git activity requirements and scope boundaries, and
+retains review and final-merge authority.
+
+### Outcome
+
+The roadmap now defines Git activity in `cdd status` as commits today and the
+latest commit time, specifies graceful non-repository behavior, prohibits
+GitPython, requires Git-history-independent tests, and keeps Refactor Risk out
+of scope. It also records completed CI, feature-Issue workflow/template, and
+GitHub capability-audit evidence.
+
+### Files changed
+
+- `docs/IMPLEMENTATION_PLAN.md`
+- `git diff --check` passed for the roadmap change.
+- The relevant repository files were manually inspected; no product code was
+  changed.
+
+### Friction / failure
+
+The sandbox initially prevented `git fetch` from writing `.git/FETCH_HEAD`;
+the required freshness check completed after approved escalation.
+
+### Harness change
+
+No harness or product-code behavior changed; this was a documentation-only
+roadmap clarification.
+
+### Lesson learned
+
+Feature planning is more reliable when implementation constraints and test
+isolation are explicit before an Issue is used to begin delivery.
+
+## 2026-09-07 — Feature delivery custom agent
+
+### Harness
+
+Tool: Codex
+Model: not recorded
+Reasoning: not recorded
+Mode: Implementation
+Task type: GitHub custom-agent configuration
+Risk level: low
+
+### Goal
+
+Add one manually invocable custom agent that takes an already-scoped GitHub
+Issue through the repository harness to a review-ready pull request.
+
+### AI responsibility
+
+- Synchronized the repository, inspected the existing custom-agent format, and
+  added the concise `feature-delivery` profile.
+- Validated its frontmatter, required workflow references, safeguards, and
+  whitespace; created PR #11 from `chore/feature-delivery-agent`.
+
+### Human responsibility
+
+The human specified the agent's purpose, workflow boundaries, and final-review
+authority.
+
+### Outcome
+
+PR #11 contains the new profile at commit `6e09ac0`; no product code changed.
+
+### Files changed
+
+- `.github/agents/feature-delivery.agent.md`
+- `AI_WORKLOG.md`
+
+### Validation
+
+- Custom-agent frontmatter and required workflow/safeguard references passed
+  the local configuration check.
+- `git diff --check` passed.
+
+### Friction / failure
+
+The shared working tree was switched to other local branches during delivery;
+the dedicated task branch was restored before staging and publication.
+
+### Harness change
+
+Added a manually invocable GitHub custom agent that delegates synchronization,
+TDD, delivery, and session logging to the repository Skills.
+
+### Lesson learned
+
+A compact custom-agent profile can preserve workflow authority by referencing
+the existing Skills instead of duplicating their operational instructions.
+
+## 2026-09-07 â€” Git activity status feature delivery
+
+### Harness
+
+Tool: Codex
+Model: not recorded
+Reasoning: not recorded
+Mode: Implementation
+Task type: Scoped product feature delivery from GitHub Issue #12
+Risk level: not recorded
+
+### Goal
+
+Take Issue #12 through implementation and validation to a review-ready pull
+request, including the clarified cohesive Rich status report.
+
+### AI responsibility
+
+- Synchronized `main`, created `feature/git-activity-status`, and implemented
+  local Git activity collection, deterministic activity levels, and the Rich
+  panel presentation.
+- Added focused tests, ran the repository quality gate, committed as `b0a4c3e`,
+  and created PR #13.
+
+### Human responsibility
+
+The human defined the feature scope, presentation requirements, exclusions,
+and retained final review and merge authority.
+
+### Outcome
+
+PR #13 is open and ready for review; it is not merged. Refactor Risk, numeric
+scoring, late-night behavior, and remote GitHub activity remain out of scope.
+
+### Files changed
+
+- `src/cdd/cli.py`
+- `src/cdd/domain.py`
+- `src/cdd/git_activity.py`
+- `src/cdd/presentation.py`
+- `tests/test_git_activity.py`
+- `tests/test_status_presentation.py`
+- `AI_WORKLOG.md`
+
+### Validation
+
+- `uv run --extra dev pytest` — 74 passed.
+- `uv run --extra dev ruff check .` — passed.
+- `uv run --extra dev mypy` — passed.
+- `git diff --check` — passed.
+
+### Friction / failure
+
+The sandbox initially blocked Git metadata writes and the local `uv` cache;
+approved escalation was required for synchronization, delivery, and the final
+quality gate.
+
+### Harness change
+
+No harness behavior changed.
+
+### Lesson learned
+
+Keeping Git collection, deterministic level mapping, and Rich rendering in
+separate responsibilities supports a small implementation with independently
+testable boundaries.
+
+## 2026-09-07 â€” README product and harness overview
 
 ### Harness
 
@@ -1315,3 +1498,72 @@ the existing harness evidence.
 README claims about integrations should follow the repository's recorded
 evidence and explicitly separate authenticated CLI/API capability from an
 unconnected MCP tool surface.
+
+## 2026-09-07 — merge-conflict Skill and PR #10 resolution
+
+### Harness
+
+Tool: Codex with GitHub MCP and local Git
+Model: not recorded
+Reasoning: not recorded
+Mode: Implementation
+Task type: repository Skill and merge-conflict resolution
+Risk level: medium
+
+### Goal
+
+Create and exercise `resolve-merge-conflict` on the real PR #10 conflict while
+preserving the PR and current `main` changes.
+
+### AI responsibility
+
+- Inspected PR #10 metadata, base/head refs, changed files, mergeability,
+  current `main`, and recent commits through GitHub MCP.
+- Merged current `main` into the PR head in an isolated worktree, identified
+  `AI_WORKLOG.md` as the only conflicted file, classified it as COMPOSABLE,
+  and retained both independent worklog histories.
+- Added the reusable conflict-resolution Skill and ran its workflow on this
+  real conflict without force-pushing or merging the PR.
+
+### Human responsibility
+
+The human requested the Skill and conflict exercise and retains authority for
+ambiguous product or architectural decisions and final PR merge.
+
+### Outcome
+
+PR #10's README work, current-main changes, both worklog histories, and the
+new conflict-resolution Skill are present on the resolved branch.
+
+### Files changed
+
+- `.agents/skills/resolve-merge-conflict/SKILL.md`
+- `AI_WORKLOG.md`
+- Current-main files merged from `main` into PR #10.
+
+### Validation
+
+- `uv run --extra dev pytest` — 74 passed.
+- `uv run --extra dev ruff check .` — passed.
+- `uv run --extra dev mypy` — passed.
+- `git diff --check` — passed.
+- No conflict markers or unmerged paths remain.
+
+### Friction / failure
+
+Initial sandbox restrictions blocked Git metadata and uv cache access; approved
+escalation was used. The bundled Skill validator could not run because `python`
+was unavailable, so the Skill was checked directly and the repository gate ran
+successfully.
+
+### Harness change
+
+Added `.agents/skills/resolve-merge-conflict/SKILL.md`, covering safe discovery,
+conflict classification, evidence-based composition, human escalation, and
+post-resolution validation.
+
+### Lesson learned
+
+Worklog conflicts can be resolved compositionally when both sides are
+independent chronological records; merge intent should still be established
+from branch history and changed files rather than markers alone.

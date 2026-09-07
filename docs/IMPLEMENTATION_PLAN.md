@@ -223,6 +223,7 @@ interactive mode.
 - [x] deterministic validation commands
 - [ ] automatic AI session logging
 - [x] repository Skills
+- [x] feature Issue creation workflow and Issue template
 - [x] safe Git delivery and ready-for-review pull-request workflow
 - [x] Python engineering guidance
 - [x] testing strategy
@@ -233,6 +234,7 @@ interactive mode.
 - [x] authenticated GitHub PR delivery
 - [ ] GitHub MCP
 - [x] GitHub Actions CI
+- [x] GitHub integration capability audit
 - [x] Context-aware Copilot Code Review
 - [x] repository CI-triage agent configuration (operational exercise pending)
 - [ ] independent AI pull-request review
@@ -272,7 +274,7 @@ interactive mode.
 - [x] Phase 4.5 — CI and repository synchronization
 - [x] Phase 4.6 — Context-aware Copilot Code Review
 - [ ] Phase 4.7 — GitHub CI Triage Agent operational exercise
-- [ ] Phase 10 — GitHub Actions CI
+- [x] Phase 10 — GitHub Actions CI baseline
 - [ ] Phase 11 — GitHub MCP integration
 - [ ] Phase 12 — Git activity feature through GitHub Issue
 - [ ] Phase 13 — Independent AI pull-request review
@@ -1189,9 +1191,9 @@ inspect diff
 
 ---
 
-# Phase 10 — GitHub Actions CI evolution
+# Phase 10 — GitHub Actions CI baseline
 
-Status: **PLANNED**
+Status: **COMPLETE**
 
 ## AI setup
 
@@ -1205,13 +1207,9 @@ Medium
 
 ## Goal
 
-The baseline GitHub Actions workflow is introduced in Phase 4.5. Revisit CI
-here only when later repository evidence justifies hardening or expansion;
-do not recreate the baseline workflow.
-
-The scope and acceptance criteria for any later CI work should be derived from
-observed limitations in the Phase 4.5 workflow rather than specified in
-advance.
+The baseline GitHub Actions workflow introduced in Phase 4.5 is complete.
+Revisit CI only when later repository evidence justifies hardening or
+expansion; do not recreate the baseline workflow.
 
 ---
 
@@ -1267,7 +1265,7 @@ Codex
 
 ---
 
-# Phase 12 — Git activity feature through GitHub workflow
+# Phase 12 — Git activity feature through GitHub Issue
 
 Status: **PLANNED**
 
@@ -1277,12 +1275,31 @@ Add local Git activity to developer status.
 
 Report:
 
-- number of commits today
+- commits today
 - latest commit time
 
 Outside a Git repository:
 
-fail gracefully.
+behave gracefully without an error or traceback.
+
+## Constraints
+
+- Integrate the Git activity information into `cdd status`; do not add a
+  separate product command.
+- Do not add GitPython or any other Git library dependency.
+- Tests must be independent of the user's real Git history. Use controlled
+  temporary repositories or an injected command boundary with deterministic
+  Git output.
+- Refactor Risk remains out of scope for this feature.
+
+## Acceptance criteria
+
+- [ ] `cdd status` shows today's commit count and the latest commit time when
+      Git activity is available.
+- [ ] Running outside a Git repository remains graceful.
+- [ ] Tests cover the Git behavior without reading the developer's repository
+      history.
+- [ ] No GitPython dependency is introduced.
 
 ## AI setup
 
