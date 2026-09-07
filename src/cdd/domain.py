@@ -110,6 +110,19 @@ def developer_state(caffeine_mg: int) -> str:
     return "ARCHITECTURE PRIVILEGES REVOKED"
 
 
+def git_activity_level(commits_today: int) -> str:
+    """Return the deterministic activity level for today's commit count."""
+    if commits_today < 0:
+        raise ValueError("commits_today cannot be negative")
+    if commits_today == 0:
+        return "QUIET"
+    if commits_today <= 2:
+        return "ACTIVE"
+    if commits_today <= 5:
+        return "SHIPPING"
+    return "DEEP WORK"
+
+
 def summarize_today(
     events: Sequence[CoffeeEvent],
     *,

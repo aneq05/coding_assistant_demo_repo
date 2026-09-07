@@ -17,6 +17,7 @@ from cdd.domain import (
     get_drink,
     summarize_today,
 )
+from cdd.git_activity import get_git_activity
 from cdd.presentation import (
     render_drink,
     render_history,
@@ -181,6 +182,7 @@ def _show_status(
     render_status(
         console,
         summarize_today(read_events(history_path), now=now, to_local=to_local),
+        get_git_activity(now=now, to_local=to_local),
     )
 
 
