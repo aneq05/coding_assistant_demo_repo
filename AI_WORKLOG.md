@@ -677,3 +677,93 @@ The Skill was sufficient, and no workflow changes were needed.
 
 Separating domain and CLI tests made the RED evidence distinguish missing
 business behavior from missing command parsing while preserving a small design.
+
+## 2026-09-07 — CI and repository synchronization
+
+### Harness
+
+Tool: Codex
+Model: GPT-5.6 Sol
+Reasoning: Medium
+Mode: Implementation
+Task type: CI and repository synchronization harness improvement
+Risk level: medium
+
+### Model selection
+
+GPT-5.6 Sol with Medium reasoning matched a multi-file workflow task requiring
+Git safety, CI implementation, external validation, and evidence inspection.
+
+### Goal
+
+Add safe repository synchronization, independent current-HEAD GitHub Actions
+validation, persistent CI report artifacts, a human-readable summary, and CI
+and review freshness checks before Phase 5.
+
+### AI responsibility
+
+- Verified PR #2 was merged, no PR was open, synchronized local `main` to remote
+  SHA `848b434`, and created `chore/ci-and-sync` without deleting old branches.
+- Created `sync-repository`, composed it from `develop-feature-tdd`, and added a
+  concise repository routing rule.
+- Added the CI workflow and current-HEAD CI/review rules to
+  `validate-pull-request`.
+- Ran local validation, delivered draft PR #3, diagnosed the initial CI failure,
+  applied the focused action-version correction, and inspected successful jobs
+  and artifacts.
+
+### Human responsibility
+
+The human chose independent CI validation, retained architecture and final
+merge authority, and chose CI artifacts instead of committed report files.
+
+### Outcome
+
+Phase 4.5 is complete. GitHub Actions independently runs pytest, ruff, and mypy,
+publishes a validation summary, and uploads SHA-named reports. CI runs #2 and #3
+passed for heads `4548558` and `4438fa4`; the worklog commit creates one final
+HEAD that must be revalidated before PR clearance.
+
+### Files changed
+
+- `.agents/skills/sync-repository/SKILL.md`
+- `.agents/skills/develop-feature-tdd/SKILL.md`
+- `.agents/skills/validate-pull-request/SKILL.md`
+- `.github/workflows/ci.yml`
+- `.gitignore`
+- `AGENTS.md`
+- `docs/IMPLEMENTATION_PLAN.md`
+- `AI_WORKLOG.md`
+
+### Validation
+
+- `quick_validate.py` passed for `sync-repository`, `develop-feature-tdd`, and
+  `validate-pull-request`.
+- `uv run --extra dev pytest` passed with 9 tests.
+- `uv run --extra dev ruff check .` passed.
+- `uv run --extra dev mypy` passed with no issues in 5 source files.
+- `git diff --check` passed and the complete diff was inspected.
+- CI run #2 passed all required steps for SHA `4548558c67de8d14efc70817e2977be8da14a40f`.
+- Its artifact `validation-reports-4548558c67de8d14efc70817e2977be8da14a40f`
+  contained `pytest.xml`, `ruff.txt`, and `mypy.txt`; the reports showed 9
+  passing tests, clean ruff, and clean mypy.
+- CI run #3 passed all required steps and uploaded a current-SHA artifact for
+  roadmap head `4438fa4f8362e3dacd3a0d843547147dd3d944fe`.
+
+### Friction / failure
+
+- `actionlint` was not installed, so no local actionlint result was claimed.
+- CI run #1 failed during job setup because the initially selected floating
+  `astral-sh/setup-uv@v9` ref did not exist. No validator ran and no artifact was
+  produced. Live GitHub release data identified available exact action tags;
+  the corrected workflow passed without weakening validation.
+
+### Harness change
+
+Validation is no longer only self-reported by the implementation agent. GitHub
+now independently reruns deterministic checks in a clean CI environment.
+
+### Lesson learned
+
+Increasing agent autonomy should be paired with independent validation and
+freshness checks.

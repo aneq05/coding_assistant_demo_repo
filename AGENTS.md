@@ -27,6 +27,12 @@ All checks must pass.
 - Project roadmap: `docs/IMPLEMENTATION_PLAN.md`
 - AI-assisted development history: `AI_WORKLOG.md`
 
+## Repository synchronization
+
+Before new repository-changing work, or after a merged PR before subsequent
+work, use `sync-repository` unless freshness was already verified during the
+current session.
+
 ## AI session logging
 
 After completed non-trivial AI-assisted work that materially changes the

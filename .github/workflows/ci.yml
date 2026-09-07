@@ -1,0 +1,116 @@
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches:
+      - main
+
+permissions:
+  contents: read
+
+jobs:
+  validation:
+    name: Python validation
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    env:
+      VALIDATED_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
+
+    steps:
+      - name: Check out current head
+        uses: actions/checkout@v7.0.1
+        with:
+          ref: ${{ env.VALIDATED_SHA }}
+
+      - name: Set up Python
+        uses: actions/setup-python@v7.0.0
+        with:
+          python-version: "3.12"
+
+      - name: Set up uv
+        uses: astral-sh/setup-uv@v10.0.1
+        with:
+          enable-cache: true
+
+      - name: Synchronize locked environment
+        run: uv sync --locked --extra dev
+
+      - name: Prepare reports
+        run: |
+          mkdir -p reports
+          cat > reports/pytest.xml <<'EOF'
+          <?xml version="1.0" encoding="utf-8"?>
+          <testsuites name="pytest" tests="1" failures="0" errors="1">
+            <testsuite name="pytest" tests="1" failures="0" errors="1">
+              <testcase name="pytest report generation">
+                <error message="pytest did not produce a JUnit report" />
+              </testcase>
+            </testsuite>
+          </testsuites>
+          EOF
+          : > reports/ruff.txt
+          : > reports/mypy.txt
+
+      - name: Run pytest
+        id: pytest
+        continue-on-error: true
+        run: uv run --extra dev pytest --junitxml=reports/pytest.xml
+
+      - name: Run ruff
+        id: ruff
+        continue-on-error: true
+        run: |
+          set -o pipefail
+          uv run --extra dev ruff check . 2>&1 | tee reports/ruff.txt
+
+      - name: Run mypy
+        id: mypy
+        continue-on-error: true
+        run: |
+          set -o pipefail
+          uv run --extra dev mypy 2>&1 | tee reports/mypy.txt
+
+      - name: Write validation summary
+        if: always()
+        env:
+          PYTEST_RESULT: ${{ steps.pytest.outcome }}
+          RUFF_RESULT: ${{ steps.ruff.outcome }}
+          MYPY_RESULT: ${{ steps.mypy.outcome }}
+        run: |
+          {
+            echo "## Validation summary"
+            echo
+            echo "Commit SHA: \`$VALIDATED_SHA\`"
+            echo
+            echo "| Validation | Result |"
+            echo "| --- | --- |"
+            echo "| pytest | $PYTEST_RESULT |"
+            echo "| ruff | $RUFF_RESULT |"
+            echo "| mypy | $MYPY_RESULT |"
+            echo
+            echo "Detailed reports are available in the workflow artifacts."
+          } >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Upload validation reports
+        if: always()
+        uses: actions/upload-artifact@v7.0.1
+        with:
+          name: validation-reports-${{ env.VALIDATED_SHA }}
+          path: reports/
+          if-no-files-found: error
+          retention-days: 14
+
+      - name: Enforce validation result
+        if: always()
+        env:
+          PYTEST_RESULT: ${{ steps.pytest.outcome }}
+          RUFF_RESULT: ${{ steps.ruff.outcome }}
+          MYPY_RESULT: ${{ steps.mypy.outcome }}
+        run: |
+          if [[ "$PYTEST_RESULT" != "success" || \
+                "$RUFF_RESULT" != "success" || \
+                "$MYPY_RESULT" != "success" ]]; then
+            echo "One or more required validation checks failed."
+            exit 1
+          fi

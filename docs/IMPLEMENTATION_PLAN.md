@@ -166,9 +166,13 @@ A Skill should not exist merely as an alias for deterministic commands.
 
 # Current status
 
-Current phase:
+Current product phase:
 
-**Phase 5 — Local persistence**
+**Phase 5 — Local persistence (not started)**
+
+Current harness phase:
+
+**Phase 4.5 — CI and repository synchronization (complete)**
 
 Current harness maturity:
 
@@ -221,9 +225,10 @@ implemented yet.
 - [ ] reusable validation workflow
 - [x] reusable TDD feature-development workflow
 - [x] review-feedback validation workflow
+- [x] safe repository synchronization workflow
 - [x] authenticated GitHub PR delivery
 - [ ] GitHub MCP
-- [ ] GitHub Actions CI
+- [x] GitHub Actions CI
 - [ ] independent AI pull-request review
 - [ ] Figma MCP
 - [ ] Goal-based delegation
@@ -257,6 +262,7 @@ implemented yet.
 
 ## GitHub engineering workflow
 
+- [x] Phase 4.5 — CI and repository synchronization
 - [ ] Phase 10 — GitHub Actions CI
 - [ ] Phase 11 — GitHub MCP integration
 - [ ] Phase 12 — Git activity feature through GitHub Issue
@@ -655,6 +661,41 @@ Do not create additional Skills solely after one occurrence.
 
 ---
 
+# Phase 4.5 — CI and repository synchronization
+
+Status: **COMPLETE**
+
+## Goal
+
+Strengthen the harness before Phase 5 with safe repository synchronization and
+independent GitHub Actions validation for the current pull-request HEAD.
+
+## Scope
+
+- `sync-repository` verifies repository identity, local work, and default-branch
+  freshness without destructive Git operations or delivery actions.
+- GitHub Actions runs pytest, ruff, and mypy on pull requests and pushes to
+  `main` using the locked development environment.
+- CI preserves JUnit, ruff, and mypy reports as finite-retention artifacts and
+  publishes a compact step summary even when validation fails.
+- `validate-pull-request` requires CI and automated-review evidence for the
+  current PR HEAD instead of accepting stale results.
+
+## Acceptance criteria
+
+- [x] repository synchronization workflow exists and is routed from new work
+- [x] TDD composes with repository synchronization
+- [x] CI workflow is defined without weakening required validation
+- [x] pull-request validation checks current-HEAD CI and review freshness
+- [x] local pytest, ruff, and mypy validation passes
+- [x] CI succeeds for the current PR HEAD
+- [x] CI step-summary generation is verified
+- [x] `pytest.xml`, `ruff.txt`, and `mypy.txt` are verified in the uploaded artifact
+
+Phase 5 remains planned and has not started.
+
+---
+
 # Phase 5 — Local persistence
 
 Status: **PLANNED**
@@ -1017,7 +1058,7 @@ inspect diff
 
 ---
 
-# Phase 10 — GitHub Actions CI
+# Phase 10 — GitHub Actions CI evolution
 
 Status: **PLANNED**
 
@@ -1033,26 +1074,13 @@ Medium
 
 ## Goal
 
-Create minimal CI on:
+The baseline GitHub Actions workflow is introduced in Phase 4.5. Revisit CI
+here only when later repository evidence justifies hardening or expansion;
+do not recreate the baseline workflow.
 
-- pushes
-- pull requests
-
-Run:
-
-```text
-pytest
-ruff
-mypy
-```
-
-## Requirements
-
-- use the same environment as local development
-- no secrets required
-- avoid duplicated configuration
-- keep workflow small
-- CI must provide deterministic feedback to agents and humans
+The scope and acceptance criteria for any later CI work should be derived from
+observed limitations in the Phase 4.5 workflow rather than specified in
+advance.
 
 ---
 
