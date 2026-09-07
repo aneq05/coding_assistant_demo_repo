@@ -1249,6 +1249,64 @@ Skill, or GitHub Issue was created.
 Issue Forms can enforce concise feature scope for humans while preserving the
 same headings used by an automation workflow.
 
+## 2026-09-07 — Git activity roadmap clarification
+
+### Harness
+
+Tool: Codex
+Model: not recorded
+Reasoning: not recorded
+Mode: Implementation
+Task type: roadmap documentation
+Risk level: low
+
+### Goal
+
+Define the planned Git activity feature precisely and reconcile roadmap status
+with current repository evidence, without implementing product behavior.
+
+### AI responsibility
+
+- Synchronized the default branch, inspected the roadmap, GitHub Actions
+  workflow, repository Skills, feature Issue Form, and GitHub capability audit.
+- Updated only `docs/IMPLEMENTATION_PLAN.md`, committed `41755e8`, and opened
+  draft PR #9.
+
+### Human responsibility
+
+The human defined the Git activity requirements and scope boundaries, and
+retains review and final-merge authority.
+
+### Outcome
+
+The roadmap now defines Git activity in `cdd status` as commits today and the
+latest commit time, specifies graceful non-repository behavior, prohibits
+GitPython, requires Git-history-independent tests, and keeps Refactor Risk out
+of scope. It also records completed CI, feature-Issue workflow/template, and
+GitHub capability-audit evidence.
+
+### Files changed
+
+- `docs/IMPLEMENTATION_PLAN.md`
+- `git diff --check` passed for the roadmap change.
+- The relevant repository files were manually inspected; no product code was
+  changed.
+
+### Friction / failure
+
+The sandbox initially prevented `git fetch` from writing `.git/FETCH_HEAD`;
+the required freshness check completed after approved escalation.
+
+### Harness change
+
+No harness or product-code behavior changed; this was a documentation-only
+roadmap clarification.
+
+### Lesson learned
+
+Feature planning is more reliable when implementation constraints and test
+isolation are explicit before an Issue is used to begin delivery.
+
 ## 2026-09-07 — Feature delivery custom agent
 
 ### Harness
