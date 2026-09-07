@@ -1128,3 +1128,62 @@ because current-head CI was green before the final corrections.
 Time-sensitive local-calendar behavior needs both an injectable clock and an
 injectable local-time conversion boundary: one prevents stale interactive time,
 and the other preserves operating-system DST rules without adding a dependency.
+
+## 2026-09-07 â€” Feature Issue creation Skill
+
+### Harness
+
+Tool: Codex
+Model: not recorded
+Reasoning: not recorded
+Mode: Implementation
+Task type: repository Skill creation
+Risk level: low
+
+### Goal
+
+Add one repository Skill that turns a short human feature goal into one scoped
+GitHub Issue without beginning implementation.
+
+### AI responsibility
+
+- Synchronized repository state, inspected existing Skill conventions and the
+  implementation roadmap, and added `create-feature-issue`.
+- Validated the Skill structure, created branch `docs/create-feature-issue-skill`,
+  and opened PR #7 without creating a GitHub Issue.
+
+### Human responsibility
+
+The human specified the Skill's required Issue structure and boundaries, and
+retains review and final-merge authority.
+
+### Outcome
+
+The new Skill searches open Issues before creating one Issue, returns a
+prepared body when Issue write access is unavailable, and prohibits
+implementation or implicit multi-Issue creation.
+
+### Files changed
+
+- `.agents/skills/create-feature-issue/SKILL.md`
+- `AI_WORKLOG.md`
+
+### Validation
+
+- `C:\\Users\\ankap\\.codex\\skills\\.system\\skill-creator\\scripts\\quick_validate.py .agents/skills/create-feature-issue` passed.
+- `git diff --check` passed for the Skill change.
+
+### Friction / failure
+
+Git fetch initially could not write `.git/FETCH_HEAD` in the sandbox; the
+required freshness check succeeded after approved escalation.
+
+### Harness change
+
+Added `create-feature-issue` as a concise, bounded GitHub Issue-authoring
+workflow. No product code or GitHub Issue was created.
+
+### Lesson learned
+
+A truthful no-write fallback lets an Issue-authoring workflow remain useful
+without assuming external mutation capability.
