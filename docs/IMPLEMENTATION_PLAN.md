@@ -172,7 +172,7 @@ Current product phase:
 
 Current harness phase:
 
-**Phase 4.5 — CI and repository synchronization (complete)**
+**Phase 4.6 — Context-aware Copilot Code Review (complete)**
 
 Current harness maturity:
 
@@ -229,6 +229,7 @@ implemented yet.
 - [x] authenticated GitHub PR delivery
 - [ ] GitHub MCP
 - [x] GitHub Actions CI
+- [x] Context-aware Copilot Code Review
 - [ ] independent AI pull-request review
 - [ ] Figma MCP
 - [ ] Goal-based delegation
@@ -263,6 +264,7 @@ implemented yet.
 ## GitHub engineering workflow
 
 - [x] Phase 4.5 — CI and repository synchronization
+- [x] Phase 4.6 — Context-aware Copilot Code Review
 - [ ] Phase 10 — GitHub Actions CI
 - [ ] Phase 11 — GitHub MCP integration
 - [ ] Phase 12 — Git activity feature through GitHub Issue
@@ -691,6 +693,48 @@ independent GitHub Actions validation for the current pull-request HEAD.
 - [x] CI succeeds for the current PR HEAD
 - [x] CI step-summary generation is verified
 - [x] `pytest.xml`, `ruff.txt`, and `mypy.txt` are verified in the uploaded artifact
+
+Phase 5 remains planned and has not started.
+
+---
+
+# Phase 4.6 — Context-aware Copilot Code Review
+
+Status: **COMPLETE**
+
+## Goal
+
+Configure repository-specific GitHub Copilot Code Review context without
+changing Coffee-Driven Development product behavior.
+
+## Scope
+
+- A review-focused GitHub Copilot Skill generates concrete, repository-aware
+  findings and remains separate from `validate-review-feedback` and
+  `validate-pull-request`.
+- Concise repository Copilot instructions route review work to the Skill and
+  existing engineering guidance.
+- Reviews compare CI evidence to the current pull-request HEAD and may use
+  relevant GitHub or MCP context when available.
+- Any actual Skill, instruction, or MCP usage is recorded only from explicit
+  review attribution or session evidence; this phase does not broadly mark
+  GitHub MCP complete.
+
+## Completion criteria
+
+- [x] A repository-specific review configuration was exercised by a real
+      Copilot pull-request review.
+- [x] Evidence is recorded separately: repository configuration exercised: YES;
+      code-review Skill usage: UNKNOWN; Copilot instruction usage: UNKNOWN;
+      GitHub MCP usage: UNKNOWN; current-head CI-context usage: UNKNOWN.
+- [x] Actionable review feedback was handled through
+      `validate-review-feedback`.
+- [x] Review freshness is assessed through `validate-pull-request`, preferring
+      exact reviewed-SHA evidence and otherwise reporting the documented
+      temporal fallback separately.
+
+GitHub MCP integration remains planned; this phase did not establish broad MCP
+usage or attribution.
 
 Phase 5 remains planned and has not started.
 

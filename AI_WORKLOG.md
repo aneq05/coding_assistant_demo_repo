@@ -767,3 +767,149 @@ now independently reruns deterministic checks in a clean CI environment.
 
 Increasing agent autonomy should be paired with independent validation and
 freshness checks.
+
+## 2026-09-07 — Context-aware Copilot Code Review configuration
+
+### Harness
+
+Tool: Codex
+Model: GPT-5.6 Terra
+Reasoning: Medium
+Mode: Implementation
+Task type: GitHub Copilot review customization
+Risk level: low-medium
+
+### Model selection
+
+GPT-5.6 Terra with Medium reasoning was selected for a bounded harness
+configuration task requiring current GitHub documentation, repository context,
+and careful separation from existing review-validation workflows.
+
+### Goal
+
+Configure repository-specific GitHub Copilot Code Review context without
+changing product behavior or enabling broad credentials.
+
+### AI responsibility
+
+- Synchronized from merged Phase 4.5 on remote `main` at `a3802a7` and created
+  `chore/context-aware-copilot-review`.
+- Verified the supported Copilot instruction and review-Skill locations in
+  current GitHub documentation.
+- Added the review-finding Skill, concise Copilot instructions, and Phase 4.6
+  roadmap entry; created draft PR #4.
+
+### Human responsibility
+
+The human authorized the scope and retains repository settings, review,
+architecture, and final merge authority.
+
+### Outcome
+
+PR #4 is the dedicated Phase 4.6 delivery. It is intentionally limited to
+review configuration and remains separate from `validate-review-feedback` and
+`validate-pull-request`. No product behavior, GitHub MCP server configuration,
+or broad personal access token was added.
+
+### Files changed
+
+- `.github/skills/code-review/SKILL.md`
+- `.github/copilot-instructions.md`
+- `docs/IMPLEMENTATION_PLAN.md`
+- `AI_WORKLOG.md`
+
+### Validation
+
+- Local Skill format validation passed for `.github/skills/code-review`.
+- `git diff --check` passed.
+- `uv run --extra dev pytest` passed with 9 tests.
+- `uv run --extra dev ruff check .` passed.
+- `uv run --extra dev mypy` passed.
+
+Current-HEAD CI and the requested Copilot review will be evaluated after this
+worklog commit creates the final review head; no outcome is recorded before it
+exists.
+
+### Friction / failure
+
+The installed GitHub CLI does not provide the preview `gh skill` command, so
+its `publish --dry-run` validation was unavailable.
+
+### Harness change
+
+The repository now has review-focused Copilot context that requests
+current-HEAD evidence and avoids duplicate or speculative findings.
+
+### Lesson learned
+
+Review configuration should distinguish explicit tool evidence from assumptions
+about what a reviewer used.
+
+## 2026-09-07 — Phase 4.6 review-freshness finalization
+
+### Harness
+
+Tool: Codex
+Model: not recorded
+Reasoning: not recorded
+Mode: Implementation
+Task type: pull-request review-freshness harness improvement
+Risk level: low
+
+### Goal
+
+Finalize Phase 4.6 using evidence from PR #4 and make final-review freshness
+reliable when GitHub omits a reviewed commit SHA.
+
+### AI responsibility
+
+- Synchronized the clean task branch and verified local `main` matched
+  `origin/main` at `a3802a7`.
+- Verified the post-head Copilot review, resolved review threads, and
+  current-head CI evidence for the prior PR #4 head.
+- Added an ordered exact-SHA and temporal fallback to
+  `validate-pull-request`, preserving explicit-SHA preference and CI and
+  actionable-feedback requirements.
+- Recorded Phase 4.6 completion with configuration-exercised evidence and
+  separate UNKNOWN attribution fields.
+
+### Human responsibility
+
+The human specified the temporal evidence policy, authorized Phase 4.6
+completion criteria, and retains final merge authority.
+
+### Outcome
+
+PR #4 remains the existing, unmerged delivery. The readiness workflow can now
+report `TEMPORAL` review-freshness evidence when GitHub omits a reviewed SHA;
+it does not present that evidence as `EXACT_SHA`. Broad GitHub MCP integration
+remains planned.
+
+### Files changed
+
+- `.agents/skills/validate-pull-request/SKILL.md`
+- `docs/IMPLEMENTATION_PLAN.md`
+- `AI_WORKLOG.md`
+
+### Validation
+
+- `quick_validate.py .agents/skills/validate-pull-request` passed.
+- `git diff --check` passed.
+- `uv run --extra dev pytest` passed with 9 tests.
+- `uv run --extra dev ruff check .` passed.
+- `uv run --extra dev mypy` passed.
+
+### Friction / failure
+
+GitHub did not expose a reviewed-commit SHA for the Copilot review, requiring
+the documented temporal fallback.
+
+### Harness change
+
+Final review freshness now has a conservative, evidence-labeled fallback for
+review systems that expose timestamps but not reviewed commit SHAs.
+
+### Lesson learned
+
+When external systems omit exact provenance, a bounded temporal rule can
+preserve safety only when it also proves the branch did not move afterward.
