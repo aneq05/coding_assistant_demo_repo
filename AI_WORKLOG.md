@@ -1364,3 +1364,70 @@ TDD, delivery, and session logging to the repository Skills.
 
 A compact custom-agent profile can preserve workflow authority by referencing
 the existing Skills instead of duplicating their operational instructions.
+
+## 2026-09-07 â€” Git activity status feature delivery
+
+### Harness
+
+Tool: Codex
+Model: not recorded
+Reasoning: not recorded
+Mode: Implementation
+Task type: Scoped product feature delivery from GitHub Issue #12
+Risk level: not recorded
+
+### Goal
+
+Take Issue #12 through implementation and validation to a review-ready pull
+request, including the clarified cohesive Rich status report.
+
+### AI responsibility
+
+- Synchronized `main`, created `feature/git-activity-status`, and implemented
+  local Git activity collection, deterministic activity levels, and the Rich
+  panel presentation.
+- Added focused tests, ran the repository quality gate, committed as `b0a4c3e`,
+  and created PR #13.
+
+### Human responsibility
+
+The human defined the feature scope, presentation requirements, exclusions,
+and retained final review and merge authority.
+
+### Outcome
+
+PR #13 is open and ready for review; it is not merged. Refactor Risk, numeric
+scoring, late-night behavior, and remote GitHub activity remain out of scope.
+
+### Files changed
+
+- `src/cdd/cli.py`
+- `src/cdd/domain.py`
+- `src/cdd/git_activity.py`
+- `src/cdd/presentation.py`
+- `tests/test_git_activity.py`
+- `tests/test_status_presentation.py`
+- `AI_WORKLOG.md`
+
+### Validation
+
+- `uv run --extra dev pytest` — 74 passed.
+- `uv run --extra dev ruff check .` — passed.
+- `uv run --extra dev mypy` — passed.
+- `git diff --check` — passed.
+
+### Friction / failure
+
+The sandbox initially blocked Git metadata writes and the local `uv` cache;
+approved escalation was required for synchronization, delivery, and the final
+quality gate.
+
+### Harness change
+
+No harness behavior changed.
+
+### Lesson learned
+
+Keeping Git collection, deterministic level mapping, and Rich rendering in
+separate responsibilities supports a small implementation with independently
+testable boundaries.
