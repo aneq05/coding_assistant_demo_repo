@@ -7,6 +7,9 @@ __pycache__/
 
 # Testing / typing / lint caches
 .pytest_cache/
+.pytest-tmp/
+.pytest-phase*/
+.phase6-smoke/
 .mypy_cache/
 .ruff_cache/
 reports/

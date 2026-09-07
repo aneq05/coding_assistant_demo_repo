@@ -7,7 +7,7 @@ from pathlib import Path
 import pytest
 
 from cdd.domain import CoffeeEvent
-from cdd.storage import append_event
+from cdd.storage import InvalidHistoryError, append_event, read_events
 
 
 def make_event(drink: str = "espresso", caffeine_mg: int = 80) -> CoffeeEvent:
@@ -66,3 +66,58 @@ def test_append_event_uses_default_history_path(
     append_event(make_event())
 
     assert (tmp_path / ".cdd" / "history.jsonl").is_file()
+
+
+def test_read_events_returns_empty_for_missing_history(tmp_path: Path) -> None:
+    assert read_events(tmp_path / "missing.jsonl") == []
+
+
+def test_read_events_parses_nonempty_lines_in_persisted_order(tmp_path: Path) -> None:
+    history_path = tmp_path / "history.jsonl"
+    history_path.write_text(
+        "\n"
+        '{"timestamp":"2026-09-07T14:30:00+02:00","drink":"espresso",'
+        '"caffeine_mg":80}\n'
+        "   \n"
+        '{"timestamp":"2026-09-07T13:00:00+00:00","drink":"americano",'
+        '"caffeine_mg":120}\n',
+        encoding="utf-8",
+    )
+
+    events = read_events(history_path)
+
+    assert events == [
+        CoffeeEvent(datetime(2026, 9, 7, 12, 30, tzinfo=UTC), "espresso", 80),
+        CoffeeEvent(datetime(2026, 9, 7, 13, 0, tzinfo=UTC), "americano", 120),
+    ]
+
+
+@pytest.mark.parametrize(
+    "line",
+    [
+        "not json",
+        '{}',
+        '{"timestamp":"not-a-time","drink":"espresso","caffeine_mg":80}',
+        (
+            '{"timestamp":"2026-09-07T12:30:00","drink":"espresso",'
+            '"caffeine_mg":80}'
+        ),
+        (
+            '{"timestamp":"2026-09-07T12:30:00+00:00","drink":7,'
+            '"caffeine_mg":80}'
+        ),
+        (
+            '{"timestamp":"2026-09-07T12:30:00+00:00","drink":"espresso",'
+            '"caffeine_mg":true}'
+        ),
+    ],
+)
+def test_read_events_rejects_malformed_nonempty_lines(
+    line: str,
+    tmp_path: Path,
+) -> None:
+    history_path = tmp_path / "history.jsonl"
+    history_path.write_text(f"\n{line}\n", encoding="utf-8")
+
+    with pytest.raises(InvalidHistoryError, match="line 2"):
+        read_events(history_path)
