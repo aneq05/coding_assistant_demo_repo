@@ -222,7 +222,7 @@ def _run_interactive(
             if not _interactive_add(
                 console,
                 history_path,
-                clock(),
+                clock,
                 input_fn,
             ):
                 console.print("Goodbye.")
@@ -261,7 +261,7 @@ def _run_interactive(
 def _interactive_add(
     console: Console,
     history_path: Path | None,
-    now: datetime,
+    clock: Clock,
     input_fn: InputFunction,
 ) -> bool:
     console.print("Choose espresso, americano, or cappuccino.")
@@ -272,7 +272,10 @@ def _interactive_add(
 
     try:
         drink = get_drink(name)
-        append_event(create_coffee_event(drink, timestamp=now), history_path)
+        append_event(
+            create_coffee_event(drink, timestamp=clock()),
+            history_path,
+        )
     except UnsupportedDrinkError as error:
         console.print(str(error))
         return True

@@ -355,3 +355,33 @@ def test_interactive_refreshes_the_clock_for_each_added_drink(
         datetime(2026, 9, 7, 23, 59, tzinfo=UTC),
         datetime(2026, 9, 8, 0, 1, tzinfo=UTC),
     ]
+
+
+def test_interactive_samples_the_clock_after_the_drink_prompt(
+    tmp_path: Path,
+) -> None:
+    history_path = tmp_path / "history.jsonl"
+    current_time = [datetime(2026, 9, 7, 23, 59, tzinfo=UTC)]
+    responses: Iterator[str] = iter(["1", "espresso", "5"])
+
+    def respond(prompt: str) -> str:
+        if prompt == "Drink: ":
+            current_time[0] = datetime(2026, 9, 8, 0, 1, tzinfo=UTC)
+        return next(responses)
+
+    assert main(
+        ["interactive"],
+        history_path=history_path,
+        clock=lambda: current_time[0],
+        to_local=lambda timestamp: timestamp,
+        input_fn=respond,
+    ) == 0
+
+    assert read_events(history_path)[0].timestamp == datetime(
+        2026,
+        9,
+        8,
+        0,
+        1,
+        tzinfo=UTC,
+    )

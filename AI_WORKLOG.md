@@ -1048,8 +1048,8 @@ interactive mode over the same product behavior.
 - Implemented the typed JSONL reader, pure status/statistics calculations,
   Rich presentation, direct commands, and interactive orchestration. Work was
   split between Codex and Cursor after the Codex usage limit was reached.
-- Audited PR #6, classified two Codex review findings as valid, and added
-  per-action clock refresh plus rule-aware per-timestamp local conversion with
+- Audited PR #6, classified three Codex review findings as valid, and added
+  post-prompt clock refresh plus rule-aware per-timestamp local conversion with
   deterministic injection seams.
 - Completed the README, roadmap, and model-usage evidence and ran local
   validation, package build, and isolated command smoke tests.
@@ -1091,9 +1091,10 @@ independent-review phase remain incomplete.
   and `InvalidHistoryError` did not exist; presentation tests failed collection
   because `cdd.presentation` did not exist.
 - Review RED: focused DST-localization and interactive-clock tests failed with
-  unsupported `to_local` and `clock` arguments on reviewed head `2ba3fe3`.
-- Review GREEN: both focused regression tests passed after the corrections.
-- `uv run --extra dev pytest` passed with 63 tests.
+  unsupported `to_local` and `clock` arguments on reviewed head `2ba3fe3`; a
+  later post-prompt clock regression reproduced a finding on head `4655c60`.
+- Review GREEN: all focused regression tests passed after the corrections.
+- `uv run --extra dev pytest` passed with 64 tests.
 - `uv run --extra dev ruff check .` passed.
 - `uv run --extra dev mypy` passed with no issues in 9 source files.
 - `git diff --check` passed.
