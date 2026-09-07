@@ -1,0 +1,61 @@
+name: Feature request
+description: Propose one scoped feature for Coffee-Driven Development.
+title: "[Feature]: "
+body:
+  - type: textarea
+    id: description
+    attributes:
+      label: Short feature description
+      description: Briefly describe the user-facing change or outcome.
+    validations:
+      required: true
+
+  - type: textarea
+    id: goal
+    attributes:
+      label: Goal
+      description: What outcome should this feature achieve?
+    validations:
+      required: true
+
+  - type: textarea
+    id: requirements
+    attributes:
+      label: Requirements
+      description: List the observable behavior this feature must provide.
+    validations:
+      required: true
+
+  - type: textarea
+    id: acceptance-criteria
+    attributes:
+      label: Acceptance criteria
+      description: List the conditions that demonstrate the feature is complete.
+      placeholder: |
+        - [ ]
+    validations:
+      required: true
+
+  - type: textarea
+    id: constraints
+    attributes:
+      label: Constraints
+      description: Note repository, technical, or workflow boundaries.
+    validations:
+      required: true
+
+  - type: textarea
+    id: out-of-scope
+    attributes:
+      label: Out of scope
+      description: List related work that this Issue must not include.
+    validations:
+      required: true
+
+  - type: textarea
+    id: implementation-notes
+    attributes:
+      label: Implementation notes (optional)
+      description: Add context, references, or suggested approaches without fixing the implementation.
+    validations:
+      required: false
