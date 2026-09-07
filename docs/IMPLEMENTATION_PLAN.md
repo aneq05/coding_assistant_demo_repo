@@ -172,7 +172,7 @@ Current product phase:
 
 Current harness phase:
 
-**Phase 4.5 — CI and repository synchronization (complete)**
+**Phase 4.6 — Context-aware Copilot Code Review (in progress)**
 
 Current harness maturity:
 
@@ -229,6 +229,7 @@ implemented yet.
 - [x] authenticated GitHub PR delivery
 - [ ] GitHub MCP
 - [x] GitHub Actions CI
+- [ ] context-aware Copilot Code Review
 - [ ] independent AI pull-request review
 - [ ] Figma MCP
 - [ ] Goal-based delegation
@@ -263,6 +264,7 @@ implemented yet.
 ## GitHub engineering workflow
 
 - [x] Phase 4.5 — CI and repository synchronization
+- [ ] Phase 4.6 — Context-aware Copilot Code Review
 - [ ] Phase 10 — GitHub Actions CI
 - [ ] Phase 11 — GitHub MCP integration
 - [ ] Phase 12 — Git activity feature through GitHub Issue
@@ -691,6 +693,42 @@ independent GitHub Actions validation for the current pull-request HEAD.
 - [x] CI succeeds for the current PR HEAD
 - [x] CI step-summary generation is verified
 - [x] `pytest.xml`, `ruff.txt`, and `mypy.txt` are verified in the uploaded artifact
+
+Phase 5 remains planned and has not started.
+
+---
+
+# Phase 4.6 — Context-aware Copilot Code Review
+
+Status: **IN PROGRESS**
+
+## Goal
+
+Configure repository-specific GitHub Copilot Code Review context without
+changing Coffee-Driven Development product behavior.
+
+## Scope
+
+- A review-focused GitHub Copilot Skill generates concrete, repository-aware
+  findings and remains separate from `validate-review-feedback` and
+  `validate-pull-request`.
+- Concise repository Copilot instructions route review work to the Skill and
+  existing engineering guidance.
+- Reviews compare CI evidence to the current pull-request HEAD and may use
+  relevant GitHub or MCP context when available.
+- Any actual Skill, instruction, or MCP usage is recorded only from explicit
+  review attribution or session evidence; this phase does not broadly mark
+  GitHub MCP complete.
+
+## Completion criteria
+
+- [ ] A repository-specific review configuration is exercised on a pull request.
+- [ ] Skill, instruction, MCP, and current-HEAD CI-context evidence is recorded
+      separately as YES, NO, or UNKNOWN.
+- [ ] Any actionable review feedback is handled through
+      `validate-review-feedback`.
+- [ ] Final pull-request readiness is assessed through
+      `validate-pull-request`.
 
 Phase 5 remains planned and has not started.
 
