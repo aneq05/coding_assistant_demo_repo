@@ -38,7 +38,11 @@ def main(
         except UnsupportedDrinkError as error:
             parser.error(str(error))
 
-        append_event(create_coffee_event(drink), history_path)
+        try:
+            append_event(create_coffee_event(drink), history_path)
+        except OSError as error:
+            parser.error(f"Could not persist coffee event: {error}")
+
         print(drink.name)
         print(f"Estimated caffeine: {drink.caffeine_mg} mg")
 

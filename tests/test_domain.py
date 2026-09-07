@@ -1,6 +1,6 @@
 """Tests for deterministic drink information."""
 
-from datetime import UTC, datetime
+from datetime import UTC, datetime, timedelta, timezone
 
 import pytest
 
@@ -50,3 +50,28 @@ def test_create_coffee_event_captures_required_drink_data() -> None:
         drink="espresso",
         caffeine_mg=80,
     )
+
+
+def test_create_coffee_event_normalizes_aware_timestamp_to_utc() -> None:
+    """Injected aware timestamps preserve the UTC storage invariant."""
+    timestamp = datetime(
+        2026,
+        9,
+        7,
+        14,
+        30,
+        tzinfo=timezone(timedelta(hours=2)),
+    )
+
+    event = create_coffee_event(get_drink("espresso"), timestamp=timestamp)
+
+    assert event.timestamp == datetime(2026, 9, 7, 12, 30, tzinfo=UTC)
+    assert event.timestamp.tzinfo is UTC
+
+
+def test_create_coffee_event_rejects_naive_timestamp() -> None:
+    """A timestamp without timezone information cannot become a stored event."""
+    timestamp = datetime(2026, 9, 7, 12, 30, tzinfo=UTC).replace(tzinfo=None)
+
+    with pytest.raises(ValueError, match="timestamp must be timezone-aware"):
+        create_coffee_event(get_drink("espresso"), timestamp=timestamp)

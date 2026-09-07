@@ -53,6 +53,24 @@ def test_drink_rejects_unsupported_drink(
     assert not history_path.exists()
 
 
+def test_drink_reports_persistence_failure_without_traceback(
+    capsys: pytest.CaptureFixture[str],
+    monkeypatch: pytest.MonkeyPatch,
+    tmp_path: Path,
+) -> None:
+    """Filesystem failures remain a clean CLI error at the presentation boundary."""
+    def fail_to_append(*args: object) -> None:
+        raise OSError("read-only filesystem")
+
+    monkeypatch.setattr("cdd.cli.append_event", fail_to_append)
+
+    with pytest.raises(SystemExit) as result:
+        main(["drink", "espresso"], history_path=tmp_path / "history.jsonl")
+
+    assert result.value.code != 0
+    assert "Could not persist coffee event" in capsys.readouterr().err
+
+
 def test_help_exits_successfully(capsys: pytest.CaptureFixture[str]) -> None:
     """The CLI exposes its initial help screen."""
     with pytest.raises(SystemExit) as result:

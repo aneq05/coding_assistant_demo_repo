@@ -47,8 +47,12 @@ def create_coffee_event(
     timestamp: datetime | None = None,
 ) -> CoffeeEvent:
     """Create a coffee event for a supported drink."""
+    event_timestamp = timestamp or datetime.now(UTC)
+    if event_timestamp.tzinfo is None or event_timestamp.utcoffset() is None:
+        raise ValueError("timestamp must be timezone-aware")
+
     return CoffeeEvent(
-        timestamp=timestamp or datetime.now(UTC),
+        timestamp=event_timestamp.astimezone(UTC),
         drink=drink.kind,
         caffeine_mg=drink.caffeine_mg,
     )
