@@ -235,6 +235,21 @@ def test_stats_empty_history_has_no_favorite(
     assert "Favorite drink" in output and "None" in output
 
 
+def test_stats_rejects_a_window_before_the_minimum_date(
+    capsys: pytest.CaptureFixture[str],
+    tmp_path: Path,
+) -> None:
+    with pytest.raises(SystemExit) as result:
+        main(
+            ["stats", "--days", "2"],
+            history_path=tmp_path / "missing.jsonl",
+            now=datetime(1, 1, 1, tzinfo=UTC),
+        )
+
+    assert result.value.code != 0
+    assert "statistics period" in capsys.readouterr().err
+
+
 def test_malformed_history_is_a_clean_cli_error(
     capsys: pytest.CaptureFixture[str],
     tmp_path: Path,

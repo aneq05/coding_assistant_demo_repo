@@ -59,6 +59,10 @@ class UnsupportedDrinkError(ValueError):
     """Raised when a drink is not supported."""
 
 
+class InvalidStatsPeriodError(ValueError):
+    """Raised when a statistics window cannot be represented."""
+
+
 _DRINKS = {
     "espresso": Drink(kind="espresso", name="Espresso", caffeine_mg=80),
     "americano": Drink(kind="americano", name="Americano", caffeine_mg=120),
@@ -141,6 +145,8 @@ def calculate_stats(
 
     local_timezone = _timezone_from(now)
     local_now = _localize(now, to_local, local_timezone)
+    if days > local_now.date().toordinal():
+        raise InvalidStatsPeriodError("days extend before the minimum date")
     first_day = local_now.date() - timedelta(days=days - 1)
     daily_totals = {first_day + timedelta(days=offset): 0 for offset in range(days)}
     included_events: list[CoffeeEvent] = []

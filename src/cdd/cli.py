@@ -9,6 +9,7 @@ from pathlib import Path
 from rich.console import Console
 
 from cdd.domain import (
+    InvalidStatsPeriodError,
     LocalTimeConverter,
     UnsupportedDrinkError,
     calculate_stats,
@@ -129,13 +130,16 @@ def main(
                     to_local=localize,
                 )
             elif arguments.command == "stats":
-                _show_stats(
-                    output,
-                    history_path=history_path,
-                    days=arguments.days,
-                    now=current_time(),
-                    to_local=localize,
-                )
+                try:
+                    _show_stats(
+                        output,
+                        history_path=history_path,
+                        days=arguments.days,
+                        now=current_time(),
+                        to_local=localize,
+                    )
+                except InvalidStatsPeriodError as error:
+                    parser.error(f"Invalid statistics period: {error}")
         except (InvalidHistoryError, OSError) as error:
             parser.error(f"Could not read coffee history: {error}")
 
@@ -254,6 +258,8 @@ def _run_interactive(
                 )
             else:
                 console.print("Invalid selection. Choose 1–5.")
+        except InvalidStatsPeriodError as error:
+            console.print(f"Invalid statistics period: {error}")
         except (InvalidHistoryError, OSError) as error:
             console.print(f"Could not read coffee history: {error}")
 
