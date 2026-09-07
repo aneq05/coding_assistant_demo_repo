@@ -1,12 +1,14 @@
 # Coffee-Driven Development
 
-A deliberately small and slightly ridiculous Python CLI
-used as a sandbox for experimenting with AI-assisted
-software engineering workflows.
+Coffee-Driven Development is two things:
 
-The application tracks coffee consumption and developer
-activity to estimate when software engineering decisions
-start becoming questionable.
+1. A deliberately small, typed Python CLI for tracking coffee and developer
+   activity.
+2. An AI-assisted engineering harness sandbox: the product stays small so the
+   repository workflow remains easy to inspect and demonstrate.
+
+The application estimates when software engineering decisions start becoming
+questionable. The interesting engineering exercise is the harness around it.
 
 ## Usage
 
@@ -22,7 +24,7 @@ For example, status after a productive morning:
 
 ```text
 Coffee-Driven Development
-─────────────────────────
+──────────────────────────
 Coffees today:      ☕ ☕
 Caffeine today:     200 mg
 Developer state:    PRODUCTIVE
@@ -51,3 +53,76 @@ Coffees today:      0
 Caffeine today:     0 mg
 Developer state:    NO SIGNAL
 ```
+
+## Why this project exists
+
+The product is intentionally small and explainable in a couple of minutes.
+That leaves room to explore how an AI-assisted engineering workflow can be
+made persistent, repeatable, validated, reviewable, and human-controlled.
+
+## Architecture
+
+```text
+CLI / orchestration
+        ↓
+pure domain logic
+        ↓
+local JSONL storage
+```
+
+Presentation is the terminal boundary: it formats domain results for the CLI,
+while domain rules remain independent of command-line rendering.
+
+## AI engineering harness
+
+The repository contains the building blocks of a small, inspectable harness:
+
+- persistent instructions in [`AGENTS.md`](AGENTS.md)
+- reusable repository [Skills](.agents/skills/), including
+  [`create-feature-issue`](.agents/skills/create-feature-issue/SKILL.md),
+  [`develop-feature-tdd`](.agents/skills/develop-feature-tdd/SKILL.md),
+  [`validate-review-feedback`](.agents/skills/validate-review-feedback/SKILL.md),
+  and [`validate-pull-request`](.agents/skills/validate-pull-request/SKILL.md)
+- a [Feature Issue template](.github/ISSUE_TEMPLATE/feature.yml)
+- a [Feature Delivery Agent](.github/agents/feature-delivery.agent.md)
+- a [CI Triage Agent](.github/agents/ci-triage.agent.md), configured for a
+  human-selected operational exercise
+- [GitHub Actions](.github/workflows/ci.yml) for deterministic validation
+- context-aware AI code-review configuration in
+  [`.github/copilot-instructions.md`](.github/copilot-instructions.md)
+- [`AI_WORKLOG.md`](AI_WORKLOG.md) for factual session history
+- documented [model-routing evidence](docs/ai/model-usage.md)
+
+The repository does not claim a connected GitHub MCP or Figma MCP integration:
+those tool surfaces are not connected yet. GitHub capabilities documented in
+[`docs/ai/github-integration-capabilities.md`](docs/ai/github-integration-capabilities.md)
+are based on the evidence and boundaries recorded there.
+
+## Engineering workflow
+
+```text
+Human goal
+    → GitHub Issue
+    → AI planning / TDD
+    → implementation
+    → local validation
+    → PR
+    → CI + AI review
+    → feedback validation
+    → human merge
+```
+
+Human approval remains required for important scope, architecture, and merge
+decisions.
+
+## Evidence
+
+- [`AI_WORKLOG.md`](AI_WORKLOG.md)
+- [`docs/IMPLEMENTATION_PLAN.md`](docs/IMPLEMENTATION_PLAN.md)
+- [`docs/ai/model-usage.md`](docs/ai/model-usage.md)
+- [`docs/ai/github-integration-capabilities.md`](docs/ai/github-integration-capabilities.md)
+
+## Future demo
+
+Git activity is the next normal product feature. **Late-Night Refactor Risk**
+is intentionally reserved for the live demo.

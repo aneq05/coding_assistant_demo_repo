@@ -1431,3 +1431,139 @@ No harness behavior changed.
 Keeping Git collection, deterministic level mapping, and Rich rendering in
 separate responsibilities supports a small implementation with independently
 testable boundaries.
+
+## 2026-09-07 â€” README product and harness overview
+
+### Harness
+
+Tool: Codex
+Model: not recorded
+Reasoning: not recorded
+Mode: Implementation
+Task type: documentation
+Risk level: low
+
+### Goal
+
+Make the README present Coffee-Driven Development as both a small Python CLI
+and an AI-assisted engineering harness sandbox while preserving product usage
+examples.
+
+### AI responsibility
+
+- Synchronized the repository and inspected the current product and harness
+  evidence.
+- Updated the README with the requested purpose, architecture, workflow,
+  capabilities, evidence links, and future-demo boundary.
+- Created and pushed branch `docs/readme-harness-overview`, commit `0346618`,
+  and pull request #10.
+
+### Human responsibility
+
+The human specified the README scope, required truthful MCP boundaries, and
+retains review and final-merge authority.
+
+### Outcome
+
+The README is concise and skimmable, distinguishes terminal presentation from
+the CLI/domain/storage path, and does not claim GitHub MCP or Figma MCP is
+connected.
+
+### Files changed
+
+- `README.md`
+- `AI_WORKLOG.md`
+
+### Validation
+
+- `git diff --check` passed.
+- `uv run --extra dev pytest` passed: 65 tests.
+- `uv run --extra dev ruff check .` passed.
+- `uv run --extra dev mypy` passed.
+- PR #10 was created for human review; no merge was performed.
+
+### Friction / failure
+
+The sandbox initially blocked Git fetch and uv cache/Python-environment access;
+approved escalation completed synchronization and validation. An unrelated
+untracked Feature Delivery Agent file was preserved and excluded from the PR.
+
+### Harness change
+
+No harness behavior changed; the README now provides a concise entry point to
+the existing harness evidence.
+
+### Lesson learned
+
+README claims about integrations should follow the repository's recorded
+evidence and explicitly separate authenticated CLI/API capability from an
+unconnected MCP tool surface.
+
+## 2026-09-07 — merge-conflict Skill and PR #10 resolution
+
+### Harness
+
+Tool: Codex with GitHub MCP and local Git
+Model: not recorded
+Reasoning: not recorded
+Mode: Implementation
+Task type: repository Skill and merge-conflict resolution
+Risk level: medium
+
+### Goal
+
+Create and exercise `resolve-merge-conflict` on the real PR #10 conflict while
+preserving the PR and current `main` changes.
+
+### AI responsibility
+
+- Inspected PR #10 metadata, base/head refs, changed files, mergeability,
+  current `main`, and recent commits through GitHub MCP.
+- Merged current `main` into the PR head in an isolated worktree, identified
+  `AI_WORKLOG.md` as the only conflicted file, classified it as COMPOSABLE,
+  and retained both independent worklog histories.
+- Added the reusable conflict-resolution Skill and ran its workflow on this
+  real conflict without force-pushing or merging the PR.
+
+### Human responsibility
+
+The human requested the Skill and conflict exercise and retains authority for
+ambiguous product or architectural decisions and final PR merge.
+
+### Outcome
+
+PR #10's README work, current-main changes, both worklog histories, and the
+new conflict-resolution Skill are present on the resolved branch.
+
+### Files changed
+
+- `.agents/skills/resolve-merge-conflict/SKILL.md`
+- `AI_WORKLOG.md`
+- Current-main files merged from `main` into PR #10.
+
+### Validation
+
+- `uv run --extra dev pytest` — 74 passed.
+- `uv run --extra dev ruff check .` — passed.
+- `uv run --extra dev mypy` — passed.
+- `git diff --check` — passed.
+- No conflict markers or unmerged paths remain.
+
+### Friction / failure
+
+Initial sandbox restrictions blocked Git metadata and uv cache access; approved
+escalation was used. The bundled Skill validator could not run because `python`
+was unavailable, so the Skill was checked directly and the repository gate ran
+successfully.
+
+### Harness change
+
+Added `.agents/skills/resolve-merge-conflict/SKILL.md`, covering safe discovery,
+conflict classification, evidence-based composition, human escalation, and
+post-resolution validation.
+
+### Lesson learned
+
+Worklog conflicts can be resolved compositionally when both sides are
+independent chronological records; merge intent should still be established
+from branch history and changed files rather than markers alone.
