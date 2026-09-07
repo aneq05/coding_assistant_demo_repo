@@ -28,11 +28,20 @@ workflow, or merge workflow.
    CI success from a PR description or treat local validation as independent CI.
    For harness or documentation PRs, apply required CI when repository policy
    requires it and confirm relevant Skill and diff validation occurred.
-5. Read review submissions, comments, and threads. Compare the current PR HEAD
-   with the latest relevant automated or required review using an exposed review
-   commit SHA or explicit reviewed-commit evidence. Do not guess. A review shown
-   to cover the current HEAD passes; a stale or unverifiable required review is
-   `NEEDS_ATTENTION`, and a new review should be requested after HEAD changes.
+5. Read review submissions, comments, threads, the current PR HEAD commit time,
+   and branch commit history. Determine automated or required review freshness
+   in this order:
+   - `EXACT_SHA`: an exposed reviewed commit SHA or explicit reviewed-commit
+     evidence equals the current PR HEAD. This passes.
+   - `TEMPORAL`: only when GitHub does not expose a reviewed SHA, a relevant
+     review submission is later than the current HEAD commit timestamp, the PR
+     still reports that same HEAD after the review, and branch history shows no
+     newer commit. This passes on temporal evidence, not as an equivalent to
+     explicit-SHA evidence.
+   - Otherwise return `NEEDS_ATTENTION` for stale or unverifiable required
+     review coverage and request a new review after HEAD changes.
+   Report the evidence method used; do not guess or label temporal evidence as
+   `EXACT_SHA`.
 6. Classify readiness as `BLOCKED` for a confirmed unmergeable or conflicted PR,
    failed required current-HEAD CI, unresolved actionable feedback, or failing
    required validation; `NEEDS_ATTENTION` for unknown mergeability, incomplete
