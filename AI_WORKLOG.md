@@ -1636,3 +1636,70 @@ PR-validation capabilities.
 An orchestrator stays small when it owns state diagnosis and dependency order
 while repository Skills and specialist agents continue to own corrections and
 validation details.
+
+## 2026-09-09 — read-only harness retrospective Skill
+
+### Harness
+
+Tool: Codex with GitHub CLI and local Git
+Model: GPT-5
+Reasoning: not recorded
+Mode: Default
+Task type: repository Skill
+Risk level: low
+
+### Goal
+
+Add one concise, evidence-driven Skill for periodic read-only evaluation of
+whether the repository harness should improve.
+
+### AI responsibility
+
+- Synchronized local `main` with `origin/main` and isolated unrelated local
+  work in a sibling worktree on `chore/harness-retrospective`.
+- Added the Skill and minimal `AGENTS.md` routing, validated the repository,
+  created task commit `168379e`, and opened draft PR #19.
+
+### Human responsibility
+
+The human specified the retrospective evidence, classifications, safety
+boundaries, and output fields, and retains review and final-merge authority.
+
+### Outcome
+
+The new workflow separates observed facts, inferences, and evidence gaps;
+requires concrete support for repeated friction; and permits `DO NOTHING` when
+additional harness complexity is not justified. It cannot modify the harness
+or implement its own recommendations.
+
+### Files changed
+
+- `.agents/skills/harness-retrospective/SKILL.md`
+- `AGENTS.md`
+- `AI_WORKLOG.md`
+
+### Validation
+
+- Bundled Skill validator — passed.
+- `uv run --extra dev pytest` — 74 passed.
+- `uv run --extra dev ruff check .` — passed.
+- `uv run --extra dev mypy` — passed.
+- `git diff --check` — passed.
+
+### Friction / failure
+
+The starting worktree contained unrelated modified and untracked files, so the
+task used an isolated sibling worktree. The validator required transient
+PyYAML because it is not a project dependency, and sandbox approval was needed
+for Git metadata, environment, and GitHub access.
+
+### Harness change
+
+Added `harness-retrospective` plus one routing instruction in `AGENTS.md`; no
+product behavior, dependency, or permission changed.
+
+### Lesson learned
+
+A retrospective workflow can stay concise when it defines evidence quality,
+classification, and decision boundaries while leaving data collection scoped
+to sources relevant and available to each run.
