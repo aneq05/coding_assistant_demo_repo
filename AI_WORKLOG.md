@@ -1568,6 +1568,77 @@ Worklog conflicts can be resolved compositionally when both sides are
 independent chronological records; merge intent should still be established
 from branch history and changed files rather than markers alone.
 
+## 2026-09-09 — isolated Feature Delivery Agent worktrees
+
+### Harness
+
+Tool: Codex with local Git and GitHub CLI
+Model: GPT-5
+Reasoning: not recorded
+Mode: Implementation
+Task type: custom-agent configuration and Git delivery safety
+Risk level: medium
+
+### Goal
+
+Allow the existing Feature Delivery Agent to perform bounded Issue-to-PR work
+in an isolated Git worktree without disturbing the primary checkout.
+
+### AI responsibility
+
+- Inspected the primary checkout, remotes, default branch, fetched state, and
+  registered worktrees before creating task state.
+- Created `chore/feature-delivery-worktrees` from fetched `origin/main` in the
+  deterministic sibling worktree `ai_coding_assistant.worktrees/feature-delivery-worktrees`.
+- Updated the existing agent with conservative worktree creation, identity
+  verification, cleanup-reporting, and Git safety boundaries while composing
+  with the existing repository Skills.
+- Created draft pull request #16 after validation.
+
+### Human responsibility
+
+The human specified the isolation and safety requirements and retains review
+and final-merge authority.
+
+### Outcome
+
+The Feature Delivery Agent now supports isolated delivery when primary-checkout
+state favors it. The primary branch and its existing user change were preserved,
+and unrelated registered worktrees were neither reused nor removed.
+
+### Files changed
+
+- `.github/agents/feature-delivery.agent.md`
+- `AI_WORKLOG.md`
+
+### Validation
+
+- Agent frontmatter, required safety instructions, and prompt length passed a
+  focused configuration check against the documented GitHub profile shape.
+- The task worktree path, branch, base ancestry, and separation from the primary
+  checkout were verified.
+- `uv run --extra dev pytest` passed: 74 tests.
+- `uv run --extra dev ruff check .` passed.
+- `uv run --extra dev mypy` passed.
+- `git diff --check` passed for the agent change.
+
+### Friction / failure
+
+The host-created sibling worktree required a command-scoped Git safe-directory
+setting for sandboxed read-only checks. Existing unrelated worktrees were left
+untouched, including one nested under the primary checkout.
+
+### Harness change
+
+The existing Feature Delivery Agent gained isolated worktree setup and safety
+checks. No new Skill was added and no existing Skill workflow was duplicated.
+
+### Lesson learned
+
+A deterministic sibling worktree avoids surfacing task files as untracked
+content in the primary checkout and lets delivery proceed without switching its
+branch or moving user changes.
+
 ## 2026-09-09 — resumable AI run-state Skill
 
 ### Harness
@@ -1908,3 +1979,62 @@ their existing layers.
 
 A small declarative value file removes drift when consumers remain explicit
 and procedural policy stays in repository instructions and Skills.
+
+## 2026-09-09 — PR #16 conflict resolution after PR #15 merge
+
+### Harness
+
+Tool: Codex with local Git and GitHub CLI
+Model: GPT-5
+Reasoning: not recorded
+Mode: Default
+Task type: merge-conflict resolution
+Risk level: low
+
+### Goal
+
+Resolve PR #16 against the current `main` without altering its isolated
+Feature Delivery Agent worktree behavior.
+
+### AI responsibility
+
+- Verified the PR branch and remote base in its isolated worktree.
+- Merged `origin/main` and compositionally retained the independent PR #16 and
+  merged PR #15 worklog entries.
+- Created and pushed merge commit `0431038` without rewriting history.
+
+### Human responsibility
+
+The human narrowed the requested scope to PR #16 and retains final merge
+authority.
+
+### Outcome
+
+PR #16 incorporates current mainline harness changes while its intended agent
+worktree changes remain intact.
+
+### Files changed
+
+- Mainline harness files incorporated by the merge
+- `AI_WORKLOG.md`
+
+### Validation
+
+- `uv run --extra dev pytest` — 74 passed.
+- `uv run --extra dev ruff check .` — passed.
+- `uv run --extra dev mypy` — passed with no issues in 12 source files.
+- Conflict-marker, unmerged-path, and staged-diff checks — passed.
+
+### Friction / failure
+
+The local default branch was behind the remote base, so the current
+`origin/main` was merged directly into the isolated PR worktree.
+
+### Harness change
+
+No new harness behavior was introduced by the resolution.
+
+### Lesson learned
+
+Rechecking the remote base immediately before resolution avoids treating a
+previously mergeable PR as current after another PR advances `main`.
