@@ -3,8 +3,9 @@ run_id: 2026-09-09-interactive-drink-picker
 status: ACTIVE
 goal: Implement the specified interactive drink picker and deliver a review-ready pull request.
 github_issue: null
-pull_request: null
+pull_request: https://github.com/aneq05/coding_assistant_demo_repo/pull/25
 branch: feature/interactive-drink-picker
+commit_sha: 274172250023b67d7cb3e2ba3e70811270f29a6b
 ---
 
 ## Progress
@@ -27,4 +28,4 @@ branch: feature/interactive-drink-picker
 
 ## Next action
 
-Commit and publish the validated implementation on the dedicated branch.
+Record delivery, then obtain current-HEAD CI and independent review evidence.

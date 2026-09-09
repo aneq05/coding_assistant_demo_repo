@@ -2554,3 +2554,78 @@ No additional harness behavior changed during delivery.
 
 A separate worklog-only follow-up commit preserves the actual PR outcome
 without rewriting the reviewed implementation commit.
+
+## 2026-09-09 — interactive drink picker delivery
+
+### Harness
+
+Tool: Codex with local Git, uv, and GitHub CLI
+Model: GPT-5
+Reasoning: not recorded
+Mode: Default
+Task type: behavioral feature implementation and pull-request delivery
+Risk level: medium
+
+### Goal
+
+Implement the specified Interactive Drink Picker and deliver it as a
+review-ready, human-controlled pull request without merging.
+
+### AI responsibility
+
+- Synchronized `main`, selected the targeted product and architecture
+  requirements, and maintained resumable state under `.ai/runs/`.
+- Added acceptance tests first, confirmed the expected missing-behavior RED,
+  then implemented the seven-drink domain catalog, Rich picker, numeric
+  selection, canonical aliases, and clean invalid-selection recovery.
+- Updated the authoritative specification, validated conformance, ran the
+  configured quality gate, and created draft PR #25 from the dedicated branch.
+
+### Human responsibility
+
+The human requested end-to-end delivery and retains architecture, review, and
+final-merge authority. No merge or auto-merge action was taken.
+
+### Outcome
+
+Commit `2741722` implements the feature on
+`feature/interactive-drink-picker`; draft PR #25 was created for review.
+
+### Files changed
+
+- `.ai/runs/2026-09-09-interactive-drink-picker.md`
+- `spec/README.md`
+- `spec/features/interactive-drink-picker.md`
+- `spec/product.md`
+- `src/cdd/cli.py`
+- `src/cdd/domain.py`
+- `src/cdd/presentation.py`
+- `tests/test_cli.py`
+- `tests/test_domain.py`
+- `tests/test_presentation.py`
+- `AI_WORKLOG.md`
+
+### Validation
+
+- Targeted TDD suite — 88 passed; expected RED preceded implementation.
+- `uv run --extra dev pytest` — 122 passed; 94.35% branch coverage.
+- `uv run --extra dev ruff check .` — passed.
+- `uv run --extra dev mypy` — passed with no issues in 23 source files.
+- Scoped specification validation — `CLEAR` for `CDD-PICK-001` through
+  `CDD-PICK-009` and affected current-product and architecture requirements.
+
+### Friction / failure
+
+Sandboxed uv cache access required approval. The first full Ruff pass found
+two import-order findings; both were corrected before the complete quality
+gate passed.
+
+### Harness change
+
+No reusable harness behavior changed. The run file records only compact
+operational state for this delivery.
+
+### Lesson learned
+
+A stable tuple can serve both direct lookup and picker ordering while keeping
+presentation-only icons out of domain and persisted event data.
