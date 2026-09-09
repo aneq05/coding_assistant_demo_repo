@@ -46,6 +46,7 @@ All checks must pass.
 | Situation | Use |
 | --- | --- |
 | Before repository-changing work, or after a merged PR before subsequent work, unless freshness was already verified in the current session | `sync-repository` |
+| Work likely to span sessions or meaningful stages needs operational state under `.ai/runs/` while permanent history remains in `AI_WORKLOG.md` | `manage-ai-run` |
 | A short feature goal needs to become one scoped GitHub Issue, without implementation or multi-Issue planning | `create-feature-issue` |
 | A scoped behavioral product change needs implementation; not documentation, Skills, or Git-only work | `develop-feature-tdd` |
 | A completed, validated change is ready to be delivered on a dedicated branch as a review-ready PR | `prepare-pull-request` |

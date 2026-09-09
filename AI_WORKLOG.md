@@ -1568,6 +1568,74 @@ Worklog conflicts can be resolved compositionally when both sides are
 independent chronological records; merge intent should still be established
 from branch history and changed files rather than markers alone.
 
+## 2026-09-09 — resumable AI run-state Skill
+
+### Harness
+
+Tool: Codex
+Model: not recorded
+Reasoning: not recorded
+Mode: Implementation
+Task type: repository Skill and harness guidance
+Risk level: low
+
+### Goal
+
+Add lightweight operational state for meaningful AI engineering work that may
+span sessions or stages without duplicating permanent project history.
+
+### AI responsibility
+
+- Preserved an unrelated local test change by working from `origin/main` in an
+  isolated `feature/manage-ai-run` worktree.
+- Added and validated `manage-ai-run`, introduced `.ai/runs/`, and added
+  concise repository routing.
+- Committed the harness change as `cf72207` and created PR #15.
+
+### Human responsibility
+
+The human specified the run-state content and safety rules and retains review
+and final-merge authority.
+
+### Outcome
+
+PR #15 contains a compact start-or-continue workflow that reconciles recorded
+state with repository evidence, resumes from the first incomplete step, and
+keeps `AI_WORKLOG.md` as the historical record. No product code changed, and
+no merge was performed.
+
+### Files changed
+
+- `.agents/skills/manage-ai-run/SKILL.md`
+- `.ai/runs/.gitkeep`
+- `AGENTS.md`
+- `AI_WORKLOG.md`
+
+### Validation
+
+- Skill Creator `quick_validate.py` — passed.
+- `uv run --extra dev pytest` — 74 passed.
+- `uv run --extra dev ruff check .` — passed.
+- `uv run --extra dev mypy` — passed.
+- Staged diff check — passed.
+
+### Friction / failure
+
+The current merged feature branch contained an unrelated uncommitted test
+change, so delivery used an isolated worktree. The Skill validator required an
+ephemeral PyYAML installation because it is not a project dependency.
+
+### Harness change
+
+Added a repository Skill for evidence-backed resumable run state and minimal
+`AGENTS.md` routing to it.
+
+### Lesson learned
+
+Operational continuation state stays useful and compact when it records only
+the next-step checklist and supporting evidence while durable outcomes remain
+in the chronological worklog.
+
 ## 2026-09-09 — PR autopilot custom agent
 
 ### Harness
@@ -1636,6 +1704,67 @@ PR-validation capabilities.
 An orchestrator stays small when it owns state diagnosis and dependency order
 while repository Skills and specialist agents continue to own corrections and
 validation details.
+
+## 2026-09-09 — merge-conflict resolution for PRs #15, #16, and #17
+
+### Harness
+
+Tool: Codex with local Git and GitHub CLI
+Model: GPT-5
+Reasoning: not recorded
+Mode: Default
+Task type: multi-PR merge-conflict resolution
+Risk level: medium
+
+### Goal
+
+Resolve current merge conflicts against `main` for PRs #15, #16, and #17
+without disturbing unrelated work in the primary checkout.
+
+### AI responsibility
+
+- Verified local and remote default-branch freshness and inspected all three PRs.
+- Used isolated worktrees, merged `origin/main`, and preserved both independent
+  `AI_WORKLOG.md` entries on each branch.
+- Created and pushed merge commits `283973c`, `b96bfdf`, and `e502379`.
+
+### Human responsibility
+
+The human requested resolution of the three PR conflicts and retains review and
+final-merge authority.
+
+### Outcome
+
+PRs #15, #16, and #17 were updated without force-pushing or changing their
+feature intent. The unrelated primary-checkout modification remained untouched.
+
+### Files changed
+
+- `.github/agents/pr-autopilot.agent.md` (merged from `main`)
+- `AI_WORKLOG.md`
+
+### Validation
+
+- `uv run --extra dev pytest` — 74 passed on each branch.
+- `uv run --extra dev ruff check .` — passed on each branch.
+- `uv run --extra dev mypy` — passed on each branch.
+- Staged diff checks and conflict-marker checks — passed on each branch.
+
+### Friction / failure
+
+Windows retained stale absolute paths in PR #16's moved virtual environment; a
+fresh environment was created and the full validation gate then passed.
+
+### Harness change
+
+No new harness behavior was introduced; each branch only incorporated the
+already-reviewed mainline agent and retained its own feature changes.
+
+### Lesson learned
+
+Independent chronological worklog entries should be composed rather than
+selected, and moved Windows virtual environments should be recreated before
+validation.
 
 ## 2026-09-09 — AGENTS.md task router
 
