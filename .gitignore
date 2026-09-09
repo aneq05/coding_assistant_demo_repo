@@ -5,6 +5,10 @@
 __pycache__/
 *.py[cod]
 
+# Langgraph
+.ai/graph/*.sqlite3
+.ai/graph/*.sqlite3-*
+
 # Testing / typing / lint caches
 .pytest_cache/
 .pytest-tmp/

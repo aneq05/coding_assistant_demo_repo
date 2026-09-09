@@ -11,7 +11,8 @@
     "implementation_plan": "docs/IMPLEMENTATION_PLAN.md",
     "specification_root": "spec",
     "specification_index": "spec/README.md",
-    "resumable_runs": ".ai/runs"
+    "resumable_runs": ".ai/runs",
+    "graph_checkpoints": ".ai/graph/checkpoints.sqlite3"
   },
   "github": {
     "claim_label": "ai-in-progress"
@@ -20,5 +21,15 @@
     "architecture-decision",
     "claim-ownership-ambiguity",
     "final-merge"
-  ]
+  ],
+  "graph": {
+    "require_independent_review_model": true,
+    "max_retries": {
+      "specification": 2,
+      "quality_gate": 2,
+      "ci": 2,
+      "review": 2,
+      "merge_conflict": 1
+    }
+  }
 }
