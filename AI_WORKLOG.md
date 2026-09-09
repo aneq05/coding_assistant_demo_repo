@@ -2117,3 +2117,47 @@ coverage enforcement alongside pytest, ruff, and mypy.
 
 Keeping coverage as its own CI outcome makes the quality threshold visible and
 independently enforceable while retaining one stable branch-protection job.
+
+## 2026-09-09 — Coverage quality gate PR delivery
+
+### Harness
+
+Tool: Codex with GitHub CLI and local Git
+Model: GPT-5
+Reasoning: not recorded
+Mode: Default
+Task type: pull-request delivery
+Risk level: low
+
+### Goal
+
+Publish the completed coverage quality gate as a separate, human-controlled
+pull request after explicit user authorization.
+
+### AI responsibility
+
+- Pushed `chore/coverage-quality-gate` and created draft PR #21.
+- Merged the subsequently advanced `origin/main`, compositionally resolved the
+  `AI_WORKLOG.md` conflict, and revalidated commit `3b6683b`.
+- Kept auto-merge disabled and reserved final merge for a human.
+
+### Human responsibility
+
+The human explicitly authorized the private-repository push and retains review
+and final merge authority.
+
+### Outcome
+
+PR #21 contains the coverage quality gate and is ready to be updated with this
+worklog-only commit before being marked ready for human review.
+
+### Files changed
+
+- `AI_WORKLOG.md`
+
+### Validation
+
+- `uv run --extra dev pytest` — 74 passed; 92.42% coverage.
+- `uv run --extra dev ruff check .` — passed.
+- `uv run --extra dev mypy` — passed with no issues in 12 source files.
+- `git diff --check` — passed.
