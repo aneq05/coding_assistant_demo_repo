@@ -2110,3 +2110,66 @@ code.
 A shared label prevents duplicate starts only when it is reconciled with active
 GitHub, repository, and resumable-run evidence; the label alone cannot safely
 establish or transfer ownership.
+
+## 2026-09-09 — PR #17 conflict resolution after PR #16 merge
+
+### Harness
+
+Tool: Codex with local Git and GitHub CLI
+Model: GPT-5
+Reasoning: not recorded
+Mode: Default
+Task type: merge-conflict resolution
+Risk level: medium
+
+### Goal
+
+Resolve PR #17 against current `main` while preserving both Issue-claim
+coordination and isolated Feature Delivery Agent worktrees.
+
+### AI responsibility
+
+- Verified the current PR head and remote base in an isolated worktree.
+- Composed claim acquisition, worktree preparation, delivery, claim release,
+  resumable-state, worktree-retention, and safety rules in execution order.
+- Preserved the independent mainline and PR-specific worklog entries.
+- Created and pushed merge commit `410a5be` without rewriting history.
+
+### Human responsibility
+
+The human requested resolution of PR #17 and retains final merge authority.
+
+### Outcome
+
+PR #17 incorporates the merged PR #16 worktree workflow while retaining its
+Issue-claim lifecycle and GitHub integration documentation.
+
+### Files changed
+
+- `.github/agents/feature-delivery.agent.md`
+- Mainline harness files incorporated by the merge
+- `AI_WORKLOG.md`
+
+### Validation
+
+- Focused Feature Delivery Agent composition check — passed.
+- `uv run --extra dev pytest` — 74 passed.
+- `uv run --extra dev ruff check .` — passed.
+- `uv run --extra dev mypy` — passed with no issues in 12 source files.
+- Conflict-marker, unmerged-path, and staged-diff checks — passed.
+
+### Friction / failure
+
+The local default branch was behind the remote base because PR #16 had merged;
+the current `origin/main` was merged directly into the isolated PR worktree.
+
+### Harness change
+
+No new capability was introduced; the resolution integrated two existing
+Feature Delivery Agent workflows.
+
+### Lesson learned
+
+Claim coordination and worktree isolation compose cleanly when ownership is
+established before any local changes and cleanup decisions preserve both run
+state and task worktrees.
