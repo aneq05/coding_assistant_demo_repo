@@ -2177,3 +2177,62 @@ Feature Delivery Agent workflows.
 Claim coordination and worktree isolation compose cleanly when ownership is
 established before any local changes and cleanup decisions preserve both run
 state and task worktrees.
+
+## 2026-09-09 — harness quality-gate reference follow-up
+
+### Harness
+
+Tool: Codex with GitHub CLI and local Git
+Model: GPT-5
+Reasoning: not recorded
+Mode: Default
+Task type: review-feedback documentation
+Risk level: low
+
+### Goal
+
+Deliver the justified roadmap portion of PR #20 review feedback after that PR
+was merged while feedback processing was still in progress.
+
+### AI responsibility
+
+- Created `docs/harness-quality-gate-reference` from current `origin/main` and
+  transplanted only the validated documentation correction.
+- Replaced two live roadmap command copies with references to the central
+  configuration while leaving CI's instrumented commands unchanged.
+- Created commit `6006365`, pushed the branch, and opened draft PR #22.
+
+### Human responsibility
+
+The human authorized the follow-up PR and retains review and final merge
+authority.
+
+### Outcome
+
+PR #22 contains only the roadmap deduplication and factual worklog updates. It
+adds no parser, dependency, CI workflow change, or product behavior.
+
+### Files changed
+
+- `docs/IMPLEMENTATION_PLAN.md`
+- `AI_WORKLOG.md`
+
+### Validation
+
+- JSON parsing and minimal schema-shape assertions — passed.
+- Roadmap canonical command duplication check — passed.
+- `git diff --check` — passed.
+
+### Friction / failure
+
+The separate local `main` worktree could not be fast-forwarded automatically,
+so the follow-up branch was created directly from current `origin/main`.
+
+### Harness change
+
+Removed two competing roadmap copies of the canonical quality-gate commands.
+
+### Lesson learned
+
+When a PR merges during feedback processing, a small follow-up branch from the
+new base preserves both review traceability and minimal scope.
