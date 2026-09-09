@@ -1,7 +1,9 @@
 """Tests for deterministic terminal presentation helpers."""
 
 import pytest
+from rich.console import Console
 
+from cdd.domain import supported_drinks
 from cdd.presentation import (
     _developer_state_style,
     _format_coffee_count,
@@ -9,7 +11,30 @@ from cdd.presentation import (
     caffeine_gauge,
     caffeine_sparkline,
     developer_state_indicator,
+    render_drink_picker,
 )
+
+
+def test_drink_picker_renders_numbers_icons_names_and_caffeine() -> None:
+    console = Console(record=True, width=80)
+
+    render_drink_picker(console, supported_drinks())
+
+    output = console.export_text()
+    expected_rows = [
+        ("1", "☕", "Espresso", "80 mg"),
+        ("2", "🖤", "Americano", "120 mg"),
+        ("3", "🤎", "Cappuccino", "75 mg"),
+        ("4", "🥛", "Latte", "75 mg"),
+        ("5", "🤍", "Flat White", "130 mg"),
+        ("6", "🍫", "Mocha", "90 mg"),
+        ("7", "⚡", "Double Espresso", "160 mg"),
+    ]
+    for number, icon, name, caffeine in expected_rows:
+        assert number in output
+        assert icon in output
+        assert name in output
+        assert caffeine in output
 
 
 @pytest.mark.parametrize(

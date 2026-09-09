@@ -16,10 +16,12 @@ from cdd.domain import (
     create_coffee_event,
     get_drink,
     summarize_today,
+    supported_drinks,
 )
 from cdd.git_activity import get_git_activity
 from cdd.presentation import (
     render_drink,
+    render_drink_picker,
     render_history,
     render_interactive_menu,
     render_stats,
@@ -272,20 +274,27 @@ def _interactive_add(
     clock: Clock,
     input_fn: InputFunction,
 ) -> bool:
-    console.print("Choose espresso, americano, or cappuccino.")
+    drinks = supported_drinks()
+    render_drink_picker(console, drinks)
     try:
-        name = input_fn("Drink: ").strip().lower()
+        selection = input_fn("Drink: ").strip().lower()
     except (EOFError, KeyboardInterrupt):
         return False
 
     try:
-        drink = get_drink(name)
+        if selection.isdecimal():
+            index = int(selection) - 1
+            if index < 0 or index >= len(drinks):
+                raise UnsupportedDrinkError
+            drink = drinks[index]
+        else:
+            drink = get_drink(selection)
         append_event(
             create_coffee_event(drink, timestamp=clock()),
             history_path,
         )
-    except UnsupportedDrinkError as error:
-        console.print(str(error))
+    except UnsupportedDrinkError:
+        console.print(f"Invalid drink selection: {selection}")
         return True
     except OSError as error:
         console.print(f"Could not persist coffee event: {error}")

@@ -12,6 +12,7 @@ from cdd.domain import (
     developer_state,
     get_drink,
     summarize_today,
+    supported_drinks,
 )
 
 
@@ -21,6 +22,10 @@ from cdd.domain import (
         ("espresso", "Espresso", 80),
         ("americano", "Americano", 120),
         ("cappuccino", "Cappuccino", 75),
+        ("latte", "Latte", 75),
+        ("flat-white", "Flat White", 130),
+        ("mocha", "Mocha", 90),
+        ("double-espresso", "Double Espresso", 160),
     ],
 )
 def test_get_drink_returns_supported_drink_information(
@@ -38,8 +43,21 @@ def test_get_drink_returns_supported_drink_information(
 
 def test_get_drink_rejects_unsupported_drink() -> None:
     """Unknown drinks are rejected instead of being substituted."""
-    with pytest.raises(UnsupportedDrinkError, match="Unsupported drink: latte"):
-        get_drink("latte")
+    with pytest.raises(UnsupportedDrinkError, match="Unsupported drink: tea"):
+        get_drink("tea")
+
+
+def test_supported_drinks_exposes_the_complete_catalog_in_picker_order() -> None:
+    """The domain catalog has the stable order specified for presentation."""
+    assert [drink.kind for drink in supported_drinks()] == [
+        "espresso",
+        "americano",
+        "cappuccino",
+        "latte",
+        "flat-white",
+        "mocha",
+        "double-espresso",
+    ]
 
 
 def test_create_coffee_event_captures_required_drink_data() -> None:

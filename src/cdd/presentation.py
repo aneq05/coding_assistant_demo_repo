@@ -44,6 +44,16 @@ _ACTIVITY_STYLES = {
 
 _SPARK_LEVELS = "▂▃▄▅▆▇█"
 
+_DRINK_ICONS = {
+    "espresso": "☕",
+    "americano": "🖤",
+    "cappuccino": "🤎",
+    "latte": "🥛",
+    "flat-white": "🤍",
+    "mocha": "🍫",
+    "double-espresso": "⚡",
+}
+
 
 def caffeine_bar(caffeine_mg: int) -> str:
     """Return a deterministic, capped one-block-per-40-mg bar."""
@@ -123,6 +133,33 @@ def render_drink(console: Console, drink: Drink, *, recorded: bool = False) -> N
     )
     if recorded:
         console.print(Text("Coffee recorded.", style="bold green"))
+
+
+def render_drink_picker(console: Console, drinks: Sequence[Drink]) -> None:
+    """Render the domain-owned drink catalog as a numbered Rich picker."""
+    choices = Table.grid(padding=(0, 1))
+    choices.add_column(style="bold cyan", justify="right")
+    choices.add_column(justify="center")
+    choices.add_column(min_width=18)
+    choices.add_column(style="bright_black", justify="right")
+
+    for number, drink in enumerate(drinks, start=1):
+        choices.add_row(
+            f"[{number}]",
+            _DRINK_ICONS[drink.kind],
+            drink.name,
+            f"{drink.caffeine_mg} mg",
+        )
+
+    console.print()
+    console.print(
+        Panel(
+            choices,
+            title="Choose your coffee",
+            border_style="cyan",
+            padding=(1, 2),
+        )
+    )
 
 
 def _format_coffee_count(count: int) -> str:

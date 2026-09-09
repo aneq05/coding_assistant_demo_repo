@@ -63,19 +63,28 @@ class InvalidStatsPeriodError(ValueError):
     """Raised when a statistics window cannot be represented."""
 
 
-_DRINKS = {
-    "espresso": Drink(kind="espresso", name="Espresso", caffeine_mg=80),
-    "americano": Drink(kind="americano", name="Americano", caffeine_mg=120),
-    "cappuccino": Drink(kind="cappuccino", name="Cappuccino", caffeine_mg=75),
-}
+_DRINKS = (
+    Drink(kind="espresso", name="Espresso", caffeine_mg=80),
+    Drink(kind="americano", name="Americano", caffeine_mg=120),
+    Drink(kind="cappuccino", name="Cappuccino", caffeine_mg=75),
+    Drink(kind="latte", name="Latte", caffeine_mg=75),
+    Drink(kind="flat-white", name="Flat White", caffeine_mg=130),
+    Drink(kind="mocha", name="Mocha", caffeine_mg=90),
+    Drink(kind="double-espresso", name="Double Espresso", caffeine_mg=160),
+)
+
+
+def supported_drinks() -> tuple[Drink, ...]:
+    """Return the canonical drink catalog in stable picker order."""
+    return _DRINKS
 
 
 def get_drink(name: str) -> Drink:
     """Return deterministic information for a supported drink."""
-    try:
-        return _DRINKS[name]
-    except KeyError as error:
-        raise UnsupportedDrinkError(f"Unsupported drink: {name}") from error
+    for drink in _DRINKS:
+        if drink.kind == name:
+            return drink
+    raise UnsupportedDrinkError(f"Unsupported drink: {name}")
 
 
 def create_coffee_event(

@@ -1,6 +1,6 @@
 # Interactive Drink Picker
 
-**Status:** specified for a future feature; not implemented.
+**Status:** implemented.
 
 ## Goal and boundaries
 

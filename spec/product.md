@@ -10,10 +10,11 @@ this document describe currently implemented product behavior.
 
 ### CDD-FR-001 — Supported drinks
 
-The product MUST support exactly `espresso` (80 mg), `americano` (120 mg), and
-`cappuccino` (75 mg) as named drink choices. Each choice MUST have its stated,
-deterministic caffeine value. An unsupported choice MUST be rejected rather
-than substituted.
+The product MUST support `espresso` (80 mg), `americano` (120 mg),
+`cappuccino` (75 mg), `latte` (75 mg), `flat-white` (130 mg), `mocha` (90 mg),
+and `double-espresso` (160 mg) as named drink choices. Each choice MUST have
+its stated, deterministic caffeine value. An unsupported choice MUST be
+rejected rather than substituted.
 
 ### CDD-FR-002 — Coffee-event recording
 
@@ -82,8 +83,10 @@ numeric options MUST be rejected unless they are positive integers.
 
 ### CDD-FR-011 — Interactive mode
 
-Interactive mode MUST provide add-drink, status, history, statistics, and exit
-paths over the same product behavior as direct commands. It MUST not create a
+Interactive mode MUST provide a numbered drink picker plus status, history,
+statistics, and exit paths over the same product behavior as direct commands.
+The picker MUST use the domain-owned drink catalog and accept the canonical
+drink identifiers as backward-compatible aliases. It MUST not create a
 separate set of business rules or persistence semantics.
 
 ### CDD-FR-012 — User-facing failures

@@ -18,6 +18,10 @@ from cdd.storage import append_event, read_events
         ("espresso", "Espresso", 80),
         ("americano", "Americano", 120),
         ("cappuccino", "Cappuccino", 75),
+        ("latte", "Latte", 75),
+        ("flat-white", "Flat White", 130),
+        ("mocha", "Mocha", 90),
+        ("double-espresso", "Double Espresso", 160),
     ],
 )
 def test_drink_displays_supported_drink_information(
@@ -49,10 +53,10 @@ def test_drink_rejects_unsupported_drink(
     history_path = tmp_path / "history.jsonl"
 
     with pytest.raises(SystemExit) as result:
-        main(["drink", "latte"], history_path=history_path)
+        main(["drink", "tea"], history_path=history_path)
 
     assert result.value.code != 0
-    assert "Unsupported drink: latte" in capsys.readouterr().err
+    assert "Unsupported drink: tea" in capsys.readouterr().err
     assert not history_path.exists()
 
 
@@ -282,6 +286,61 @@ def test_interactive_reuses_add_and_status_behavior(
     assert "80 mg" in output
     assert "BOOTING" in output
     assert "Goodbye" in output
+
+
+@pytest.mark.parametrize(
+    ("selection", "drink", "caffeine_mg"),
+    [
+        ("1", "espresso", 80),
+        ("2", "americano", 120),
+        ("3", "cappuccino", 75),
+        ("4", "latte", 75),
+        ("5", "flat-white", 130),
+        ("6", "mocha", 90),
+        ("7", "double-espresso", 160),
+    ],
+)
+def test_interactive_picker_records_every_numeric_selection(
+    selection: str,
+    drink: str,
+    caffeine_mg: int,
+    tmp_path: Path,
+) -> None:
+    """Each displayed number persists only canonical domain event data."""
+    history_path = tmp_path / "history.jsonl"
+    responses: Iterator[str] = iter(["1", selection, "5"])
+
+    assert main(
+        ["interactive"],
+        history_path=history_path,
+        input_fn=lambda _prompt: next(responses),
+    ) == 0
+
+    records = [json.loads(line) for line in history_path.read_text().splitlines()]
+    assert records[0]["drink"] == drink
+    assert records[0]["caffeine_mg"] == caffeine_mg
+    assert set(records[0]) == {"timestamp", "drink", "caffeine_mg"}
+
+
+@pytest.mark.parametrize("invalid_selection", ["99", "tea"])
+def test_interactive_picker_recovers_from_invalid_selection_without_recording(
+    invalid_selection: str,
+    capsys: pytest.CaptureFixture[str],
+    tmp_path: Path,
+) -> None:
+    history_path = tmp_path / "history.jsonl"
+    responses: Iterator[str] = iter(["1", invalid_selection, "5"])
+
+    assert main(
+        ["interactive"],
+        history_path=history_path,
+        input_fn=lambda _prompt: next(responses),
+    ) == 0
+
+    output = capsys.readouterr().out
+    assert "Invalid drink selection" in output
+    assert "Goodbye" in output
+    assert not history_path.exists()
 
 
 def test_interactive_handles_invalid_input_and_keyboard_interrupt(
