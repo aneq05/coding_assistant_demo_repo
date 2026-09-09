@@ -32,7 +32,9 @@ state in `.ai/runs/`.
 Before completing a code change, run every command in the configured
 `quality_gate_commands` list.
 
-All checks must pass.
+The configured pytest command enforces at least 90% branch coverage across
+production code. All checks must pass. Do not meet the coverage threshold
+through artificial exclusions or tests that do not assert meaningful behavior.
 
 ## Repository context
 
