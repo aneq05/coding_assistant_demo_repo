@@ -12,7 +12,6 @@ from langgraph.types import interrupt
 
 from ai_harness.feature_delivery.state import DeliveryState
 
-
 CAPABILITY_OWNERS: dict[str, str] = {
     "manage-ai-run": ".agents/skills/manage-ai-run/SKILL.md",
     "validate-scope": ".github/agents/feature-delivery.agent.md",
@@ -84,7 +83,7 @@ def request_capability(
 
     result = interrupt(payload)
     if not isinstance(result, dict):
-        raise ValueError(f"{capability} result must be a JSON object")
+        raise TypeError(f"{capability} result must be a JSON object")
     return result
 
 
@@ -107,5 +106,5 @@ def optional_string(result: dict[str, Any], key: str) -> str | None:
     if value is None:
         return None
     if not isinstance(value, str):
-        raise ValueError(f"'{key}' must be a string or null")
+        raise TypeError(f"'{key}' must be a string or null")
     return value

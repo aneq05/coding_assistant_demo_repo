@@ -7,10 +7,10 @@ caller) executes the named existing capability and resumes the same graph run.
 
 from __future__ import annotations
 
-from typing import Any
+from typing import Any, cast
 
 from langgraph.graph import END, START, StateGraph
-from langgraph.types import Command, interrupt
+from langgraph.types import interrupt
 
 from ai_harness.feature_delivery.capabilities import (
     optional_string,
@@ -36,7 +36,7 @@ from ai_harness.feature_delivery.state import (
 
 
 def _retry(state: DeliveryState, key: str) -> dict[str, int]:
-    retries = dict(state["retries"])
+    retries = cast(dict[str, int], dict(state["retries"]))
     retries[key] += 1
     return retries
 
@@ -768,10 +768,10 @@ def build_delivery_graph(
             }
         )
         if not isinstance(answer, dict):
-            raise ValueError("human gate response must be a JSON object")
+            raise TypeError("human gate response must be a JSON object")
         decision = answer.get("decision")
         if decision not in {"APPROVE", "BLOCK", "ABORT"}:
-            raise ValueError("human decision must be APPROVE, BLOCK, or ABORT")
+            raise TypeError("human decision must be APPROVE, BLOCK, or ABORT")
         return {
             "human_decision": decision,
             "human_gate": None if decision == "APPROVE" else state["human_gate"],

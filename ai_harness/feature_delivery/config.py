@@ -28,13 +28,13 @@ class GraphPolicy:
 
 def _require_dict(value: object, name: str) -> dict[str, Any]:
     if not isinstance(value, dict):
-        raise ValueError(f"{name} must be an object")
+        raise TypeError(f"{name} must be an object")
     return value
 
 
 def _require_positive_int(value: object, name: str) -> int:
     if isinstance(value, bool) or not isinstance(value, int) or value < 0:
-        raise ValueError(f"{name} must be a non-negative integer")
+        raise TypeError(f"{name} must be a non-negative integer")
     return value
 
 
@@ -59,7 +59,7 @@ def load_graph_policy(repository_root: Path | None = None) -> GraphPolicy:
 
     require_independent = graph.get("require_independent_review_model")
     if not isinstance(require_independent, bool):
-        raise ValueError("graph.require_independent_review_model must be boolean")
+        raise TypeError("graph.require_independent_review_model must be boolean")
 
     return GraphPolicy(
         repository_root=root,

@@ -5,7 +5,6 @@ from __future__ import annotations
 import operator
 from typing import Annotated, Literal, TypedDict
 
-
 ClearStatus = Literal[
     "CLEAR",
     "MISMATCH",
