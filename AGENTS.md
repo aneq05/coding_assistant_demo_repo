@@ -27,6 +27,9 @@ All checks must pass.
 - Project roadmap: `docs/IMPLEMENTATION_PLAN.md`
 - AI-assisted development history: `AI_WORKLOG.md`
 
+Use `harness-retrospective` for periodic, read-only evaluation of whether real
+engineering evidence justifies changing the repository harness.
+
 ## Repository synchronization
 
 Before new repository-changing work, or after a merged PR before subsequent
