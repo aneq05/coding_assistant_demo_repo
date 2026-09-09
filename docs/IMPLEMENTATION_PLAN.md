@@ -138,17 +138,8 @@ The goal is to demonstrate deliberate model routing.
 
 # Validation strategy
 
-Canonical local validation is cross-platform and uses `uv` directly.
-
-Before completing meaningful code changes, run:
-
-```bash
-uv run --extra dev pytest
-uv run --extra dev ruff check .
-uv run --extra dev mypy
-```
-
-These commands are intentionally explicit.
+Canonical local validation is cross-platform and uses the explicit `uv`
+commands in `.ai/harness.config.json` under `quality_gate_commands`.
 
 The project does not depend on GNU Make.
 
@@ -435,13 +426,8 @@ none
 
 ## Validation
 
-Canonical validation:
-
-```bash
-uv run --extra dev pytest
-uv run --extra dev ruff check .
-uv run --extra dev mypy
-```
+Canonical validation uses `.ai/harness.config.json` field
+`quality_gate_commands`.
 
 ## Current architecture
 

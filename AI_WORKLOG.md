@@ -1930,6 +1930,9 @@ introducing a configuration framework or moving policy into JSON.
   commit `1e1f69e`, pushed the branch, and opened PR #20.
 - Merged the concurrently advanced `origin/main` and compositionally retained
   both the task-router guidance and chronological worklog entries.
+- Classified final-head review feedback as partially valid, replaced two live
+  roadmap command copies with configuration references, and rejected an
+  out-of-scope CI parsing or consistency framework.
 
 ### Human responsibility
 
@@ -1951,6 +1954,7 @@ code, dependency, parser, or configuration framework changed.
 - `.agents/skills/record-ai-session/SKILL.md`
 - `.agents/skills/sync-repository/SKILL.md`
 - `.github/skills/code-review/SKILL.md`
+- `docs/IMPLEMENTATION_PLAN.md`
 - `AI_WORKLOG.md`
 
 ### Validation
