@@ -29,6 +29,21 @@ No capability was found to be unavailable within the authenticated GitHub CLI
 integration itself. `UNAVAILABLE` above is limited to the distinct GitHub MCP
 tool surface.
 
+## Feature Delivery claim boundary
+
+The Feature Delivery Agent uses the single `ai-in-progress` Issue label as a
+lightweight implementation claim. It prefers GitHub MCP for Issue inspection
+and label mutation when that tool surface and permission are available. The
+label is a coordination signal, not proof of ownership: the agent must reconcile
+it with Issue activity, linked work, repository state, and any matching
+resumable `manage-ai-run` record. Ambiguous or conflicting claims require human
+direction and no repository changes.
+
+Successful delivery preserves merge-time Issue/PR linkage and releases the
+label when permissions allow; it never closes the Issue directly. Aborted work
+retains any claim that may protect meaningful unfinished state and reports the
+remaining claim and run status.
+
 ## Short harness retrospective
 
 - **Duplicated or stale guidance:** `AGENTS.md` and several Git workflow

@@ -53,6 +53,7 @@ through artificial exclusions or tests that do not assert meaningful behavior.
 | A scoped behavioral product change needs implementation; not documentation, Skills, or Git-only work | `develop-feature-tdd` |
 | A completed, validated change is ready to be delivered on a dedicated branch as a review-ready PR | `prepare-pull-request` |
 | Meaningful AI-assisted work changes the repository, architecture, harness, validation, or external integrations, and is not already being logged by `prepare-pull-request` | `record-ai-session` |
+| Periodic read-only evaluation is needed to determine whether real engineering evidence justifies changing the repository harness | `harness-retrospective` |
 | A real Git merge conflict must be inspected and resolved while preserving both sides | `resolve-merge-conflict` |
 | An existing PR has actionable human or automated review feedback | `validate-review-feedback` |
 | A delivered PR has had review feedback processed and needs the final readiness assessment before human merge | `validate-pull-request` |
