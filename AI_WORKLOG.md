@@ -2038,3 +2038,138 @@ No new harness behavior was introduced by the resolution.
 
 Rechecking the remote base immediately before resolution avoids treating a
 previously mergeable PR as current after another PR advances `main`.
+
+## 2026-09-09 — Feature Delivery Issue claiming
+
+### Harness
+
+Tool: Codex with authenticated GitHub CLI and local Git
+Model: GPT-5
+Reasoning: not recorded
+Mode: Implementation
+Task type: agent configuration and documentation
+Risk level: medium
+
+### Goal
+
+Prevent concurrent Feature Delivery sessions from independently implementing
+the same GitHub Issue with a conservative, lightweight claim lifecycle.
+
+### AI responsibility
+
+- Inspected repository, branch, worktree, pull request, Issue, and existing
+  `manage-ai-run` branch state before editing.
+- Updated the Feature Delivery Agent with `ai-in-progress` claim inspection,
+  acquisition, release, abort, resumable-state, and Issue-linkage rules.
+- Preserved unrelated modified files and existing worktrees by using isolated
+  branch `chore/feature-delivery-claiming`.
+- Created commit `6bc5a79` and draft pull request #17.
+
+### Human responsibility
+
+The human specified the claim policy and retains authority over ambiguous
+claims, architectural decisions, review, and final merge.
+
+### Outcome
+
+The Feature Delivery Agent now stops before repository changes when an Issue
+is owned or ownership is ambiguous, claims unowned work before implementation,
+coordinates matching resumable state, and releases successful claims without
+manually closing Issues.
+
+### Files changed
+
+- `.github/agents/feature-delivery.agent.md`
+- `docs/ai/github-integration-capabilities.md`
+- `AI_WORKLOG.md`
+
+### Validation
+
+- Agent frontmatter and required tool scope structure check passed.
+- `uv run --extra dev pytest` passed: 74 tests.
+- `uv run --extra dev ruff check .` passed.
+- `uv run --extra dev mypy` passed.
+- `git diff --check` passed.
+- PR #17 was created for human review; no merge was performed.
+
+### Friction / failure
+
+The primary checkout contained an unrelated modified test and existing
+worktrees, and local `main` was behind `origin/main`; an isolated worktree based
+on the fetched remote default branch preserved that state. Sandbox restrictions
+initially blocked the uv cache, so validation used approved escalation.
+
+### Harness change
+
+Added conservative GitHub Issue claim coordination directly to the existing
+Feature Delivery Agent without adding a separate Skill or changing product
+code.
+
+### Lesson learned
+
+A shared label prevents duplicate starts only when it is reconciled with active
+GitHub, repository, and resumable-run evidence; the label alone cannot safely
+establish or transfer ownership.
+
+## 2026-09-09 — PR #17 conflict resolution after PR #16 merge
+
+### Harness
+
+Tool: Codex with local Git and GitHub CLI
+Model: GPT-5
+Reasoning: not recorded
+Mode: Default
+Task type: merge-conflict resolution
+Risk level: medium
+
+### Goal
+
+Resolve PR #17 against current `main` while preserving both Issue-claim
+coordination and isolated Feature Delivery Agent worktrees.
+
+### AI responsibility
+
+- Verified the current PR head and remote base in an isolated worktree.
+- Composed claim acquisition, worktree preparation, delivery, claim release,
+  resumable-state, worktree-retention, and safety rules in execution order.
+- Preserved the independent mainline and PR-specific worklog entries.
+- Created and pushed merge commit `410a5be` without rewriting history.
+
+### Human responsibility
+
+The human requested resolution of PR #17 and retains final merge authority.
+
+### Outcome
+
+PR #17 incorporates the merged PR #16 worktree workflow while retaining its
+Issue-claim lifecycle and GitHub integration documentation.
+
+### Files changed
+
+- `.github/agents/feature-delivery.agent.md`
+- Mainline harness files incorporated by the merge
+- `AI_WORKLOG.md`
+
+### Validation
+
+- Focused Feature Delivery Agent composition check — passed.
+- `uv run --extra dev pytest` — 74 passed.
+- `uv run --extra dev ruff check .` — passed.
+- `uv run --extra dev mypy` — passed with no issues in 12 source files.
+- Conflict-marker, unmerged-path, and staged-diff checks — passed.
+
+### Friction / failure
+
+The local default branch was behind the remote base because PR #16 had merged;
+the current `origin/main` was merged directly into the isolated PR worktree.
+
+### Harness change
+
+No new capability was introduced; the resolution integrated two existing
+Feature Delivery Agent workflows.
+
+### Lesson learned
+
+Claim coordination and worktree isolation compose cleanly when ownership is
+established before any local changes and cleanup decisions preserve both run
+state and task worktrees.
