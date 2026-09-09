@@ -1,0 +1,22 @@
+{
+  "version": 1,
+  "default_branch": "main",
+  "quality_gate_commands": [
+    "uv run --extra dev pytest",
+    "uv run --extra dev ruff check .",
+    "uv run --extra dev mypy"
+  ],
+  "paths": {
+    "ai_worklog": "AI_WORKLOG.md",
+    "implementation_plan": "docs/IMPLEMENTATION_PLAN.md",
+    "resumable_runs": ".ai/runs"
+  },
+  "github": {
+    "claim_label": "ai-in-progress"
+  },
+  "human_gates": [
+    "architecture-decision",
+    "claim-ownership-ambiguity",
+    "final-merge"
+  ]
+}
