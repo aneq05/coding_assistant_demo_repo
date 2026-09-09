@@ -1636,3 +1636,73 @@ PR-validation capabilities.
 An orchestrator stays small when it owns state diagnosis and dependency order
 while repository Skills and specialist agents continue to own corrections and
 validation details.
+
+## 2026-09-09 — central AI harness configuration
+
+### Harness
+
+Tool: Codex with GitHub CLI and local Git
+Model: GPT-5
+Reasoning: not recorded
+Mode: Default
+Task type: harness configuration
+Risk level: low
+
+### Goal
+
+Centralize the repository's small deterministic AI workflow values without
+introducing a configuration framework or moving policy into JSON.
+
+### AI responsibility
+
+- Synchronized `main` with `origin/main` and preserved unrelated work by using
+  the isolated `chore/central-harness-config` worktree.
+- Inspected current workflow guidance and review-ready resumable-run and
+  claim-locking PRs before selecting the minimal shared values.
+- Added the configuration, updated only direct Skill consumers, created task
+  commit `1e1f69e`, pushed the branch, and opened draft PR #20.
+
+### Human responsibility
+
+The human specified the configuration boundaries and retains architecture,
+review, and final merge authority.
+
+### Outcome
+
+PR #20 centralizes the default branch, quality-gate commands, shared paths,
+claim label, and human-gate identifiers. No product behavior, Python runtime
+code, dependency, parser, or configuration framework changed.
+
+### Files changed
+
+- `.ai/harness.config.json`
+- `AGENTS.md`
+- `.agents/skills/create-feature-issue/SKILL.md`
+- `.agents/skills/prepare-pull-request/SKILL.md`
+- `.agents/skills/record-ai-session/SKILL.md`
+- `.agents/skills/sync-repository/SKILL.md`
+- `.github/skills/code-review/SKILL.md`
+- `AI_WORKLOG.md`
+
+### Validation
+
+- JSON parsing and minimal schema-shape assertions — passed.
+- `git diff --check` — passed.
+- The Python quality gate was not run because no product or Python code changed.
+
+### Friction / failure
+
+The starting checkout contained unrelated user work, so the task used an
+isolated worktree. Sandbox approval was required for remote Git and GitHub
+operations.
+
+### Harness change
+
+Added one versioned JSON source for deterministic shared values and kept
+persistent rules, procedures, orchestration, history, and resumable state in
+their existing layers.
+
+### Lesson learned
+
+A small declarative value file removes drift when consumers remain explicit
+and procedural policy stays in repository instructions and Skills.
