@@ -30,6 +30,7 @@ packages = ["src/cdd"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
+pythonpath = ["."]
 addopts = """-ra
 --basetemp=.pytest-tmp
 --cov=cdd
@@ -65,4 +66,4 @@ line-length = 88
 [tool.mypy]
 python_version = "3.12"
 strict = true
-files = ["src", "tests"]
+files = ["src", "tests", "ai_harness"]
