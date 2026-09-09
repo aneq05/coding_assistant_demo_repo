@@ -1703,3 +1703,81 @@ and agents.
 Capability triggers can remain explicit without duplicating workflow details
 when the repository control plane names situations and delegates procedures to
 the owning Skill or agent.
+
+## 2026-09-09 — Coverage quality gate
+
+### Harness
+
+Tool: Codex with local Git and GitHub CLI
+Model: GPT-5
+Reasoning: not recorded
+Mode: Default
+Task type: CI and test harness
+Risk level: medium
+
+### Goal
+
+Require at least 90% branch-aware production-code coverage locally and in CI,
+publish coverage reports and summary data, and preserve pytest, ruff, mypy,
+SHA-aware validation, and human-controlled merging.
+
+### AI responsibility
+
+- Preserved unrelated local work by implementing on the isolated
+  `chore/coverage-quality-gate` worktree and branch.
+- Added centralized coverage tooling and configuration, CI enforcement,
+  reports, summary output, and repository policy documentation.
+- Created task commit `04f9259`, integrated current `origin/main` without
+  rewriting history, and attempted delivery to GitHub.
+
+### Human responsibility
+
+The human defined the coverage and delivery policy, retains final review and
+merge authority, and must explicitly authorize exporting the branch payload to
+the configured private GitHub remote before delivery can continue.
+
+### Outcome
+
+The local branch enforces 90% production-code branch coverage and measures
+92.42% across 74 passing tests. No additional tests or application behavior
+changes were needed. The environment rejected the push as a sensitive export,
+so no pull request was created and no merge or auto-merge occurred.
+
+### Files changed
+
+- `.github/workflows/ci.yml`
+- `.gitignore`
+- `AGENTS.md`
+- `docs/engineering/testing-strategy.md`
+- `pyproject.toml`
+- `uv.lock`
+- `AI_WORKLOG.md`
+
+### Validation
+
+- `uv run --extra dev pytest` — 74 passed; 92.42% coverage; 90% gate passed.
+- `uv run --extra dev ruff check .` — passed.
+- `uv run --extra dev mypy` — passed.
+- A 93% fail-under simulation at 92.42% exited with status 2.
+- Coverage text, XML, JSON, and HTML outputs were generated and inspected.
+- `git diff --check` — passed.
+
+### Friction / failure
+
+The starting checkout and existing worktrees contained unrelated local work,
+so a new worktree was required. `main` advanced during implementation and was
+merged into the task branch. Sandbox access required local uv paths and
+escalation for its interpreter. The final Git push was rejected by the
+environment pending explicit user authorization for the private-repository
+payload and destination.
+
+### Harness change
+
+Added `pytest-cov` and centralized coverage configuration, plus CI report
+generation, artifact inclusion, measured-coverage summary output, and explicit
+coverage enforcement alongside pytest, ruff, and mypy.
+
+### Lesson learned
+
+Keeping coverage as its own CI outcome makes the quality threshold visible and
+independently enforceable while retaining one stable branch-protection job.
