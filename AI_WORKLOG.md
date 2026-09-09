@@ -1637,6 +1637,73 @@ An orchestrator stays small when it owns state diagnosis and dependency order
 while repository Skills and specialist agents continue to own corrections and
 validation details.
 
+## 2026-09-09 — AGENTS.md task router
+
+### Harness
+
+Tool: Codex with GitHub CLI and local Git
+Model: GPT-5
+Reasoning: not recorded
+Mode: Default
+Task type: repository guidance documentation
+Risk level: low
+
+### Goal
+
+Refactor `AGENTS.md` into a lightweight task router while preserving project
+invariants, validation requirements, human approval boundaries, and Git safety
+rules.
+
+### AI responsibility
+
+- Inspected the capabilities present on current `origin/main` and their
+  trigger boundaries.
+- Preserved unrelated local work by using an isolated worktree on
+  `docs/agents-task-router`.
+- Consolidated repeated workflow prose into one task router and created task
+  commit `7dc8eb6` and PR #18 for human review.
+
+### Human responsibility
+
+The human defined the documentation scope and policy-preservation constraints
+and retains review and final-merge authority.
+
+### Outcome
+
+`AGENTS.md` now keeps persistent policy concise and routes tasks to all eight
+Skills and three custom agents present on the base branch. The unmerged
+`manage-ai-run` capability was not advertised. No product behavior or
+repository policy changed, and no merge or auto-merge was performed.
+
+### Files changed
+
+- `AGENTS.md`
+- `AI_WORKLOG.md`
+
+### Validation
+
+- `git diff --check` passed.
+- The router inventory was checked against `origin/main`.
+- PR #18 was created for human review.
+
+### Friction / failure
+
+The starting worktree contained an unrelated modified test and untracked
+worktree directory, and local `main` was behind `origin/main`. The task used a
+fresh isolated worktree so that existing user work remained untouched.
+
+### Harness change
+
+Reorganized `AGENTS.md` as a compact control plane for invariants, human gates,
+validation, and capability routing; detailed procedures remain in their Skills
+and agents.
+
+### Lesson learned
+
+Capability triggers can remain explicit without duplicating workflow details
+when the repository control plane names situations and delegates procedures to
+the owning Skill or agent.
+
 ## 2026-09-09 — central AI harness configuration
 
 ### Harness
@@ -1660,7 +1727,9 @@ introducing a configuration framework or moving policy into JSON.
 - Inspected current workflow guidance and review-ready resumable-run and
   claim-locking PRs before selecting the minimal shared values.
 - Added the configuration, updated only direct Skill consumers, created task
-  commit `1e1f69e`, pushed the branch, and opened draft PR #20.
+  commit `1e1f69e`, pushed the branch, and opened PR #20.
+- Merged the concurrently advanced `origin/main` and compositionally retained
+  both the task-router guidance and chronological worklog entries.
 
 ### Human responsibility
 
@@ -1687,14 +1756,18 @@ code, dependency, parser, or configuration framework changed.
 ### Validation
 
 - JSON parsing and minimal schema-shape assertions — passed.
-- `git diff --check` — passed.
-- The Python quality gate was not run because no product or Python code changed.
+- `uv run --extra dev pytest` — 74 passed.
+- `uv run --extra dev ruff check .` — passed.
+- `uv run --extra dev mypy` — passed with no issues in 12 source files.
+- `git diff --check` — passed after base-branch reconciliation.
 
 ### Friction / failure
 
 The starting checkout contained unrelated user work, so the task used an
-isolated worktree. Sandbox approval was required for remote Git and GitHub
-operations.
+isolated worktree. While PR #20 was being prepared, PR #18 advanced `main` and
+created composable conflicts in `AGENTS.md` and `AI_WORKLOG.md`. Sandbox
+approval was required for remote Git and GitHub operations. The sandboxed
+quality-gate attempt could not initialize uv's cache; the approved run passed.
 
 ### Harness change
 
