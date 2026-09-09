@@ -1703,3 +1703,79 @@ and agents.
 Capability triggers can remain explicit without duplicating workflow details
 when the repository control plane names situations and delegates procedures to
 the owning Skill or agent.
+
+## 2026-09-09 — central AI harness configuration
+
+### Harness
+
+Tool: Codex with GitHub CLI and local Git
+Model: GPT-5
+Reasoning: not recorded
+Mode: Default
+Task type: harness configuration
+Risk level: low
+
+### Goal
+
+Centralize the repository's small deterministic AI workflow values without
+introducing a configuration framework or moving policy into JSON.
+
+### AI responsibility
+
+- Synchronized `main` with `origin/main` and preserved unrelated work by using
+  the isolated `chore/central-harness-config` worktree.
+- Inspected current workflow guidance and review-ready resumable-run and
+  claim-locking PRs before selecting the minimal shared values.
+- Added the configuration, updated only direct Skill consumers, created task
+  commit `1e1f69e`, pushed the branch, and opened PR #20.
+- Merged the concurrently advanced `origin/main` and compositionally retained
+  both the task-router guidance and chronological worklog entries.
+
+### Human responsibility
+
+The human specified the configuration boundaries and retains architecture,
+review, and final merge authority.
+
+### Outcome
+
+PR #20 centralizes the default branch, quality-gate commands, shared paths,
+claim label, and human-gate identifiers. No product behavior, Python runtime
+code, dependency, parser, or configuration framework changed.
+
+### Files changed
+
+- `.ai/harness.config.json`
+- `AGENTS.md`
+- `.agents/skills/create-feature-issue/SKILL.md`
+- `.agents/skills/prepare-pull-request/SKILL.md`
+- `.agents/skills/record-ai-session/SKILL.md`
+- `.agents/skills/sync-repository/SKILL.md`
+- `.github/skills/code-review/SKILL.md`
+- `AI_WORKLOG.md`
+
+### Validation
+
+- JSON parsing and minimal schema-shape assertions — passed.
+- `uv run --extra dev pytest` — 74 passed.
+- `uv run --extra dev ruff check .` — passed.
+- `uv run --extra dev mypy` — passed with no issues in 12 source files.
+- `git diff --check` — passed after base-branch reconciliation.
+
+### Friction / failure
+
+The starting checkout contained unrelated user work, so the task used an
+isolated worktree. While PR #20 was being prepared, PR #18 advanced `main` and
+created composable conflicts in `AGENTS.md` and `AI_WORKLOG.md`. Sandbox
+approval was required for remote Git and GitHub operations. The sandboxed
+quality-gate attempt could not initialize uv's cache; the approved run passed.
+
+### Harness change
+
+Added one versioned JSON source for deterministic shared values and kept
+persistent rules, procedures, orchestration, history, and resumable state in
+their existing layers.
+
+### Lesson learned
+
+A small declarative value file removes drift when consumers remain explicit
+and procedural policy stays in repository instructions and Skills.
