@@ -2498,3 +2498,59 @@ agent-routing reference to the authoritative product specification.
 
 An indexed requirement set can preserve traceability and targeted retrieval
 without making roadmap history or current implementation the product contract.
+
+## 2026-09-09 — product specification PR delivery
+
+### Harness
+
+Tool: Codex with GitHub CLI and local Git
+Model: GPT-5
+Reasoning: not recorded
+Mode: Default
+Task type: pull-request delivery
+Risk level: low
+
+### Goal
+
+Publish the completed product specification layer as a human-controlled pull
+request.
+
+### AI responsibility
+
+- Created `docs/product-specification-layer` from `main`, explicitly staged
+  the intended nine files, and committed `dffee80`.
+- Pushed the branch and created draft PR #24 with scope and validation notes.
+
+### Human responsibility
+
+The human requested GitHub delivery and retains review and final-merge
+authority.
+
+### Outcome
+
+Draft PR #24 contains the specification layer. It adds no runtime behavior.
+
+### Files changed
+
+- `AI_WORKLOG.md`
+
+### Validation
+
+- `git diff --cached --check` — passed before commit `dffee80`.
+- `uv run --extra dev pytest` — 74 passed; 92.42% coverage.
+- `uv run --extra dev ruff check .` — passed.
+- `uv run --extra dev mypy` — passed with no issues in 12 source files.
+
+### Friction / failure
+
+Sandboxed Git metadata, GitHub CLI authentication configuration, and uv cache
+access required approved delivery and validation access.
+
+### Harness change
+
+No additional harness behavior changed during delivery.
+
+### Lesson learned
+
+A separate worklog-only follow-up commit preserves the actual PR outcome
+without rewriting the reviewed implementation commit.
