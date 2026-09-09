@@ -51,11 +51,37 @@ jobs:
           EOF
           : > reports/ruff.txt
           : > reports/mypy.txt
+          : > reports/coverage.txt
 
       - name: Run pytest
         id: pytest
         continue-on-error: true
         run: uv run --extra dev pytest --junitxml=reports/pytest.xml
+
+      - name: Enforce coverage threshold
+        id: coverage
+        if: always()
+        continue-on-error: true
+        run: |
+          set -o pipefail
+          uv run --extra dev coverage report --fail-under=90 2>&1 | tee reports/coverage.txt
+
+      - name: Read measured coverage
+        id: measured_coverage
+        if: always()
+        shell: python
+        run: |
+          import json
+          import os
+          from pathlib import Path
+
+          report = Path("reports/coverage.json")
+          measured = "unavailable"
+          if report.is_file():
+              totals = json.loads(report.read_text(encoding="utf-8"))["totals"]
+              measured = f"{totals['percent_covered']:.2f}%"
+          with Path(os.environ["GITHUB_OUTPUT"]).open("a", encoding="utf-8") as output:
+              output.write(f"actual={measured}\n")
 
       - name: Run ruff
         id: ruff
@@ -75,6 +101,8 @@ jobs:
         if: always()
         env:
           PYTEST_RESULT: ${{ steps.pytest.outcome }}
+          COVERAGE_RESULT: ${{ steps.coverage.outcome }}
+          ACTUAL_COVERAGE: ${{ steps.measured_coverage.outputs.actual }}
           RUFF_RESULT: ${{ steps.ruff.outcome }}
           MYPY_RESULT: ${{ steps.mypy.outcome }}
         run: |
@@ -86,8 +114,11 @@ jobs:
             echo "| Validation | Result |"
             echo "| --- | --- |"
             echo "| pytest | $PYTEST_RESULT |"
+            echo "| coverage (required: >= 90%) | $COVERAGE_RESULT |"
             echo "| ruff | $RUFF_RESULT |"
             echo "| mypy | $MYPY_RESULT |"
+            echo
+            echo "Actual production-code branch coverage: **$ACTUAL_COVERAGE**"
             echo
             echo "Detailed reports are available in the workflow artifacts."
           } >> "$GITHUB_STEP_SUMMARY"
@@ -105,10 +136,12 @@ jobs:
         if: always()
         env:
           PYTEST_RESULT: ${{ steps.pytest.outcome }}
+          COVERAGE_RESULT: ${{ steps.coverage.outcome }}
           RUFF_RESULT: ${{ steps.ruff.outcome }}
           MYPY_RESULT: ${{ steps.mypy.outcome }}
         run: |
           if [[ "$PYTEST_RESULT" != "success" || \
+                "$COVERAGE_RESULT" != "success" || \
                 "$RUFF_RESULT" != "success" || \
                 "$MYPY_RESULT" != "success" ]]; then
             echo "One or more required validation checks failed."

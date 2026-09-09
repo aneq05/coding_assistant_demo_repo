@@ -2178,6 +2178,196 @@ Claim coordination and worktree isolation compose cleanly when ownership is
 established before any local changes and cleanup decisions preserve both run
 state and task worktrees.
 
+## 2026-09-09 — read-only harness retrospective Skill
+
+### Harness
+
+Tool: Codex with GitHub CLI and local Git
+Model: GPT-5
+Reasoning: not recorded
+Mode: Default
+Task type: repository Skill
+Risk level: low
+
+### Goal
+
+Add one concise, evidence-driven Skill for periodic read-only evaluation of
+whether the repository harness should improve.
+
+### AI responsibility
+
+- Synchronized local `main` with `origin/main` and isolated unrelated local
+  work in a sibling worktree on `chore/harness-retrospective`.
+- Added the Skill and minimal `AGENTS.md` routing, validated the repository,
+  created task commit `168379e`, and opened draft PR #19.
+
+### Human responsibility
+
+The human specified the retrospective evidence, classifications, safety
+boundaries, and output fields, and retains review and final-merge authority.
+
+### Outcome
+
+The new workflow separates observed facts, inferences, and evidence gaps;
+requires concrete support for repeated friction; and permits `DO NOTHING` when
+additional harness complexity is not justified. It cannot modify the harness
+or implement its own recommendations.
+
+### Files changed
+
+- `.agents/skills/harness-retrospective/SKILL.md`
+- `AGENTS.md`
+- `AI_WORKLOG.md`
+
+### Validation
+
+- Bundled Skill validator — passed.
+- `uv run --extra dev pytest` — 74 passed.
+- `uv run --extra dev ruff check .` — passed.
+- `uv run --extra dev mypy` — passed.
+- `git diff --check` — passed.
+
+### Friction / failure
+
+The starting worktree contained unrelated modified and untracked files, so the
+task used an isolated sibling worktree. The validator required transient
+PyYAML because it is not a project dependency, and sandbox approval was needed
+for Git metadata, environment, and GitHub access.
+
+### Harness change
+
+Added `harness-retrospective` plus one routing instruction in `AGENTS.md`; no
+product behavior, dependency, or permission changed.
+
+### Lesson learned
+
+A retrospective workflow can stay concise when it defines evidence quality,
+classification, and decision boundaries while leaving data collection scoped
+to sources relevant and available to each run.
+
+## 2026-09-09 — Coverage quality gate
+
+### Harness
+
+Tool: Codex with local Git and GitHub CLI
+Model: GPT-5
+Reasoning: not recorded
+Mode: Default
+Task type: CI and test harness
+Risk level: medium
+
+### Goal
+
+Require at least 90% branch-aware production-code coverage locally and in CI,
+publish coverage reports and summary data, and preserve pytest, ruff, mypy,
+SHA-aware validation, and human-controlled merging.
+
+### AI responsibility
+
+- Preserved unrelated local work by implementing on the isolated
+  `chore/coverage-quality-gate` worktree and branch.
+- Added centralized coverage tooling and configuration, CI enforcement,
+  reports, summary output, and repository policy documentation.
+- Created task commit `04f9259`, integrated advancing `origin/main` without
+  rewriting history, and attempted delivery to GitHub.
+
+### Human responsibility
+
+The human defined the coverage and delivery policy, retains final review and
+merge authority, and explicitly authorized exporting the branch payload to the
+configured private GitHub remote after the environment rejected the first push.
+
+### Outcome
+
+PR #21 enforces 90% production-code branch coverage and measures 92.42% across
+74 passing tests. No additional tests or application behavior changes were
+needed. The first push was rejected as a sensitive export; delivery resumed
+after explicit user authorization. No merge or auto-merge occurred.
+
+### Files changed
+
+- `.github/workflows/ci.yml`
+- `.gitignore`
+- `AGENTS.md`
+- `docs/engineering/testing-strategy.md`
+- `pyproject.toml`
+- `uv.lock`
+- `AI_WORKLOG.md`
+
+### Validation
+
+- `uv run --extra dev pytest` — 74 passed; 92.42% coverage; 90% gate passed.
+- `uv run --extra dev ruff check .` — passed.
+- `uv run --extra dev mypy` — passed.
+- A 93% fail-under simulation at 92.42% exited with status 2.
+- Coverage text, XML, JSON, and HTML outputs were generated and inspected.
+- `git diff --check` — passed.
+
+### Friction / failure
+
+The starting checkout and existing worktrees contained unrelated local work,
+so a new worktree was required. `main` advanced repeatedly during
+implementation and delivery; the branch incorporated those updates, including
+composable conflicts in `AGENTS.md` and `AI_WORKLOG.md`. Sandbox access
+required local uv paths and escalation for its interpreter. The first Git push
+was rejected pending explicit user authorization for the private-repository
+payload and destination.
+
+### Harness change
+
+Added `pytest-cov` and centralized coverage configuration, plus CI report
+generation, artifact inclusion, measured-coverage summary output, and explicit
+coverage enforcement alongside pytest, ruff, and mypy.
+
+### Lesson learned
+
+Keeping coverage as its own CI outcome makes the quality threshold visible and
+independently enforceable while retaining one stable branch-protection job.
+
+## 2026-09-09 — Coverage quality gate PR delivery
+
+### Harness
+
+Tool: Codex with GitHub CLI and local Git
+Model: GPT-5
+Reasoning: not recorded
+Mode: Default
+Task type: pull-request delivery
+Risk level: low
+
+### Goal
+
+Publish the completed coverage quality gate as a separate, human-controlled
+pull request after explicit user authorization.
+
+### AI responsibility
+
+- Pushed `chore/coverage-quality-gate` and created draft PR #21.
+- Merged the subsequently advanced `origin/main`, compositionally resolved the
+  `AI_WORKLOG.md` conflict, and revalidated commit `3b6683b`.
+- Kept auto-merge disabled and reserved final merge for a human.
+
+### Human responsibility
+
+The human explicitly authorized the private-repository push and retains review
+and final merge authority.
+
+### Outcome
+
+PR #21 contains the coverage quality gate and is ready to be updated with this
+worklog-only commit before being marked ready for human review.
+
+### Files changed
+
+- `AI_WORKLOG.md`
+
+### Validation
+
+- `uv run --extra dev pytest` — 74 passed; 92.42% coverage.
+- `uv run --extra dev ruff check .` — passed.
+- `uv run --extra dev mypy` — passed with no issues in 12 source files.
+- `git diff --check` — passed.
+
 ## 2026-09-09 — harness quality-gate reference follow-up
 
 ### Harness
