@@ -27,6 +27,12 @@ All checks must pass.
 - Project roadmap: `docs/IMPLEMENTATION_PLAN.md`
 - AI-assisted development history: `AI_WORKLOG.md`
 
+## Resumable AI runs
+
+For work likely to span sessions or meaningful stages, use `manage-ai-run` to
+start or continue operational state under `.ai/runs/`. Keep permanent history
+in `AI_WORKLOG.md`.
+
 ## Repository synchronization
 
 Before new repository-changing work, or after a merged PR before subsequent
