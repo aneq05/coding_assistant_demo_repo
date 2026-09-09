@@ -1,7 +1,12 @@
 # Coffee-Driven Development
 
-A deliberately over-serious coffee tracker built as a small product sandbox for
-AI-assisted software engineering.
+A deliberately over-serious coffee tracker built as a **small product sandbox
+for AI-assisted software engineering**.
+
+> **The coffee tracker is intentionally tiny.**
+> The main goal of this repository is not to build a complex coffee application,
+> but to explore how AI can be used effectively, safely, and repeatably across
+> the software-development lifecycle.
 
 Coffee-Driven Development combines:
 
@@ -11,6 +16,23 @@ Coffee-Driven Development combines:
    reusable Skills, specialist agents, LangGraph orchestration, CI, independent
    review, and human-controlled merge decisions.
 
+The product provides a deliberately understandable test bed for experimenting
+with AI-assisted engineering practices such as specification-driven delivery,
+agent orchestration, deterministic validation, resumable workflows, model
+separation, and human-in-the-loop control.
+
+In other words:
+
+```text
+small product
+     +
+AI engineering harness
+     +
+measurable delivery workflow
+     =
+the actual project
+```
+
 <p align="center">
   <img
     src="docs/images/cdd-status.png"
@@ -18,6 +40,41 @@ Coffee-Driven Development combines:
     width="100%"
   />
 </p>
+
+## What this repository is meant to demonstrate
+
+The repository is primarily an **AI engineering playground and portfolio
+project**. The product stays intentionally small so the engineering system around
+it can remain visible and explainable.
+
+The areas being explored include:
+
+- repository-owned instructions and reusable Skills;
+- specialist coding, CI-triage, and PR-review agents;
+- specification-driven development;
+- LangGraph-based deterministic orchestration around probabilistic agents;
+- persistent and resumable AI runs;
+- isolated worktrees and conservative repository handling;
+- TDD and deterministic local quality gates;
+- GitHub Actions CI;
+- exact-HEAD CI and review freshness;
+- independent review by a model different from the implementation model;
+- bounded retry policies and human escalation;
+- human-controlled final merge decisions.
+
+The longer-term goal is to keep improving the **AI-assisted development
+framework around the product**, rather than growing the coffee tracker into a
+large application for its own sake.
+
+Observability and evaluation are a planned next area of exploration. In
+particular, I intend to experiment with **Langfuse** as an observability layer
+for feature-delivery runs once there is enough real model activity to make the
+measurements useful. Potential signals include graph-node latency, model usage,
+retry patterns, token/cost information, failure points, and evaluation scores.
+
+Langfuse is therefore **not currently part of the implemented stack**. The
+project deliberately avoids adding tools only for the sake of having more tools;
+new infrastructure should have a concrete engineering or measurement purpose.
 
 ## Quick start
 
@@ -151,6 +208,18 @@ polished terminal presentation
         +
 advanced AI engineering harness
 ```
+
+The complexity budget is intentionally spent on the **delivery system**, not on
+inventing unnecessary product scope.
+
+That makes it easier to inspect questions such as:
+
+- Can an AI-assisted run be resumed safely?
+- Can deterministic gates prevent an agent from skipping validation?
+- Is CI evidence still valid for the current commit?
+- Can implementation and review be separated?
+- When should automation stop and escalate to a human?
+- How can AI development workflows be made observable and measurable?
 
 The purpose is not to hide complexity inside the application. It is to make
 the software-delivery system around a comprehensible application observable.
@@ -296,6 +365,43 @@ Two persistence layers intentionally serve different purposes:
 The repository run record remains the human-readable operational source while
 SQLite enables exact graph resumption.
 
+## Planned AI engineering evolution
+
+The project is intentionally iterative. Planned experiments should strengthen
+the AI engineering harness rather than simply increase the number of tools in
+the stack.
+
+Current / near-term direction:
+
+```text
+repository Skills + specialist agents
+        ↓
+specification-driven feature delivery
+        ↓
+LangGraph orchestration and resumability
+        ↓
+GitHub CI + independent review
+        ↓
+end-to-end graph-driven feature demo
+        ↓
+observability / evaluation experiments
+        ↓
+Langfuse (planned)
+```
+
+A future Langfuse integration would be intended to answer concrete questions
+such as:
+
+- Which graph stages consume the most time?
+- Which stages require the most retries?
+- Which model performed implementation or review?
+- What are the token and cost characteristics of a delivery run?
+- Where do feature-delivery runs commonly fail or escalate?
+- How can different model/workflow variants be compared with evaluation scores?
+
+This observability layer is intentionally planned rather than prematurely
+integrated.
+
 ## Validation
 
 The product and harness are validated with:
@@ -331,26 +437,54 @@ Skill before later quality and PR-readiness gates.
 
 ## Future end-to-end demo
 
-**Late-Night Refactor Risk** is intentionally specified but not implemented.
+The repository currently contains **three intentionally specified but not yet
+implemented product features**. Any of them can be used as the subject of a
+full end-to-end feature-delivery demonstration:
 
-The feature will use current local time, current-day caffeine, and current-day
-local Git activity to calculate a deterministic, explainable refactor-risk
-signal.
+| Candidate feature | Specification | Main engineering angle |
+| --- | --- | --- |
+| **Late-Night Refactor Risk** | [`CDD-RISK-001`–`CDD-RISK-009`](spec/features/late-night-refactor-risk.md) | deterministic risk scoring from local time, caffeine, and Git activity |
+| **Backdated Coffee Recording** | [`CDD-HIST-001`–`CDD-HIST-009`](spec/features/backdated-coffee-recording.md) | CLI/API-of-the-command design, timezone-aware historical input, validation, persistence, and downstream statistics |
+| **Interactive Drink Picker** | [`CDD-PICK-001`–`CDD-PICK-009`](spec/features/interactive-drink-picker.md) | richer domain-owned drink catalog plus a polished Rich-based interactive selection flow |
 
-It is reserved for an end-to-end delivery demonstration:
+All three are deliberately kept in the **specified, not implemented** state so
+that one can be selected later and delivered through the complete AI-assisted
+engineering workflow rather than added manually in advance.
+
+The intended demo path is:
 
 ```text
-requirement
-    -> Issue
-    -> graph
-    -> spec validation
-    -> TDD implementation
-    -> quality gate
-    -> pull request
-    -> CI
-    -> independent review
-    -> READY_FOR_HUMAN_MERGE
+feature specification
+        ↓
+GitHub Issue
+        ↓
+Feature Delivery Graph
+        ↓
+scope + requirement selection
+        ↓
+TDD implementation
+        ↓
+specification validation
+        ↓
+local quality gate
+        ↓
+pull request
+        ↓
+GitHub Actions CI
+        ↓
+independent model review
+        ↓
+feedback / repair loops if needed
+        ↓
+exact-HEAD readiness validation
+        ↓
+READY_FOR_HUMAN_MERGE
+        ↓
+human merge
 ```
 
-That keeps the final demo focused on the complete engineering workflow rather
-than only on generating product code.
+The point of the demo is therefore not the complexity of the selected coffee
+feature itself. The feature acts as a controlled workload for demonstrating the
+AI engineering framework around it: specification-driven delivery, bounded
+agent execution, deterministic gates, resumability, CI/review freshness, and
+human-controlled release decisions.
