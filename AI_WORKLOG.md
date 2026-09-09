@@ -1567,3 +1567,75 @@ post-resolution validation.
 Worklog conflicts can be resolved compositionally when both sides are
 independent chronological records; merge intent should still be established
 from branch history and changed files rather than markers alone.
+
+## 2026-09-09 — Feature Delivery Issue claiming
+
+### Harness
+
+Tool: Codex with authenticated GitHub CLI and local Git
+Model: GPT-5
+Reasoning: not recorded
+Mode: Implementation
+Task type: agent configuration and documentation
+Risk level: medium
+
+### Goal
+
+Prevent concurrent Feature Delivery sessions from independently implementing
+the same GitHub Issue with a conservative, lightweight claim lifecycle.
+
+### AI responsibility
+
+- Inspected repository, branch, worktree, pull request, Issue, and existing
+  `manage-ai-run` branch state before editing.
+- Updated the Feature Delivery Agent with `ai-in-progress` claim inspection,
+  acquisition, release, abort, resumable-state, and Issue-linkage rules.
+- Preserved unrelated modified files and existing worktrees by using isolated
+  branch `chore/feature-delivery-claiming`.
+- Created commit `6bc5a79` and draft pull request #17.
+
+### Human responsibility
+
+The human specified the claim policy and retains authority over ambiguous
+claims, architectural decisions, review, and final merge.
+
+### Outcome
+
+The Feature Delivery Agent now stops before repository changes when an Issue
+is owned or ownership is ambiguous, claims unowned work before implementation,
+coordinates matching resumable state, and releases successful claims without
+manually closing Issues.
+
+### Files changed
+
+- `.github/agents/feature-delivery.agent.md`
+- `docs/ai/github-integration-capabilities.md`
+- `AI_WORKLOG.md`
+
+### Validation
+
+- Agent frontmatter and required tool scope structure check passed.
+- `uv run --extra dev pytest` passed: 74 tests.
+- `uv run --extra dev ruff check .` passed.
+- `uv run --extra dev mypy` passed.
+- `git diff --check` passed.
+- PR #17 was created for human review; no merge was performed.
+
+### Friction / failure
+
+The primary checkout contained an unrelated modified test and existing
+worktrees, and local `main` was behind `origin/main`; an isolated worktree based
+on the fetched remote default branch preserved that state. Sandbox restrictions
+initially blocked the uv cache, so validation used approved escalation.
+
+### Harness change
+
+Added conservative GitHub Issue claim coordination directly to the existing
+Feature Delivery Agent without adding a separate Skill or changing product
+code.
+
+### Lesson learned
+
+A shared label prevents duplicate starts only when it is reconciled with active
+GitHub, repository, and resumable-run evidence; the label alone cannot safely
+establish or transfer ownership.
