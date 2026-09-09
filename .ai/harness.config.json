@@ -9,6 +9,8 @@
   "paths": {
     "ai_worklog": "AI_WORKLOG.md",
     "implementation_plan": "docs/IMPLEMENTATION_PLAN.md",
+    "specification_root": "spec",
+    "specification_index": "spec/README.md",
     "resumable_runs": ".ai/runs"
   },
   "github": {
