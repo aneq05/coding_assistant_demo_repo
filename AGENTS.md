@@ -10,22 +10,28 @@ This repository is intentionally small.
 - Do not add dependencies without justification.
 - Do not modify files when explicitly asked only to plan or analyze.
 - For non-trivial changes, inspect the repository and propose a plan first.
-- Human approval is required for architectural decisions and final merge.
+- Human approval is required at the architecture-decision and final-merge gates.
+
+## Harness configuration
+
+Read `.ai/harness.config.json` for deterministic shared harness values. Its
+versioned schema contains the default branch, canonical quality-gate commands,
+shared repository paths, the GitHub claim label, and human-gate identifiers.
+Keep rules and invariants here, reusable procedures in Skills, orchestration in
+custom agents, historical evidence in `AI_WORKLOG.md`, and resumable operational
+state in `.ai/runs/`.
 
 ## Validation
 
-Before completing a code change, run:
-
-1. `uv run --extra dev pytest`
-2. `uv run --extra dev ruff check .`
-3. `uv run --extra dev mypy`
+Before completing a code change, run every command in the configured
+`quality_gate_commands` list.
 
 All checks must pass.
 
 ## Repository context
 
-- Project roadmap: `docs/IMPLEMENTATION_PLAN.md`
-- AI-assisted development history: `AI_WORKLOG.md`
+- Project roadmap: configured `paths.implementation_plan`
+- AI-assisted development history: configured `paths.ai_worklog`
 
 ## Repository synchronization
 
@@ -37,7 +43,8 @@ current session.
 
 After completed non-trivial AI-assisted work that materially changes the
 repository, architecture, harness, validation, or external integrations, use
-the `record-ai-session` Skill to append an accurate entry to `AI_WORKLOG.md`.
+the `record-ai-session` Skill to append an accurate entry to the configured AI
+worklog.
 Do not log trivial interactions, invent missing metadata, or override explicit
 user instructions.
 
