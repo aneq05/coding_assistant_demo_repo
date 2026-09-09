@@ -9,9 +9,10 @@ Use before starting repository-changing work when freshness has not already
 been verified in the current session, especially after a previous pull request
 was merged. This is a synchronization workflow, not cleanup or delivery.
 
-1. Inspect the current branch, working tree including untracked files,
-   configured remotes, default branch, and remote repository identity. Verify
-   that the expected repository and remote are in use.
+1. Read the configured default branch from `.ai/harness.config.json`. Inspect
+   the current branch, working tree including untracked files, configured
+   remotes, and remote repository identity. Verify that the configured default
+   branch and expected repository and remote are in use.
 2. If switching or updating could overwrite or lose local work, stop and report
    the exact affected state. Never discard changes, stash user work, reset hard,
    clean files, overwrite branches, or delete an old task branch.
