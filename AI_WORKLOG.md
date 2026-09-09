@@ -1567,3 +1567,71 @@ post-resolution validation.
 Worklog conflicts can be resolved compositionally when both sides are
 independent chronological records; merge intent should still be established
 from branch history and changed files rather than markers alone.
+
+## 2026-09-09 — resumable AI run-state Skill
+
+### Harness
+
+Tool: Codex
+Model: not recorded
+Reasoning: not recorded
+Mode: Implementation
+Task type: repository Skill and harness guidance
+Risk level: low
+
+### Goal
+
+Add lightweight operational state for meaningful AI engineering work that may
+span sessions or stages without duplicating permanent project history.
+
+### AI responsibility
+
+- Preserved an unrelated local test change by working from `origin/main` in an
+  isolated `feature/manage-ai-run` worktree.
+- Added and validated `manage-ai-run`, introduced `.ai/runs/`, and added
+  concise repository routing.
+- Committed the harness change as `cf72207` and created PR #15.
+
+### Human responsibility
+
+The human specified the run-state content and safety rules and retains review
+and final-merge authority.
+
+### Outcome
+
+PR #15 contains a compact start-or-continue workflow that reconciles recorded
+state with repository evidence, resumes from the first incomplete step, and
+keeps `AI_WORKLOG.md` as the historical record. No product code changed, and
+no merge was performed.
+
+### Files changed
+
+- `.agents/skills/manage-ai-run/SKILL.md`
+- `.ai/runs/.gitkeep`
+- `AGENTS.md`
+- `AI_WORKLOG.md`
+
+### Validation
+
+- Skill Creator `quick_validate.py` — passed.
+- `uv run --extra dev pytest` — 74 passed.
+- `uv run --extra dev ruff check .` — passed.
+- `uv run --extra dev mypy` — passed.
+- Staged diff check — passed.
+
+### Friction / failure
+
+The current merged feature branch contained an unrelated uncommitted test
+change, so delivery used an isolated worktree. The Skill validator required an
+ephemeral PyYAML installation because it is not a project dependency.
+
+### Harness change
+
+Added a repository Skill for evidence-backed resumable run state and minimal
+`AGENTS.md` routing to it.
+
+### Lesson learned
+
+Operational continuation state stays useful and compact when it records only
+the next-step checklist and supporting evidence while durable outcomes remain
+in the chronological worklog.
