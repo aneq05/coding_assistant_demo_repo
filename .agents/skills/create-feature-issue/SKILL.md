@@ -9,9 +9,9 @@ Turn the user's feature goal into one concise, actionable GitHub Issue. Do not
 begin implementation, edit product code, or create more than one Issue unless
 the user explicitly requests multiple Issues.
 
-1. Read `AGENTS.md`, the relevant roadmap sections in
-   `docs/IMPLEMENTATION_PLAN.md`, and any repository guidance needed to define
-   the feature's boundaries.
+1. Read `AGENTS.md`, the roadmap at the path configured in
+   `.ai/harness.config.json`, and any repository guidance needed to define the
+   feature's boundaries.
 2. Use the available GitHub integration or MCP to search open Issues for an
    equivalent or substantially overlapping request. If one exists, return its
    number and URL, explain the overlap briefly, and do not create a duplicate.
