@@ -1979,3 +1979,62 @@ their existing layers.
 
 A small declarative value file removes drift when consumers remain explicit
 and procedural policy stays in repository instructions and Skills.
+
+## 2026-09-09 — PR #16 conflict resolution after PR #15 merge
+
+### Harness
+
+Tool: Codex with local Git and GitHub CLI
+Model: GPT-5
+Reasoning: not recorded
+Mode: Default
+Task type: merge-conflict resolution
+Risk level: low
+
+### Goal
+
+Resolve PR #16 against the current `main` without altering its isolated
+Feature Delivery Agent worktree behavior.
+
+### AI responsibility
+
+- Verified the PR branch and remote base in its isolated worktree.
+- Merged `origin/main` and compositionally retained the independent PR #16 and
+  merged PR #15 worklog entries.
+- Created and pushed merge commit `0431038` without rewriting history.
+
+### Human responsibility
+
+The human narrowed the requested scope to PR #16 and retains final merge
+authority.
+
+### Outcome
+
+PR #16 incorporates current mainline harness changes while its intended agent
+worktree changes remain intact.
+
+### Files changed
+
+- Mainline harness files incorporated by the merge
+- `AI_WORKLOG.md`
+
+### Validation
+
+- `uv run --extra dev pytest` — 74 passed.
+- `uv run --extra dev ruff check .` — passed.
+- `uv run --extra dev mypy` — passed with no issues in 12 source files.
+- Conflict-marker, unmerged-path, and staged-diff checks — passed.
+
+### Friction / failure
+
+The local default branch was behind the remote base, so the current
+`origin/main` was merged directly into the isolated PR worktree.
+
+### Harness change
+
+No new harness behavior was introduced by the resolution.
+
+### Lesson learned
+
+Rechecking the remote base immediately before resolution avoids treating a
+previously mergeable PR as current after another PR advances `main`.
