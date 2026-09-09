@@ -1635,3 +1635,72 @@ Added a repository Skill for evidence-backed resumable run state and minimal
 Operational continuation state stays useful and compact when it records only
 the next-step checklist and supporting evidence while durable outcomes remain
 in the chronological worklog.
+
+## 2026-09-09 — PR autopilot custom agent
+
+### Harness
+
+Tool: Codex with GitHub CLI and local Git
+Model: GPT-5
+Reasoning: not recorded
+Mode: Default
+Task type: custom-agent harness
+Risk level: low
+
+### Goal
+
+Add one manually invocable custom agent that diagnoses an existing pull
+request and routes each blocking state to the smallest existing repository
+capability without duplicating its procedure.
+
+### AI responsibility
+
+- Preserved unrelated local work by creating an isolated worktree from current
+  `origin/main` on `chore/pr-autopilot-agent`.
+- Added and validated `.github/agents/pr-autopilot.agent.md` against the
+  repository conventions and GitHub's documented custom-agent configuration.
+- Created task commit `3e08292`, pushed the branch, and created PR #14 for
+  human review.
+
+### Human responsibility
+
+The human specified the routing, evidence, safety, validation, and delivery
+requirements and retains final review and merge authority.
+
+### Outcome
+
+PR #14 contains a concise manual orchestrator for conflict, CI, review,
+synchronization, and final PR-validation routing. No product code or dependency
+changed, and no merge, auto-merge, self-approval, or force-push occurred.
+
+### Files changed
+
+- `.github/agents/pr-autopilot.agent.md`
+- `AI_WORKLOG.md`
+
+### Validation
+
+- Custom-agent location, suffix, frontmatter, supported tool aliases, prompt
+  length, and required routes — passed.
+- `git diff --check` — passed.
+- `uv run --extra dev pytest` — 74 passed.
+- `uv run --extra dev ruff check .` — passed.
+- `uv run --extra dev mypy` — passed.
+
+### Friction / failure
+
+The starting branch contained an unrelated modification to
+`tests/test_presentation.py`, so the task was isolated in a separate worktree.
+Sandbox approval was required for remote Git and GitHub operations.
+
+### Harness change
+
+Added a manually invocable `pr-autopilot` agent with read-only GitHub MCP
+access and routing to the existing conflict, CI, review, synchronization, and
+PR-validation capabilities.
+
+### Lesson learned
+
+An orchestrator stays small when it owns state diagnosis and dependency order
+while repository Skills and specialist agents continue to own corrections and
+validation details.
