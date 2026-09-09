@@ -122,7 +122,14 @@ decisions.
 - [`docs/ai/model-usage.md`](docs/ai/model-usage.md)
 - [`docs/ai/github-integration-capabilities.md`](docs/ai/github-integration-capabilities.md)
 
+## Product specification
+
+[`spec/`](spec/README.md) is the authoritative, repository-owned description
+of intended product behavior and architecture constraints. The implementation,
+tests, roadmap, and worklog are evidence, not replacements for the
+specification.
+
 ## Future demo
 
-Git activity is the next normal product feature. **Late-Night Refactor Risk**
-is intentionally reserved for the live demo.
+**Late-Night Refactor Risk** is intentionally specified but reserved for the
+live demo; it is not implemented.

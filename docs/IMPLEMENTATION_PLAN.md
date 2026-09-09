@@ -203,7 +203,7 @@ interactive mode.
 - [x] coffee tracking
 - [x] persistent coffee history
 - [x] developer status
-- [ ] Git activity
+- [x] Git activity
 - [ ] refactor-risk scoring
 
 ## AI harness capabilities implemented
@@ -267,7 +267,7 @@ interactive mode.
 - [ ] Phase 4.7 — GitHub CI Triage Agent operational exercise
 - [x] Phase 10 — GitHub Actions CI baseline
 - [ ] Phase 11 — GitHub MCP integration
-- [ ] Phase 12 — Git activity feature through GitHub Issue
+- [x] Phase 12 — Git activity feature through GitHub Issue
 - [ ] Phase 13 — Independent AI pull-request review
 - [ ] Phase 14 — AI review-feedback validation
 
@@ -1253,7 +1253,7 @@ Codex
 
 # Phase 12 — Git activity feature through GitHub Issue
 
-Status: **PLANNED**
+Status: **COMPLETE**
 
 ## Feature
 
@@ -1280,12 +1280,12 @@ behave gracefully without an error or traceback.
 
 ## Acceptance criteria
 
-- [ ] `cdd status` shows today's commit count and the latest commit time when
+- [x] `cdd status` shows today's commit count and the latest commit time when
       Git activity is available.
-- [ ] Running outside a Git repository remains graceful.
-- [ ] Tests cover the Git behavior without reading the developer's repository
+- [x] Running outside a Git repository remains graceful.
+- [x] Tests cover the Git behavior without reading the developer's repository
       history.
-- [ ] No GitPython dependency is introduced.
+- [x] No GitPython dependency is introduced.
 
 ## AI setup
 
@@ -1324,6 +1324,13 @@ pull request
 ## Human gate
 
 Do not merge automatically.
+
+## Completion evidence
+
+Local Git activity was delivered in `cdd status` in commit `b0a4c3e` and
+merged to the default branch. The implementation reports current-day commits,
+the latest commit time, deterministic activity levels, and an empty Git result
+outside a repository. Refactor Risk remains out of scope.
 
 ---
 

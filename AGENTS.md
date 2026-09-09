@@ -39,6 +39,7 @@ through artificial exclusions or tests that do not assert meaningful behavior.
 ## Repository context
 
 - Project roadmap: configured `paths.implementation_plan`
+- Authoritative product specification: configured `paths.specification_index`
 - AI-assisted development history: configured `paths.ai_worklog`
 - Python conventions: `docs/engineering/python-guidelines.md`
 - Testing strategy: `docs/engineering/testing-strategy.md`

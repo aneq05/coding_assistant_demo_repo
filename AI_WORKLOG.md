@@ -2426,3 +2426,75 @@ Removed two competing roadmap copies of the canonical quality-gate commands.
 
 When a PR merges during feedback processing, a small follow-up branch from the
 new base preserves both review traceability and minimal scope.
+
+## 2026-09-09 — product specification layer
+
+### Harness
+
+Tool: Codex with local Git and uv
+Model: GPT-5
+Reasoning: not recorded
+Mode: Default
+Task type: product specification and harness documentation
+Risk level: low-medium
+
+### Goal
+
+Establish a repository-owned, authoritative specification of current product
+behavior and architecture constraints, and specify Late-Night Refactor Risk
+without implementing it.
+
+### AI responsibility
+
+- Synchronized `main`, inspected the implementation, tests, roadmap, worklog,
+  harness configuration, and relevant Git history.
+- Created the indexed `spec/` documentation with stable functional,
+  architecture, non-functional, and future-risk requirement IDs.
+- Added deterministic specification paths to the harness and corrected stale
+  Git-activity roadmap and README references using merged implementation
+  evidence.
+
+### Human responsibility
+
+The human requested the specification layer and retains authority for material
+product-scope, architecture, and final-merge decisions.
+
+### Outcome
+
+The repository now has a product specification layer. Late-Night Refactor Risk
+is specified only; no runtime feature, AI behavior, graph framework, or
+conformance automation was added.
+
+### Files changed
+
+- `.ai/harness.config.json`
+- `AGENTS.md`
+- `README.md`
+- `docs/IMPLEMENTATION_PLAN.md`
+- `spec/README.md`
+- `spec/product.md`
+- `spec/architecture.md`
+- `spec/features/late-night-refactor-risk.md`
+- `AI_WORKLOG.md`
+
+### Validation
+
+- `git diff --check` — passed.
+- `uv run --extra dev pytest` — 74 passed; 92.42% coverage.
+- `uv run --extra dev ruff check .` — passed.
+- `uv run --extra dev mypy` — passed with no issues in 12 source files.
+
+### Friction / failure
+
+The sandbox could not initialize the existing uv cache; the configured quality
+gate passed after approved cache access.
+
+### Harness change
+
+Added deterministic specification-root and specification-index paths and an
+agent-routing reference to the authoritative product specification.
+
+### Lesson learned
+
+An indexed requirement set can preserve traceability and targeted retrieval
+without making roadmap history or current implementation the product contract.
