@@ -1708,3 +1708,64 @@ PR-validation capabilities.
 An orchestrator stays small when it owns state diagnosis and dependency order
 while repository Skills and specialist agents continue to own corrections and
 validation details.
+
+## 2026-09-09 — merge-conflict resolution for PRs #15, #16, and #17
+
+### Harness
+
+Tool: Codex with local Git and GitHub CLI
+Model: GPT-5
+Reasoning: not recorded
+Mode: Default
+Task type: multi-PR merge-conflict resolution
+Risk level: medium
+
+### Goal
+
+Resolve current merge conflicts against `main` for PRs #15, #16, and #17
+without disturbing unrelated work in the primary checkout.
+
+### AI responsibility
+
+- Verified local and remote default-branch freshness and inspected all three PRs.
+- Used isolated worktrees, merged `origin/main`, and preserved both independent
+  `AI_WORKLOG.md` entries on each branch.
+- Created and pushed merge commits `283973c`, `b96bfdf`, and `e502379`.
+
+### Human responsibility
+
+The human requested resolution of the three PR conflicts and retains review and
+final-merge authority.
+
+### Outcome
+
+PRs #15, #16, and #17 were updated without force-pushing or changing their
+feature intent. The unrelated primary-checkout modification remained untouched.
+
+### Files changed
+
+- `.github/agents/pr-autopilot.agent.md` (merged from `main`)
+- `AI_WORKLOG.md`
+
+### Validation
+
+- `uv run --extra dev pytest` — 74 passed on each branch.
+- `uv run --extra dev ruff check .` — passed on each branch.
+- `uv run --extra dev mypy` — passed on each branch.
+- Staged diff checks and conflict-marker checks — passed on each branch.
+
+### Friction / failure
+
+Windows retained stale absolute paths in PR #16's moved virtual environment; a
+fresh environment was created and the full validation gate then passed.
+
+### Harness change
+
+No new harness behavior was introduced; each branch only incorporated the
+already-reviewed mainline agent and retained its own feature changes.
+
+### Lesson learned
+
+Independent chronological worklog entries should be composed rather than
+selected, and moved Windows virtual environments should be recreated before
+validation.
