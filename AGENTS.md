@@ -16,11 +16,12 @@ This repository is intentionally small.
 
 Before completing a code change, run:
 
-1. `uv run --extra dev pytest`
+1. `uv run --extra dev pytest` (production-code branch coverage must be at least 90%)
 2. `uv run --extra dev ruff check .`
 3. `uv run --extra dev mypy`
 
-All checks must pass.
+All checks must pass. Do not meet the coverage threshold through artificial
+exclusions or tests that do not assert meaningful behavior.
 
 ## Repository context
 

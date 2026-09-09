@@ -10,6 +10,7 @@ __pycache__/
 .pytest-tmp/
 .pytest-phase*/
 .phase6-smoke/
+.coverage
 .mypy_cache/
 .ruff_cache/
 reports/
