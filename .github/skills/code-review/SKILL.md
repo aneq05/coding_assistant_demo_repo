@@ -13,7 +13,8 @@ readiness. Those responsibilities belong to `validate-review-feedback` and
 1. Establish the pull request's goal, current HEAD SHA, base branch, metadata,
    complete changed-file set, repository architecture, and applicable roadmap
    phase. Read `AGENTS.md`, the Python guidelines, testing strategy, and the
-   relevant section of `docs/IMPLEMENTATION_PLAN.md`.
+   relevant roadmap section at the path configured in
+   `.ai/harness.config.json`.
 2. When relevant context is available, use the GitHub context or GitHub MCP to
    inspect only the current pull request: its current HEAD and base, changed
    files, explicitly referenced Issues, current-HEAD Actions results and

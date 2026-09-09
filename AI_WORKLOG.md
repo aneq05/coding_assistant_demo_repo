@@ -1568,77 +1568,144 @@ Worklog conflicts can be resolved compositionally when both sides are
 independent chronological records; merge intent should still be established
 from branch history and changed files rather than markers alone.
 
-## 2026-09-09 — Feature Delivery Issue claiming
+## 2026-09-09 — isolated Feature Delivery Agent worktrees
 
 ### Harness
 
-Tool: Codex with authenticated GitHub CLI and local Git
+Tool: Codex with local Git and GitHub CLI
 Model: GPT-5
 Reasoning: not recorded
 Mode: Implementation
-Task type: agent configuration and documentation
+Task type: custom-agent configuration and Git delivery safety
 Risk level: medium
 
 ### Goal
 
-Prevent concurrent Feature Delivery sessions from independently implementing
-the same GitHub Issue with a conservative, lightweight claim lifecycle.
+Allow the existing Feature Delivery Agent to perform bounded Issue-to-PR work
+in an isolated Git worktree without disturbing the primary checkout.
 
 ### AI responsibility
 
-- Inspected repository, branch, worktree, pull request, Issue, and existing
-  `manage-ai-run` branch state before editing.
-- Updated the Feature Delivery Agent with `ai-in-progress` claim inspection,
-  acquisition, release, abort, resumable-state, and Issue-linkage rules.
-- Preserved unrelated modified files and existing worktrees by using isolated
-  branch `chore/feature-delivery-claiming`.
-- Created commit `6bc5a79` and draft pull request #17.
+- Inspected the primary checkout, remotes, default branch, fetched state, and
+  registered worktrees before creating task state.
+- Created `chore/feature-delivery-worktrees` from fetched `origin/main` in the
+  deterministic sibling worktree `ai_coding_assistant.worktrees/feature-delivery-worktrees`.
+- Updated the existing agent with conservative worktree creation, identity
+  verification, cleanup-reporting, and Git safety boundaries while composing
+  with the existing repository Skills.
+- Created draft pull request #16 after validation.
 
 ### Human responsibility
 
-The human specified the claim policy and retains authority over ambiguous
-claims, architectural decisions, review, and final merge.
+The human specified the isolation and safety requirements and retains review
+and final-merge authority.
 
 ### Outcome
 
-The Feature Delivery Agent now stops before repository changes when an Issue
-is owned or ownership is ambiguous, claims unowned work before implementation,
-coordinates matching resumable state, and releases successful claims without
-manually closing Issues.
+The Feature Delivery Agent now supports isolated delivery when primary-checkout
+state favors it. The primary branch and its existing user change were preserved,
+and unrelated registered worktrees were neither reused nor removed.
 
 ### Files changed
 
 - `.github/agents/feature-delivery.agent.md`
-- `docs/ai/github-integration-capabilities.md`
 - `AI_WORKLOG.md`
 
 ### Validation
 
-- Agent frontmatter and required tool scope structure check passed.
+- Agent frontmatter, required safety instructions, and prompt length passed a
+  focused configuration check against the documented GitHub profile shape.
+- The task worktree path, branch, base ancestry, and separation from the primary
+  checkout were verified.
 - `uv run --extra dev pytest` passed: 74 tests.
 - `uv run --extra dev ruff check .` passed.
 - `uv run --extra dev mypy` passed.
-- `git diff --check` passed.
-- PR #17 was created for human review; no merge was performed.
+- `git diff --check` passed for the agent change.
 
 ### Friction / failure
 
-The primary checkout contained an unrelated modified test and existing
-worktrees, and local `main` was behind `origin/main`; an isolated worktree based
-on the fetched remote default branch preserved that state. Sandbox restrictions
-initially blocked the uv cache, so validation used approved escalation.
+The host-created sibling worktree required a command-scoped Git safe-directory
+setting for sandboxed read-only checks. Existing unrelated worktrees were left
+untouched, including one nested under the primary checkout.
 
 ### Harness change
 
-Added conservative GitHub Issue claim coordination directly to the existing
-Feature Delivery Agent without adding a separate Skill or changing product
-code.
+The existing Feature Delivery Agent gained isolated worktree setup and safety
+checks. No new Skill was added and no existing Skill workflow was duplicated.
 
 ### Lesson learned
 
-A shared label prevents duplicate starts only when it is reconciled with active
-GitHub, repository, and resumable-run evidence; the label alone cannot safely
-establish or transfer ownership.
+A deterministic sibling worktree avoids surfacing task files as untracked
+content in the primary checkout and lets delivery proceed without switching its
+branch or moving user changes.
+
+## 2026-09-09 — resumable AI run-state Skill
+
+### Harness
+
+Tool: Codex
+Model: not recorded
+Reasoning: not recorded
+Mode: Implementation
+Task type: repository Skill and harness guidance
+Risk level: low
+
+### Goal
+
+Add lightweight operational state for meaningful AI engineering work that may
+span sessions or stages without duplicating permanent project history.
+
+### AI responsibility
+
+- Preserved an unrelated local test change by working from `origin/main` in an
+  isolated `feature/manage-ai-run` worktree.
+- Added and validated `manage-ai-run`, introduced `.ai/runs/`, and added
+  concise repository routing.
+- Committed the harness change as `cf72207` and created PR #15.
+
+### Human responsibility
+
+The human specified the run-state content and safety rules and retains review
+and final-merge authority.
+
+### Outcome
+
+PR #15 contains a compact start-or-continue workflow that reconciles recorded
+state with repository evidence, resumes from the first incomplete step, and
+keeps `AI_WORKLOG.md` as the historical record. No product code changed, and
+no merge was performed.
+
+### Files changed
+
+- `.agents/skills/manage-ai-run/SKILL.md`
+- `.ai/runs/.gitkeep`
+- `AGENTS.md`
+- `AI_WORKLOG.md`
+
+### Validation
+
+- Skill Creator `quick_validate.py` — passed.
+- `uv run --extra dev pytest` — 74 passed.
+- `uv run --extra dev ruff check .` — passed.
+- `uv run --extra dev mypy` — passed.
+- Staged diff check — passed.
+
+### Friction / failure
+
+The current merged feature branch contained an unrelated uncommitted test
+change, so delivery used an isolated worktree. The Skill validator required an
+ephemeral PyYAML installation because it is not a project dependency.
+
+### Harness change
+
+Added a repository Skill for evidence-backed resumable run state and minimal
+`AGENTS.md` routing to it.
+
+### Lesson learned
+
+Operational continuation state stays useful and compact when it records only
+the next-step checklist and supporting evidence while durable outcomes remain
+in the chronological worklog.
 
 ## 2026-09-09 — PR autopilot custom agent
 
@@ -1836,3 +1903,210 @@ and agents.
 Capability triggers can remain explicit without duplicating workflow details
 when the repository control plane names situations and delegates procedures to
 the owning Skill or agent.
+
+## 2026-09-09 — central AI harness configuration
+
+### Harness
+
+Tool: Codex with GitHub CLI and local Git
+Model: GPT-5
+Reasoning: not recorded
+Mode: Default
+Task type: harness configuration
+Risk level: low
+
+### Goal
+
+Centralize the repository's small deterministic AI workflow values without
+introducing a configuration framework or moving policy into JSON.
+
+### AI responsibility
+
+- Synchronized `main` with `origin/main` and preserved unrelated work by using
+  the isolated `chore/central-harness-config` worktree.
+- Inspected current workflow guidance and review-ready resumable-run and
+  claim-locking PRs before selecting the minimal shared values.
+- Added the configuration, updated only direct Skill consumers, created task
+  commit `1e1f69e`, pushed the branch, and opened PR #20.
+- Merged the concurrently advanced `origin/main` and compositionally retained
+  both the task-router guidance and chronological worklog entries.
+
+### Human responsibility
+
+The human specified the configuration boundaries and retains architecture,
+review, and final merge authority.
+
+### Outcome
+
+PR #20 centralizes the default branch, quality-gate commands, shared paths,
+claim label, and human-gate identifiers. No product behavior, Python runtime
+code, dependency, parser, or configuration framework changed.
+
+### Files changed
+
+- `.ai/harness.config.json`
+- `AGENTS.md`
+- `.agents/skills/create-feature-issue/SKILL.md`
+- `.agents/skills/prepare-pull-request/SKILL.md`
+- `.agents/skills/record-ai-session/SKILL.md`
+- `.agents/skills/sync-repository/SKILL.md`
+- `.github/skills/code-review/SKILL.md`
+- `AI_WORKLOG.md`
+
+### Validation
+
+- JSON parsing and minimal schema-shape assertions — passed.
+- `uv run --extra dev pytest` — 74 passed.
+- `uv run --extra dev ruff check .` — passed.
+- `uv run --extra dev mypy` — passed with no issues in 12 source files.
+- `git diff --check` — passed after base-branch reconciliation.
+
+### Friction / failure
+
+The starting checkout contained unrelated user work, so the task used an
+isolated worktree. While PR #20 was being prepared, PR #18 advanced `main` and
+created composable conflicts in `AGENTS.md` and `AI_WORKLOG.md`. Sandbox
+approval was required for remote Git and GitHub operations. The sandboxed
+quality-gate attempt could not initialize uv's cache; the approved run passed.
+
+### Harness change
+
+Added one versioned JSON source for deterministic shared values and kept
+persistent rules, procedures, orchestration, history, and resumable state in
+their existing layers.
+
+### Lesson learned
+
+A small declarative value file removes drift when consumers remain explicit
+and procedural policy stays in repository instructions and Skills.
+
+## 2026-09-09 — PR #16 conflict resolution after PR #15 merge
+
+### Harness
+
+Tool: Codex with local Git and GitHub CLI
+Model: GPT-5
+Reasoning: not recorded
+Mode: Default
+Task type: merge-conflict resolution
+Risk level: low
+
+### Goal
+
+Resolve PR #16 against the current `main` without altering its isolated
+Feature Delivery Agent worktree behavior.
+
+### AI responsibility
+
+- Verified the PR branch and remote base in its isolated worktree.
+- Merged `origin/main` and compositionally retained the independent PR #16 and
+  merged PR #15 worklog entries.
+- Created and pushed merge commit `0431038` without rewriting history.
+
+### Human responsibility
+
+The human narrowed the requested scope to PR #16 and retains final merge
+authority.
+
+### Outcome
+
+PR #16 incorporates current mainline harness changes while its intended agent
+worktree changes remain intact.
+
+### Files changed
+
+- Mainline harness files incorporated by the merge
+- `AI_WORKLOG.md`
+
+### Validation
+
+- `uv run --extra dev pytest` — 74 passed.
+- `uv run --extra dev ruff check .` — passed.
+- `uv run --extra dev mypy` — passed with no issues in 12 source files.
+- Conflict-marker, unmerged-path, and staged-diff checks — passed.
+
+### Friction / failure
+
+The local default branch was behind the remote base, so the current
+`origin/main` was merged directly into the isolated PR worktree.
+
+### Harness change
+
+No new harness behavior was introduced by the resolution.
+
+### Lesson learned
+
+Rechecking the remote base immediately before resolution avoids treating a
+previously mergeable PR as current after another PR advances `main`.
+
+## 2026-09-09 — Feature Delivery Issue claiming
+
+### Harness
+
+Tool: Codex with authenticated GitHub CLI and local Git
+Model: GPT-5
+Reasoning: not recorded
+Mode: Implementation
+Task type: agent configuration and documentation
+Risk level: medium
+
+### Goal
+
+Prevent concurrent Feature Delivery sessions from independently implementing
+the same GitHub Issue with a conservative, lightweight claim lifecycle.
+
+### AI responsibility
+
+- Inspected repository, branch, worktree, pull request, Issue, and existing
+  `manage-ai-run` branch state before editing.
+- Updated the Feature Delivery Agent with `ai-in-progress` claim inspection,
+  acquisition, release, abort, resumable-state, and Issue-linkage rules.
+- Preserved unrelated modified files and existing worktrees by using isolated
+  branch `chore/feature-delivery-claiming`.
+- Created commit `6bc5a79` and draft pull request #17.
+
+### Human responsibility
+
+The human specified the claim policy and retains authority over ambiguous
+claims, architectural decisions, review, and final merge.
+
+### Outcome
+
+The Feature Delivery Agent now stops before repository changes when an Issue
+is owned or ownership is ambiguous, claims unowned work before implementation,
+coordinates matching resumable state, and releases successful claims without
+manually closing Issues.
+
+### Files changed
+
+- `.github/agents/feature-delivery.agent.md`
+- `docs/ai/github-integration-capabilities.md`
+- `AI_WORKLOG.md`
+
+### Validation
+
+- Agent frontmatter and required tool scope structure check passed.
+- `uv run --extra dev pytest` passed: 74 tests.
+- `uv run --extra dev ruff check .` passed.
+- `uv run --extra dev mypy` passed.
+- `git diff --check` passed.
+- PR #17 was created for human review; no merge was performed.
+
+### Friction / failure
+
+The primary checkout contained an unrelated modified test and existing
+worktrees, and local `main` was behind `origin/main`; an isolated worktree based
+on the fetched remote default branch preserved that state. Sandbox restrictions
+initially blocked the uv cache, so validation used approved escalation.
+
+### Harness change
+
+Added conservative GitHub Issue claim coordination directly to the existing
+Feature Delivery Agent without adding a separate Skill or changing product
+code.
+
+### Lesson learned
+
+A shared label prevents duplicate starts only when it is reconciled with active
+GitHub, repository, and resumable-run evidence; the label alone cannot safely
+establish or transfer ownership.
