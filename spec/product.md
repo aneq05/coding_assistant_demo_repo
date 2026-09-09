@@ -24,11 +24,13 @@ the drink and its estimated caffeine amount.
 
 ### CDD-FR-003 — Local history persistence
 
-Coffee history MUST persist locally at `~/.cdd/history.jsonl` by default. Each
-event MUST be appended as one independently parseable JSON object line, and a
-new event MUST preserve existing events. The persisted event contract contains
-an aware ISO 8601 timestamp, a nonempty drink name, and a nonnegative integer
-caffeine amount.
+Coffee history MUST persist locally at the repository-local
+`.cdd/history.jsonl` path by default.
+
+The runtime data directory MUST remain excluded from version control.
+
+Each event MUST be appended as one independently parseable JSON object line,
+and a new event MUST preserve existing events.
 
 ### CDD-FR-004 — History integrity
 

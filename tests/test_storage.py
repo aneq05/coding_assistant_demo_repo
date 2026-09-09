@@ -6,6 +6,7 @@ from pathlib import Path
 
 import pytest
 
+from cdd import storage
 from cdd.domain import CoffeeEvent
 from cdd.storage import InvalidHistoryError, append_event, read_events
 
@@ -60,8 +61,7 @@ def test_append_event_uses_default_history_path(
     monkeypatch: pytest.MonkeyPatch,
     tmp_path: Path,
 ) -> None:
-    """The production default is the history file beneath the user's home."""
-    monkeypatch.setattr(Path, "home", lambda: tmp_path)
+    monkeypatch.setattr(storage, "_REPOSITORY_ROOT", tmp_path)
 
     append_event(make_event())
 

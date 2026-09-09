@@ -6,6 +6,7 @@ from pathlib import Path
 
 from cdd.domain import CoffeeEvent
 
+_REPOSITORY_ROOT = Path(__file__).resolve().parents[2]
 
 class InvalidHistoryError(ValueError):
     """Raised when a persisted history line does not match the event schema."""
@@ -13,7 +14,7 @@ class InvalidHistoryError(ValueError):
 
 def default_history_path() -> Path:
     """Return the default per-user coffee history path."""
-    return Path.home() / ".cdd" / "history.jsonl"
+    return _REPOSITORY_ROOT / ".cdd" / "history.jsonl"
 
 
 def append_event(event: CoffeeEvent, path: Path | None = None) -> None:

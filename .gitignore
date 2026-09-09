@@ -23,6 +23,9 @@ reports/
 .uv-cache/
 .uv-python/
 
+# Local CDD runtime data
+.cdd/
+
 # Environment / secrets
 .env
 .env.*
