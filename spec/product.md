@@ -22,6 +22,11 @@ and a timezone-aware occurrence time. Stored event times MUST be normalized to
 UTC; a timezone-naive time MUST be rejected. A successful command MUST confirm
 the drink and its estimated caffeine amount.
 
+The occurrence time defaults to the current clock. A user MAY instead supply a
+timezone-aware ISO 8601 timestamp that is not later than the current clock.
+Malformed, timezone-naive, and future explicit times MUST be rejected without
+persisting an event.
+
 ### CDD-FR-003 — Local history persistence
 
 Coffee history MUST persist locally at the repository-local
@@ -76,7 +81,7 @@ MUST remain successful with zero commits and no latest commit.
 
 ### CDD-FR-010 — Command interface
 
-The CLI MUST provide `drink <drink>`, `history [--limit N]`, `status`, `stats
+The CLI MUST provide `drink <drink> [--at <timestamp>]`, `history [--limit N]`, `status`, `stats
 [--days N]`, and `interactive`. Help MUST be available successfully. Invalid
 numeric options MUST be rejected unless they are positive integers.
 
@@ -86,12 +91,19 @@ Interactive mode MUST provide add-drink, status, history, statistics, and exit
 paths over the same product behavior as direct commands. It MUST not create a
 separate set of business rules or persistence semantics.
 
+Interactive add-drink MUST default to recording now and MUST also offer an
+explicit historical occurrence time using the direct command's timestamp
+validation and event-creation behavior.
+
 ### CDD-FR-012 — User-facing failures
 
 Expected invalid input, history read failures, and event-persistence failures
 MUST be presented as clean user-facing errors without a traceback. Interactive
 invalid selections and EOF or interruption at a menu or drink prompt MUST exit
 or recover gracefully.
+
+Malformed, timezone-naive, and future occurrence times are expected invalid
+input and MUST NOT append a partial or fallback event.
 
 ## Non-functional requirements
 

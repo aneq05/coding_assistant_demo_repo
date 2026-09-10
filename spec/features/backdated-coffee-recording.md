@@ -1,6 +1,6 @@
 # Backdated Coffee Recording
 
-**Status:** specified for a future feature; not implemented.
+**Status:** implemented.
 
 ## Goal and boundaries
 

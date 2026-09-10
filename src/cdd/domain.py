@@ -59,6 +59,10 @@ class UnsupportedDrinkError(ValueError):
     """Raised when a drink is not supported."""
 
 
+class InvalidOccurrenceTimeError(ValueError):
+    """Raised when an explicit coffee occurrence time is invalid."""
+
+
 class InvalidStatsPeriodError(ValueError):
     """Raised when a statistics window cannot be represented."""
 
@@ -81,10 +85,19 @@ def get_drink(name: str) -> Drink:
 def create_coffee_event(
     drink: Drink,
     *,
-    timestamp: datetime | None = None,
+    timestamp: datetime | str | None = None,
+    now: datetime | None = None,
 ) -> CoffeeEvent:
     """Create a coffee event for a supported drink."""
-    event_timestamp = timestamp or datetime.now(UTC)
+    if isinstance(timestamp, str):
+        event_timestamp = _parse_occurrence_time(timestamp)
+        if now is None:
+            raise ValueError("now is required for an explicit occurrence time")
+        current_time = _aware_datetime(now, name="now")
+        if event_timestamp > current_time:
+            raise InvalidOccurrenceTimeError("occurrence time cannot be in the future")
+    else:
+        event_timestamp = timestamp or datetime.now(UTC)
     if event_timestamp.tzinfo is None or event_timestamp.utcoffset() is None:
         raise ValueError("timestamp must be timezone-aware")
 
@@ -93,6 +106,29 @@ def create_coffee_event(
         drink=drink.kind,
         caffeine_mg=drink.caffeine_mg,
     )
+
+
+def _parse_occurrence_time(value: str) -> datetime:
+    try:
+        timestamp = datetime.fromisoformat(value)
+    except ValueError as error:
+        raise InvalidOccurrenceTimeError(
+            "occurrence time must be a valid ISO 8601 timestamp"
+        ) from error
+    try:
+        return _aware_datetime(timestamp, name="occurrence time")
+    except ValueError as error:
+        raise InvalidOccurrenceTimeError(str(error)) from error
+    except OverflowError as error:
+        raise InvalidOccurrenceTimeError(
+            "occurrence time cannot be represented in UTC"
+        ) from error
+
+
+def _aware_datetime(timestamp: datetime, *, name: str) -> datetime:
+    if timestamp.tzinfo is None or timestamp.utcoffset() is None:
+        raise ValueError(f"{name} must be timezone-aware")
+    return timestamp.astimezone(UTC)
 
 
 def developer_state(caffeine_mg: int) -> str:

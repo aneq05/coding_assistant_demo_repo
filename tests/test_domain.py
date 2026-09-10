@@ -6,6 +6,7 @@ import pytest
 
 from cdd.domain import (
     CoffeeEvent,
+    InvalidOccurrenceTimeError,
     UnsupportedDrinkError,
     calculate_stats,
     create_coffee_event,
@@ -78,6 +79,38 @@ def test_create_coffee_event_rejects_naive_timestamp() -> None:
 
     with pytest.raises(ValueError, match="timestamp must be timezone-aware"):
         create_coffee_event(get_drink("espresso"), timestamp=timestamp)
+
+
+def test_create_historical_coffee_event_parses_and_normalizes_offset() -> None:
+    event = create_coffee_event(
+        get_drink("espresso"),
+        timestamp="2026-09-05T14:30:00+02:00",
+        now=datetime(2026, 9, 7, 12, 0, tzinfo=UTC),
+    )
+
+    assert event.timestamp == datetime(2026, 9, 5, 12, 30, tzinfo=UTC)
+
+
+@pytest.mark.parametrize(
+    ("timestamp", "message"),
+    [
+        ("not-a-timestamp", "valid ISO 8601"),
+        ("2026-09-05T14:30:00", "timezone-aware"),
+        ("2026-09-08T12:00:00+00:00", "cannot be in the future"),
+        ("0001-01-01T00:00:00+01:00", "cannot be represented in UTC"),
+        ("9999-12-31T23:59:59-01:00", "cannot be represented in UTC"),
+    ],
+)
+def test_create_historical_coffee_event_rejects_invalid_input(
+    timestamp: str,
+    message: str,
+) -> None:
+    with pytest.raises(InvalidOccurrenceTimeError, match=message):
+        create_coffee_event(
+            get_drink("espresso"),
+            timestamp=timestamp,
+            now=datetime(2026, 9, 7, 12, 0, tzinfo=UTC),
+        )
 
 
 @pytest.mark.parametrize(

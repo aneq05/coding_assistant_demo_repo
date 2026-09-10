@@ -56,6 +56,61 @@ def test_drink_rejects_unsupported_drink(
     assert not history_path.exists()
 
 
+def test_drink_records_an_explicit_historical_time_as_utc(
+    tmp_path: Path,
+) -> None:
+    history_path = tmp_path / "history.jsonl"
+
+    assert main(
+        ["drink", "espresso", "--at", "2026-09-05T14:30:00+02:00"],
+        history_path=history_path,
+        now=datetime(2026, 9, 7, 12, 0, tzinfo=UTC),
+    ) == 0
+
+    assert read_events(history_path)[0].timestamp == datetime(
+        2026, 9, 5, 12, 30, tzinfo=UTC
+    )
+
+
+def test_drink_without_at_uses_the_injected_current_time(tmp_path: Path) -> None:
+    history_path = tmp_path / "history.jsonl"
+    now = datetime(2026, 9, 7, 12, 0, tzinfo=UTC)
+
+    assert main(["drink", "espresso"], history_path=history_path, now=now) == 0
+
+    assert read_events(history_path)[0].timestamp == now
+
+
+@pytest.mark.parametrize(
+    "timestamp",
+    [
+        "not-a-timestamp",
+        "",
+        "2026-09-05T14:30:00",
+        "2026-09-08T12:00:00+00:00",
+        "0001-01-01T00:00:00+01:00",
+        "9999-12-31T23:59:59-01:00",
+    ],
+)
+def test_drink_rejects_invalid_explicit_time_without_writing(
+    timestamp: str,
+    capsys: pytest.CaptureFixture[str],
+    tmp_path: Path,
+) -> None:
+    history_path = tmp_path / "history.jsonl"
+
+    with pytest.raises(SystemExit) as result:
+        main(
+            ["drink", "espresso", "--at", timestamp],
+            history_path=history_path,
+            now=datetime(2026, 9, 7, 12, 0, tzinfo=UTC),
+        )
+
+    assert result.value.code != 0
+    assert "occurrence time" in capsys.readouterr().err
+    assert not history_path.exists()
+
+
 def test_drink_reports_persistence_failure_without_traceback(
     capsys: pytest.CaptureFixture[str],
     monkeypatch: pytest.MonkeyPatch,
@@ -133,6 +188,31 @@ def test_history_limit_and_empty_history_are_explicit(
 
     assert main(["history"], history_path=tmp_path / "missing.jsonl") == 0
     assert "No coffee recorded yet." in capsys.readouterr().out
+
+
+def test_history_orders_by_occurrence_time_before_applying_limit(
+    capsys: pytest.CaptureFixture[str],
+    tmp_path: Path,
+) -> None:
+    history_path = tmp_path / "history.jsonl"
+    append_event(
+        CoffeeEvent(datetime(2026, 9, 7, 12, 0, tzinfo=UTC), "espresso", 80),
+        history_path,
+    )
+    append_event(
+        CoffeeEvent(datetime(2026, 9, 5, 12, 0, tzinfo=UTC), "americano", 120),
+        history_path,
+    )
+
+    assert main(
+        ["history", "--limit", "1"],
+        history_path=history_path,
+        now=datetime(2026, 9, 7, 12, 0, tzinfo=UTC),
+    ) == 0
+
+    output = capsys.readouterr().out
+    assert "Espresso" in output
+    assert "Americano" not in output
 
 
 @pytest.mark.parametrize(
@@ -264,11 +344,11 @@ def test_malformed_history_is_a_clean_cli_error(
     assert "Could not read coffee history" in capsys.readouterr().err
 
 
-def test_interactive_reuses_add_and_status_behavior(
+def test_interactive_reuses_add_now_and_status_behavior(
     capsys: pytest.CaptureFixture[str],
     tmp_path: Path,
 ) -> None:
-    responses: Iterator[str] = iter(["1", "espresso", "2", "5"])
+    responses: Iterator[str] = iter(["1", "espresso", "", "2", "5"])
 
     assert main(
         ["interactive"],
@@ -282,6 +362,50 @@ def test_interactive_reuses_add_and_status_behavior(
     assert "80 mg" in output
     assert "BOOTING" in output
     assert "Goodbye" in output
+
+
+def test_interactive_records_historical_time_and_includes_it_in_stats(
+    capsys: pytest.CaptureFixture[str],
+    tmp_path: Path,
+) -> None:
+    history_path = tmp_path / "history.jsonl"
+    responses: Iterator[str] = iter(
+        ["1", "americano", "historical", "2026-09-05T14:30:00+02:00", "4", "5"]
+    )
+
+    assert main(
+        ["interactive"],
+        history_path=history_path,
+        now=datetime(2026, 9, 7, 12, 0, tzinfo=UTC),
+        input_fn=lambda _prompt: next(responses),
+    ) == 0
+
+    assert read_events(history_path)[0].timestamp == datetime(
+        2026, 9, 5, 12, 30, tzinfo=UTC
+    )
+    output = capsys.readouterr().out
+    assert "Total coffees" in output and "1" in output
+    assert "120 mg" in output
+
+
+def test_interactive_rejects_future_time_without_writing(
+    capsys: pytest.CaptureFixture[str],
+    tmp_path: Path,
+) -> None:
+    history_path = tmp_path / "history.jsonl"
+    responses: Iterator[str] = iter(
+        ["1", "espresso", "historical", "2026-09-08T12:00:00+00:00", "5"]
+    )
+
+    assert main(
+        ["interactive"],
+        history_path=history_path,
+        now=datetime(2026, 9, 7, 12, 0, tzinfo=UTC),
+        input_fn=lambda _prompt: next(responses),
+    ) == 0
+
+    assert "Invalid occurrence time" in capsys.readouterr().out
+    assert not history_path.exists()
 
 
 def test_interactive_handles_invalid_input_and_keyboard_interrupt(
@@ -350,7 +474,9 @@ def test_interactive_refreshes_the_clock_for_each_added_drink(
     tmp_path: Path,
 ) -> None:
     history_path = tmp_path / "history.jsonl"
-    responses: Iterator[str] = iter(["1", "espresso", "1", "americano", "5"])
+    responses: Iterator[str] = iter(
+        ["1", "espresso", "", "1", "americano", "", "5"]
+    )
     times: Iterator[datetime] = iter(
         [
             datetime(2026, 9, 7, 23, 59, tzinfo=UTC),
@@ -377,7 +503,7 @@ def test_interactive_samples_the_clock_after_the_drink_prompt(
 ) -> None:
     history_path = tmp_path / "history.jsonl"
     current_time = [datetime(2026, 9, 7, 23, 59, tzinfo=UTC)]
-    responses: Iterator[str] = iter(["1", "espresso", "5"])
+    responses: Iterator[str] = iter(["1", "espresso", "", "5"])
 
     def respond(prompt: str) -> str:
         if prompt == "Drink: ":

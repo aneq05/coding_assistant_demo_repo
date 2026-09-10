@@ -2554,3 +2554,144 @@ No additional harness behavior changed during delivery.
 
 A separate worklog-only follow-up commit preserves the actual PR outcome
 without rewriting the reviewed implementation commit.
+
+## 2026-09-10 — backdated coffee recording
+
+### Harness
+
+Tool: Codex with Feature Delivery Graph, local Git, uv, and GitHub CLI
+Model: GPT-5
+Reasoning: not recorded
+Mode: Default
+Task type: graph-orchestrated feature delivery
+Risk level: medium
+
+### Goal
+
+Implement the specified backdated coffee recording behavior and deliver it as
+a review-ready pull request without merging.
+
+### AI responsibility
+
+- Created and claimed Issue #26, started graph run
+  `26-backdated-coffee-recording`, and used its isolated worktree.
+- Added test-first direct and interactive historical-time behavior with shared
+  domain validation, UTC normalization, clean failures, and downstream stats.
+- Updated the task-relevant specification documents and created implementation
+  commit `6f866e5` on `feature/backdated-coffee-recording`.
+- Pushed the branch and created PR #27 for human review.
+
+### Human responsibility
+
+The human requested the scoped delivery and retains final review and merge
+authority. The pull request was not merged or configured for auto-merge.
+
+### Outcome
+
+PR #27 contains the backdated recording feature, deterministic tests, and
+current-product specification updates with no new dependency or storage-format
+change.
+
+### Files changed
+
+- `src/cdd/domain.py`
+- `src/cdd/cli.py`
+- `tests/test_domain.py`
+- `tests/test_cli.py`
+- `spec/README.md`
+- `spec/product.md`
+- `spec/features/backdated-coffee-recording.md`
+- `AI_WORKLOG.md`
+
+### Validation
+
+- Focused RED confirmed the missing domain API before implementation.
+- Focused GREEN — 56 passed.
+- `uv run --extra dev pytest` — 115 passed; 93.29% branch coverage.
+- `uv run --extra dev ruff check .` — passed.
+- `uv run --extra dev mypy` — passed with no issues in 23 source files.
+- Specification validation — CLEAR for `CDD-HIST-001` through
+  `CDD-HIST-009` and the affected current-product and architecture requirements.
+
+### Friction / failure
+
+The configured GitHub claim label did not exist and was created before the
+Issue could be claimed. Windows native argument quoting required passing graph
+resume JSON through an environment variable. One mypy narrowing error was
+corrected before the final quality gate.
+
+### Harness change
+
+No repository harness behavior changed. The configured `ai-in-progress` label
+was added to the GitHub repository so the existing claim workflow could run.
+
+### Lesson learned
+
+A single domain entry point for explicit timestamps keeps direct and
+interactive validation identical while preserving the existing event and
+storage contracts.
+
+## 2026-09-10 — backdated recording review feedback
+
+### Harness
+
+Tool: Codex with Feature Delivery Graph, independent reviewer, local Git, uv,
+and GitHub CLI
+Model: GPT-5 implementation; GPT-6 Astra independent review
+Reasoning: not recorded for implementation; High for independent review
+Mode: Default
+Task type: review-feedback validation and correction
+Risk level: medium
+
+### Goal
+
+Validate and process independent findings on PR #27 without treating reviewer
+feedback as authority.
+
+### AI responsibility
+
+- Reproduced and classified both independent findings as `VALID` against
+  `CDD-FR-005`, `CDD-HIST-003`, `CDD-HIST-007`, and `CDD-HIST-008`.
+- Sorted history by occurrence time before limiting and translated UTC
+  normalization overflow into a clean explicit-time error.
+- Added regression tests and pushed correction commit `925c0de` to PR #27.
+
+### Human responsibility
+
+The human retains final review and merge authority. No merge or auto-merge was
+performed.
+
+### Outcome
+
+PR #27 now preserves newest-first history semantics for backdated appends and
+cleanly rejects aware timestamps that cannot be represented in UTC.
+
+### Files changed
+
+- `src/cdd/cli.py`
+- `src/cdd/domain.py`
+- `tests/test_cli.py`
+- `tests/test_domain.py`
+- `AI_WORKLOG.md`
+
+### Validation
+
+- Focused review regressions — RED with five expected failures, then GREEN
+  with 12 passed.
+- `uv run --extra dev pytest` — 120 passed; 93.31% branch coverage.
+- `uv run --extra dev ruff check .` — passed.
+- `uv run --extra dev mypy` — passed with no issues in 23 source files.
+
+### Friction / failure
+
+No additional friction beyond the reproduced defects.
+
+### Harness change
+
+No harness behavior changed.
+
+### Lesson learned
+
+Append order stops representing recency once historical events are accepted,
+and timezone conversion must guard representable-date boundaries as well as
+input syntax and awareness.

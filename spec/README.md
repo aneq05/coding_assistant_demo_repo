@@ -26,7 +26,7 @@ Material product scope and architecture changes remain human-controlled.
 | Current product behavior | `CDD-FR-001`–`CDD-FR-012`, `CDD-NFR-001`–`CDD-NFR-002` | implemented | none recorded |
 | Product architecture | `CDD-AR-001`–`CDD-AR-007` | current constraint | none recorded |
 | Late-Night Refactor Risk | `CDD-RISK-001`–`CDD-RISK-009` | specified, not implemented | none recorded |
-| Backdated Coffee Recording | `CDD-HIST-001`–`CDD-HIST-009` | specified, not implemented | none recorded |
+| Backdated Coffee Recording | `CDD-HIST-001`–`CDD-HIST-009` | implemented | none recorded |
 | Interactive Drink Picker | `CDD-PICK-001`–`CDD-PICK-009` | specified, not implemented | none recorded |
 
 This index is the entry point for task-scoped retrieval. Feature files should
