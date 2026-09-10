@@ -9,6 +9,7 @@ from pathlib import Path
 from rich.console import Console
 
 from cdd.domain import (
+    InvalidOccurrenceTimeError,
     InvalidStatsPeriodError,
     LocalTimeConverter,
     UnsupportedDrinkError,
@@ -60,6 +61,11 @@ def build_parser() -> argparse.ArgumentParser:
         help="Show deterministic caffeine information for a drink.",
     )
     drink_parser.add_argument("drink")
+    drink_parser.add_argument(
+        "--at",
+        metavar="TIMESTAMP",
+        help="Record the coffee at a timezone-aware historical ISO 8601 time.",
+    )
     history_parser = subparsers.add_parser(
         "history",
         help="Show recent coffee history.",
@@ -98,10 +104,17 @@ def main(
             parser.error(str(error))
 
         try:
+            recorded_at = current_time()
             append_event(
-                create_coffee_event(drink, timestamp=current_time()),
+                create_coffee_event(
+                    drink,
+                    timestamp=recorded_at if arguments.at is None else arguments.at,
+                    now=recorded_at,
+                ),
                 history_path,
             )
+        except InvalidOccurrenceTimeError as error:
+            parser.error(f"Invalid occurrence time: {error}")
         except OSError as error:
             parser.error(f"Could not persist coffee event: {error}")
 
@@ -280,12 +293,27 @@ def _interactive_add(
 
     try:
         drink = get_drink(name)
+        time_choice = input_fn("Record when? [now/historical]: ").strip().lower()
+        if time_choice in {"", "1", "now"}:
+            current_time = clock()
+            timestamp: datetime | str = current_time
+        elif time_choice in {"2", "historical"}:
+            timestamp = input_fn("Occurrence time (ISO 8601): ").strip()
+            current_time = clock()
+        else:
+            console.print("Invalid time selection. Choose now or historical.")
+            return True
         append_event(
-            create_coffee_event(drink, timestamp=clock()),
+            create_coffee_event(drink, timestamp=timestamp, now=current_time),
             history_path,
         )
+    except (EOFError, KeyboardInterrupt):
+        return False
     except UnsupportedDrinkError as error:
         console.print(str(error))
+        return True
+    except InvalidOccurrenceTimeError as error:
+        console.print(f"Invalid occurrence time: {error}")
         return True
     except OSError as error:
         console.print(f"Could not persist coffee event: {error}")
