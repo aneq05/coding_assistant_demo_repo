@@ -2630,3 +2630,68 @@ was added to the GitHub repository so the existing claim workflow could run.
 A single domain entry point for explicit timestamps keeps direct and
 interactive validation identical while preserving the existing event and
 storage contracts.
+
+## 2026-09-10 — backdated recording review feedback
+
+### Harness
+
+Tool: Codex with Feature Delivery Graph, independent reviewer, local Git, uv,
+and GitHub CLI
+Model: GPT-5 implementation; GPT-6 Astra independent review
+Reasoning: not recorded for implementation; High for independent review
+Mode: Default
+Task type: review-feedback validation and correction
+Risk level: medium
+
+### Goal
+
+Validate and process independent findings on PR #27 without treating reviewer
+feedback as authority.
+
+### AI responsibility
+
+- Reproduced and classified both independent findings as `VALID` against
+  `CDD-FR-005`, `CDD-HIST-003`, `CDD-HIST-007`, and `CDD-HIST-008`.
+- Sorted history by occurrence time before limiting and translated UTC
+  normalization overflow into a clean explicit-time error.
+- Added regression tests and pushed correction commit `925c0de` to PR #27.
+
+### Human responsibility
+
+The human retains final review and merge authority. No merge or auto-merge was
+performed.
+
+### Outcome
+
+PR #27 now preserves newest-first history semantics for backdated appends and
+cleanly rejects aware timestamps that cannot be represented in UTC.
+
+### Files changed
+
+- `src/cdd/cli.py`
+- `src/cdd/domain.py`
+- `tests/test_cli.py`
+- `tests/test_domain.py`
+- `AI_WORKLOG.md`
+
+### Validation
+
+- Focused review regressions — RED with five expected failures, then GREEN
+  with 12 passed.
+- `uv run --extra dev pytest` — 120 passed; 93.31% branch coverage.
+- `uv run --extra dev ruff check .` — passed.
+- `uv run --extra dev mypy` — passed with no issues in 23 source files.
+
+### Friction / failure
+
+No additional friction beyond the reproduced defects.
+
+### Harness change
+
+No harness behavior changed.
+
+### Lesson learned
+
+Append order stops representing recency once historical events are accepted,
+and timezone conversion must guard representable-date boundaries as well as
+input syntax and awareness.
