@@ -41,6 +41,29 @@ the actual project
   />
 </p>
 
+## Interactive project map
+
+For a visual walkthrough of the product, repository structure, AI harness,
+quality gates, and end-to-end feature-delivery workflow, see:
+
+[`docs/interactive-map/`](docs/interactive-map/README.md)
+
+The map is a standalone HTML page. From the repository root, it can be opened
+directly or served locally with:
+
+```console
+python -m http.server 8000 -d docs/interactive-map
+```
+
+Then open:
+
+```text
+http://localhost:8000
+```
+
+The map is intended as a compact presentation layer for technical interviews
+and repository walkthroughs.
+
 ## What this repository is meant to demonstrate
 
 The repository is primarily an **AI engineering playground and portfolio
@@ -122,6 +145,15 @@ Developer state remains deterministic:
 101-250 mg -> PRODUCTIVE
 251-399 mg -> TURBO MODE
 400+ mg    -> ARCHITECTURE PRIVILEGES REVOKED
+```
+
+Git activity is also mapped deterministically:
+
+```text
+0 commits -> QUIET
+1-2       -> ACTIVE
+3-5       -> SHIPPING
+6+        -> DEEP WORK
 ```
 
 ### Coffee statistics
@@ -234,8 +266,10 @@ The repository includes:
   including:
   - `create-feature-issue`
   - `develop-feature-tdd`
+  - `harness-retrospective`
   - `manage-ai-run`
   - `prepare-pull-request`
+  - `record-ai-session`
   - `resolve-merge-conflict`
   - `sync-repository`
   - `validate-review-feedback`
@@ -257,22 +291,70 @@ Product runtime and AI orchestration are deliberately separated:
 
 ```text
 src/cdd/       -> application
-ai_harness/    -> explicit agent workflow orchestration
+ai_harness/    -> explicit graph state and delivery control flow
 .agents/       -> reusable procedures
-.github/agents -> specialist reasoning roles
+.github/agents -> specialist reasoning / orchestration capabilities
 spec/          -> intended product behavior
+.ai/runs/      -> human-readable operational run state
+.ai/graph/     -> local technical LangGraph checkpoint state
 ```
+
+The repository also uses MCP integrations where appropriate. GitHub MCP provides
+structured repository access for Issue/PR/CI-oriented operations, while Figma MCP
+has been used for visual project material and presentation work.
 
 ## Feature delivery workflow
 
-The graph separates probabilistic engineering reasoning from deterministic
-workflow control.
+Feature-delivery work is routed through the **Feature Delivery Agent** and the
+**Feature Delivery Graph**. The user does not need to explicitly request
+LangGraph for a task that is recognized as end-to-end feature delivery.
+
+The central design rule is:
+
+> **Agents execute engineering capabilities; the graph controls the engineering
+> process.**
+
+The graph owns execution order, state transitions, retry bounds, freshness
+checks, and human-gate routing. Existing Skills and specialist agents remain the
+authority for the individual engineering procedures they execute.
+
+At runtime, the interaction looks like this:
 
 ```text
-User goal
-   |
-   v
-GitHub Issue
+feature-delivery task detected
+        |
+        v
+Feature Delivery Agent
+        |
+        v
+Feature Delivery Graph
+(LangGraph orchestrator)
+        |
+        v
+start / resume graph run
+        |
+        v
+graph interrupt / capability request
+        |
+        v
+Skill / specialist agent executes capability
+        |
+        v
+evidence-backed structured result
+        |
+        v
+resume same graph thread
+        |
+        v
+next graph node
+        |
+        +---- repeat until terminal state
+```
+
+The end-to-end delivery path is:
+
+```text
+User goal / scoped Issue
    |
    v
 Feature Delivery Agent
@@ -309,24 +391,31 @@ Feature Delivery Graph
    |
    +--> GitHub Actions CI
    |       |
-   |       +--> fail -> CI triage -> correction -> quality gate -> CI
+   |       +--> fail
+   |              -> CI Triage Agent
+   |              -> correction
+   |              -> local quality gate
+   |              -> CI again
    |
    +--> mergeability check
    |       |
-   |       +--> conflict -> resolve-merge-conflict -> full validation
+   |       +--> conflict
+   |              -> resolve-merge-conflict
+   |              -> invalidate stale evidence
+   |              -> full validation
    |
    +--> independent code review
    |       |
-   |       +--> findings -> validate-review-feedback
-   |                         |
-   |                         +--> accepted fix
-   |                              -> quality gate
-   |                              -> CI
-   |                              -> fresh review
+   |       +--> findings
+   |              -> validate-review-feedback
+   |              -> accepted correction
+   |              -> local quality gate
+   |              -> CI
+   |              -> fresh review
    |
    +--> validate-pull-request
    |
-   +--> verify current-HEAD evidence freshness
+   +--> verify exact current-HEAD evidence
    |
    v
 READY_FOR_HUMAN_MERGE
@@ -347,6 +436,10 @@ current_head_sha == ci_sha == reviewed_sha
 The implementation and reviewer models are also separated for independent
 review.
 
+If graph startup or resumption fails during a feature-delivery task, the agent
+must stop and report the failure rather than silently falling back to an
+un-orchestrated delivery path.
+
 For the detailed graph design, see
 [`docs/ai/feature-delivery-graph.md`](docs/ai/feature-delivery-graph.md).
 
@@ -355,15 +448,25 @@ For the detailed graph design, see
 Two persistence layers intentionally serve different purposes:
 
 ```text
-.ai/runs/
+.ai/runs/<run-id>.md
     -> compact, human-readable operational state
 
-.ai/graph/*.sqlite3
-    -> technical LangGraph checkpoints
+.ai/graph/checkpoints.sqlite3
+    -> technical LangGraph checkpoint state for exact resumption
 ```
 
-The repository run record remains the human-readable operational source while
-SQLite enables exact graph resumption.
+The same `run_id` is used throughout one graph execution and as the LangGraph
+thread identifier.
+
+The SQLite checkpoint database is local runtime state and is intentionally
+ignored by Git. It exists so the graph can preserve execution state across
+interrupt/resume cycles.
+
+The `.ai/runs/` record remains the compact human-readable operational layer.
+It should not duplicate the complete LangGraph checkpoint state.
+
+`AI_WORKLOG.md` serves a third, separate purpose: durable historical evidence
+about meaningful AI-assisted engineering work.
 
 ## Planned AI engineering evolution
 
@@ -422,6 +525,7 @@ Production-code coverage is enforced at **>= 90%**.
 - [`docs/ai/feature-delivery-graph.md`](docs/ai/feature-delivery-graph.md)
 - [`docs/ai/model-usage.md`](docs/ai/model-usage.md)
 - [`docs/ai/github-integration-capabilities.md`](docs/ai/github-integration-capabilities.md)
+- [`docs/interactive-map/`](docs/interactive-map/README.md)
 
 ## Product specification
 
@@ -458,7 +562,17 @@ feature specification
         ↓
 GitHub Issue
         ↓
+Feature Delivery Agent
+        ↓
 Feature Delivery Graph
+        ↓
+capability request
+        ↓
+Skill / specialist agent execution
+        ↓
+structured result
+        ↓
+resume graph
         ↓
 scope + requirement selection
         ↓
