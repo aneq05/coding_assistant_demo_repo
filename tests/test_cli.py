@@ -88,6 +88,8 @@ def test_drink_without_at_uses_the_injected_current_time(tmp_path: Path) -> None
         "",
         "2026-09-05T14:30:00",
         "2026-09-08T12:00:00+00:00",
+        "0001-01-01T00:00:00+01:00",
+        "9999-12-31T23:59:59-01:00",
     ],
 )
 def test_drink_rejects_invalid_explicit_time_without_writing(
@@ -186,6 +188,31 @@ def test_history_limit_and_empty_history_are_explicit(
 
     assert main(["history"], history_path=tmp_path / "missing.jsonl") == 0
     assert "No coffee recorded yet." in capsys.readouterr().out
+
+
+def test_history_orders_by_occurrence_time_before_applying_limit(
+    capsys: pytest.CaptureFixture[str],
+    tmp_path: Path,
+) -> None:
+    history_path = tmp_path / "history.jsonl"
+    append_event(
+        CoffeeEvent(datetime(2026, 9, 7, 12, 0, tzinfo=UTC), "espresso", 80),
+        history_path,
+    )
+    append_event(
+        CoffeeEvent(datetime(2026, 9, 5, 12, 0, tzinfo=UTC), "americano", 120),
+        history_path,
+    )
+
+    assert main(
+        ["history", "--limit", "1"],
+        history_path=history_path,
+        now=datetime(2026, 9, 7, 12, 0, tzinfo=UTC),
+    ) == 0
+
+    output = capsys.readouterr().out
+    assert "Espresso" in output
+    assert "Americano" not in output
 
 
 @pytest.mark.parametrize(

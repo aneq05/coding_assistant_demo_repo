@@ -97,6 +97,8 @@ def test_create_historical_coffee_event_parses_and_normalizes_offset() -> None:
         ("not-a-timestamp", "valid ISO 8601"),
         ("2026-09-05T14:30:00", "timezone-aware"),
         ("2026-09-08T12:00:00+00:00", "cannot be in the future"),
+        ("0001-01-01T00:00:00+01:00", "cannot be represented in UTC"),
+        ("9999-12-31T23:59:59-01:00", "cannot be represented in UTC"),
     ],
 )
 def test_create_historical_coffee_event_rejects_invalid_input(

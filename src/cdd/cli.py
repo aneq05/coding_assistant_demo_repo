@@ -177,10 +177,14 @@ def _show_history(
     limit: int,
     to_local: LocalTimeConverter,
 ) -> None:
-    events = read_events(history_path)
+    events = sorted(
+        read_events(history_path),
+        key=lambda event: event.timestamp,
+        reverse=True,
+    )
     render_history(
         console,
-        list(reversed(events[-limit:])),
+        events[:limit],
         to_local=to_local,
     )
 

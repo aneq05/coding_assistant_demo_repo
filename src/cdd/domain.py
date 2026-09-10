@@ -119,6 +119,10 @@ def _parse_occurrence_time(value: str) -> datetime:
         return _aware_datetime(timestamp, name="occurrence time")
     except ValueError as error:
         raise InvalidOccurrenceTimeError(str(error)) from error
+    except OverflowError as error:
+        raise InvalidOccurrenceTimeError(
+            "occurrence time cannot be represented in UTC"
+        ) from error
 
 
 def _aware_datetime(timestamp: datetime, *, name: str) -> datetime:
