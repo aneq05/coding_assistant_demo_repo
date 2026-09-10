@@ -60,6 +60,25 @@ input{padding:0 12px;min-width:250px}
 .module-card code{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;background:#0d1432;border:1px solid rgba(136,157,234,.18);padding:2px 6px;border-radius:6px;color:#dfe8ff}
 .screen-caption{padding:10px 12px 12px;color:#cbd5f6;font-size:13px;line-height:1.5;background:#0d1432;border-top:1px solid rgba(125,145,226,.12)}
 
+.levels-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:12px}
+.level-card{background:#101735;border:1px solid rgba(125,145,226,.2);border-radius:14px;padding:13px}
+.level-card h5{margin:0 0 10px;font-size:13px;color:#eef3ff}
+.level-row{display:grid;grid-template-columns:100px 1fr;gap:10px;padding:7px 0;border-top:1px solid rgba(125,145,226,.12);font-size:12px;line-height:1.4}
+.level-row:first-of-type{border-top:0}
+.level-range{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;color:#8fd6ff}
+.ai-detail-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin-top:12px}
+.ai-detail-card{background:#101735;border:1px solid rgba(125,145,226,.2);border-radius:14px;padding:13px}
+.ai-detail-card h5{margin:0 0 7px;font-size:13px;color:#eef3ff}
+.ai-detail-card p{margin:0;color:#cbd5f6;font-size:12px;line-height:1.5}
+.ai-detail-card code{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;background:#0d1432;border:1px solid rgba(136,157,234,.18);padding:2px 5px;border-radius:5px;color:#dfe8ff}
+.ai-subtitle{margin:18px 0 8px;font-size:12px;text-transform:uppercase;letter-spacing:.08em;color:#dce5ff}
+
+.flow-graph{margin-top:14px;padding:16px 18px;border-radius:14px;background:#0d1432;border:1px solid rgba(125,145,226,.18);overflow:auto}
+.flow-graph pre{margin:0;white-space:pre;line-height:1.45;font-size:13px;color:#e8eeff;font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace}
+.flow-caption{margin-top:10px;color:#cbd5f6;font-size:13px;line-height:1.55}
+
+
+
 .gallery-big{display:grid;grid-template-columns:1fr;gap:18px}
 .shot-big{border-radius:14px;overflow:hidden;background:#0b1028;border:1px solid rgba(125,145,226,.2)}
 .shot-head{padding:10px 12px;font-size:13px;font-weight:700;background:#12183a;border-bottom:1px solid rgba(125,145,226,.15)}
@@ -185,26 +204,11 @@ function renderGallery(){
   return `<div class="rich-section">
     <h4>Główne moduły aplikacji</h4>
     <div class="module-grid">
-      <div class="module-card">
-        <strong>Record coffee <code>drink</code></strong>
-        <p>Pozwala wybrać rodzaj kawy, przypisuje jej odpowiednią ilość kofeiny i zapisuje zdarzenie wraz z timestampem do lokalnej historii JSONL.</p>
-      </div>
-      <div class="module-card">
-        <strong>Coffee history <code>history</code></strong>
-        <p>Odczytuje zapisane zdarzenia i pokazuje je w czytelnej tabeli od najnowszych wpisów, razem z godziną, rodzajem napoju i ilością kofeiny.</p>
-      </div>
-      <div class="module-card">
-        <strong>Developer status <code>status</code></strong>
-        <p>Agreguje dane z bieżącego dnia: liczbę wypitych kaw, całkowitą kofeinę i developer state. Dodatkowo pokazuje lokalną aktywność Git.</p>
-      </div>
-      <div class="module-card">
-        <strong>Statistics <code>stats</code></strong>
-        <p>Analizuje historię z wybranego okresu i pokazuje liczbę kaw, sumę kofeiny, średnią dzienną, ulubiony napój oraz dzienny trend spożycia.</p>
-      </div>
-      <div class="module-card">
-        <strong>Interactive mode <code>interactive</code></strong>
-        <p>Udostępnia najważniejsze funkcje aplikacji z jednego menu terminalowego, dzięki czemu nie trzeba pamiętać poszczególnych komend CLI.</p>
-      </div>
+      <div class="module-card"><strong>Record coffee <code>drink</code></strong><p>Pozwala wybrać rodzaj kawy, przypisuje jej odpowiednią ilość kofeiny i zapisuje zdarzenie razem z timestampem do lokalnej historii JSONL.</p></div>
+      <div class="module-card"><strong>Coffee history <code>history</code></strong><p>Odczytuje zapisane zdarzenia i pokazuje je w czytelnej tabeli od najnowszych wpisów, razem z godziną, rodzajem napoju i ilością kofeiny.</p></div>
+      <div class="module-card"><strong>Developer status <code>status</code></strong><p>Agreguje dane z bieżącego dnia: liczbę wypitych kaw, całkowitą kofeinę i developer state. Dodatkowo wykorzystuje lokalną aktywność Git.</p></div>
+      <div class="module-card"><strong>Statistics <code>stats</code></strong><p>Analizuje historię z wybranego okresu i pokazuje m.in. liczbę kaw, sumę kofeiny, średnią dzienną, ulubiony napój oraz dzienny trend spożycia.</p></div>
+      <div class="module-card"><strong>Interactive mode <code>interactive</code></strong><p>Udostępnia te same funkcje przez jedno menu terminalowe, dzięki czemu aplikacji można używać bez zapamiętywania poszczególnych komend CLI.</p></div>
     </div>
   </div>
 
@@ -214,23 +218,29 @@ function renderGallery(){
       <div class="shot-big">
         <div class="shot-head">Developer status — <code>status</code></div>
         <img src="${IMAGES.status}" alt="Status CLI">
-        <div class="screen-caption">Widok bieżącego dnia: liczba kaw, całkowita kofeina, wyliczony developer state oraz aktywność Git, m.in. liczba commitów i ostatni commit.</div>
+        <div class="screen-caption">Widok bieżącego dnia: liczba kaw, całkowita kofeina, developer state oraz lokalna aktywność Git.</div>
+        <div class="levels-grid">
+          <div class="level-card">
+            <h5>Poziomy developer state</h5>
+            <div class="level-row"><span class="level-range">0 mg</span><span>NO SIGNAL</span></div>
+            <div class="level-row"><span class="level-range">1–100 mg</span><span>BOOTING</span></div>
+            <div class="level-row"><span class="level-range">101–250 mg</span><span>PRODUCTIVE</span></div>
+            <div class="level-row"><span class="level-range">251–399 mg</span><span>TURBO MODE</span></div>
+            <div class="level-row"><span class="level-range">≥400 mg</span><span>ARCHITECTURE PRIVILEGES REVOKED</span></div>
+          </div>
+          <div class="level-card">
+            <h5>Poziomy Git activity</h5>
+            <div class="level-row"><span class="level-range">0 commitów</span><span>QUIET</span></div>
+            <div class="level-row"><span class="level-range">1–2</span><span>ACTIVE</span></div>
+            <div class="level-row"><span class="level-range">3–5</span><span>SHIPPING</span></div>
+            <div class="level-row"><span class="level-range">6+</span><span>DEEP WORK</span></div>
+          </div>
+        </div>
       </div>
-      <div class="shot-big">
-        <div class="shot-head">Statistics — <code>stats</code></div>
-        <img src="${IMAGES.stats}" alt="Statystyki CLI">
-        <div class="screen-caption">Podsumowanie wybranego okresu z liczbą kaw, sumą kofeiny, średnią dzienną, najczęściej wybieranym napojem i trendem dziennym.</div>
-      </div>
-      <div class="shot-big">
-        <div class="shot-head">Coffee history — <code>history</code></div>
-        <img src="${IMAGES.history}" alt="Historia CLI">
-        <div class="screen-caption">Historia zapisanych zdarzeń przedstawiona w czytelnej tabeli — od najnowszych wpisów, razem z czasem, napojem i ilością kofeiny.</div>
-      </div>
-      <div class="shot-big">
-        <div class="shot-head">Interactive mode — <code>interactive</code></div>
-        <img src="${IMAGES.interactive}" alt="Tryb interaktywny CLI">
-        <div class="screen-caption">Jedno menu terminalowe zbierające najważniejsze funkcje aplikacji, dzięki czemu użytkownik może korzystać z niej bez pamiętania komend.</div>
-      </div>
+
+      <div class="shot-big"><div class="shot-head">Statistics — <code>stats</code></div><img src="${IMAGES.stats}" alt="Statystyki CLI"><div class="screen-caption">Podsumowanie wybranego okresu z liczbą kaw, sumą kofeiny, średnią dzienną, ulubionym napojem i trendem.</div></div>
+      <div class="shot-big"><div class="shot-head">Coffee history — <code>history</code></div><img src="${IMAGES.history}" alt="Historia CLI"><div class="screen-caption">Historia zapisanych zdarzeń: czas, rodzaj napoju i ilość kofeiny, od najnowszych wpisów.</div></div>
+      <div class="shot-big"><div class="shot-head">Interactive mode — <code>interactive</code></div><img src="${IMAGES.interactive}" alt="Tryb interaktywny CLI"><div class="screen-caption">Jedno menu terminalowe zbierające najważniejsze funkcje aplikacji.</div></div>
     </div>
   </div>`;
 }
@@ -239,6 +249,43 @@ function renderRepo(){
   return `<div class="rich-section">
     <h4>Struktura repo</h4>
     <pre class="repo-tree">${REPO_TREE}</pre>
+
+    <div class="ai-subtitle">Agenci</div>
+    <div class="ai-detail-grid">
+      <div class="ai-detail-card"><h5>Feature Delivery Agent</h5><p>Prowadzi zmianę funkcjonalną od issue/specyfikacji do gotowego PR-a. Dobiera właściwe Skills, pracuje w rytmie TDD i pilnuje zgodności z wymaganiami.</p></div>
+      <div class="ai-detail-card"><h5>CI Triage Agent</h5><p>Analizuje nieudane joby CI, zbiera evidence z logów i pomaga przejść kontrolowaną ścieżką naprawczą.</p></div>
+      <div class="ai-detail-card"><h5>PR Autopilot Agent</h5><p>Koordynuje końcową gotowość PR-a: walidację, review feedback, świeżość evidence i warunki wejścia do human merge.</p></div>
+    </div>
+
+    <div class="ai-subtitle">Reusable Skills</div>
+    <div class="ai-detail-grid">
+      <div class="ai-detail-card"><h5>create-feature-issue</h5><p>Porządkuje potrzebę w GitHub Issue z zakresem i wymaganiami.</p></div>
+      <div class="ai-detail-card"><h5>develop-feature-tdd</h5><p>Prowadzi implementację przez test-first workflow: test → kod → refactor → walidacja.</p></div>
+      <div class="ai-detail-card"><h5>validate-specification</h5><p>Sprawdza zgodność zmiany ze specyfikacją i requirement IDs.</p></div>
+      <div class="ai-detail-card"><h5>sync-repository</h5><p>Synchronizuje branch/worktree przed rozpoczęciem lub kontynuacją pracy.</p></div>
+      <div class="ai-detail-card"><h5>prepare-pull-request</h5><p>Przygotowuje PR z opisem, zakresem i evidence z wykonanych checków.</p></div>
+      <div class="ai-detail-card"><h5>validate-pull-request</h5><p>Sprawdza, czy CI, review i inne evidence dotyczą aktualnego HEAD PR-a.</p></div>
+      <div class="ai-detail-card"><h5>validate-review-feedback</h5><p>Weryfikuje review findings i poprawki wynikające z feedbacku.</p></div>
+      <div class="ai-detail-card"><h5>resolve-merge-conflict</h5><p>Prowadzi kontrolowane rozwiązanie konfliktu i ponowną walidację po zmianie HEAD.</p></div>
+      <div class="ai-detail-card"><h5>manage-ai-run</h5><p>Zarządza stanem dłuższego przebiegu AI.</p></div>
+      <div class="ai-detail-card"><h5>record-ai-session</h5><p>Zapisuje istotne decyzje, kontekst i evidence z sesji AI.</p></div>
+      <div class="ai-detail-card"><h5>harness-retrospective</h5><p>Podsumowuje zakończony run i pomaga ulepszać sam harness.</p></div>
+    </div>
+
+    <div class="ai-subtitle">Pliki i runtime AI harness</div>
+    <div class="ai-detail-grid">
+      <div class="ai-detail-card"><h5><code>.ai/harness.config.json</code></h5><p>Wspólna konfiguracja polityki harnessu: limity retry i zasady kontrolujące zachowanie workflow.</p></div>
+      <div class="ai-detail-card"><h5><code>.ai/runs/</code></h5><p>Miejsce przeznaczone na operational state pojedynczych przebiegów AI.</p></div>
+      <div class="ai-detail-card"><h5><code>.ai/graph/checkpoints.sqlite3</code></h5><p>Checkpointy LangGraph umożliwiające zatrzymanie, wznowienie i zachowanie stanu workflow.</p></div>
+      <div class="ai-detail-card"><h5><code>ai_harness/feature_delivery/</code></h5><p>Deterministyczna orkiestracja: typed state, routing, interrupt/resume, retry loops, human gates i invalidacja starego evidence po zmianie HEAD.</p></div>
+      <div class="ai-detail-card"><h5><code>AI_WORKLOG.md</code></h5><p>Czytelna dla człowieka historia pracy z AI: decyzje, kontekst i evidence.</p></div>
+    </div>
+
+    <div class="ai-subtitle">MCP</div>
+    <div class="ai-detail-grid">
+      <div class="ai-detail-card"><h5>GitHub MCP</h5><p>Integracja z GitHubem przez ustandaryzowany protokół MCP. Umożliwia agentom pracę z issue, PR-ami i stanem repozytorium oraz wspiera review i analizę CI.</p></div>
+      <div class="ai-detail-card"><h5>Figma MCP</h5><p>Używany do pracy z materiałami projektowymi i wizualną prezentacją projektu bez ręcznego przenoszenia kontekstu pomiędzy Figma a narzędziami AI.</p></div>
+    </div>
   </div>`;
 }
 
@@ -260,71 +307,122 @@ function renderQuality(){
 }
 
 function renderWorkflow(){
-  return `<div class="rich-section pr-tree-wrap">
-    <h4>Ścieżka PR</h4>
-    <div class="pr-tree">
-      <div class="pr-level">
-        <div class="pr-step">1. Prompt / Issue</div><div class="pr-arrow">→</div>
-        <div class="pr-step">2. Agent + Skills</div><div class="pr-arrow">→</div>
-        <div class="pr-step">3. Sync repo</div><div class="pr-arrow">→</div>
-        <div class="pr-step">4. Branch / worktree</div>
-      </div>
+  return `<div class="rich-section">
+    <h4>Workflow end-to-end</h4>
+    <div class="flow-graph"><pre>USER PROMPT
+   │
+   ▼
+FEATURE DELIVERY AGENT
+   │
+   ▼
+READ SPEC
+   │
+   ▼
+START / RESUME RUN
+   │
+   ▼
+VALIDATE SCOPE
+   │
+   ▼
+CLAIM ISSUE
+   │
+   ▼
+SYNC REPOSITORY
+   │
+   ▼
+CREATE ISOLATED WORKTREE
+   │
+   ▼
+SELECT REQUIREMENTS
+   │
+   ▼
+TDD IMPLEMENTATION
+   │
+   ▼
+VALIDATE SPECIFICATION
+   │
+   ├── mismatch
+   │      ↓
+   │    repair ───────┐
+   │                  │
+   └──────────────────┘
+   │
+   ▼
+LOCAL QUALITY GATE
+pytest / ruff / mypy / coverage
+   │
+   ├── fail
+   │      ↓
+   │    repair ───────┐
+   │                  │
+   └──────────────────┘
+   │
+   ▼
+PREPARE PR
+   │
+   ▼
+PUSH
+   │
+   ▼
+CURRENT HEAD SHA
+   │
+   ▼
+GITHUB ACTIONS CI
+   │
+   ├── fail
+   │      ↓
+   │   CI TRIAGE AGENT
+   │      ↓
+   │   correction
+   │      ↓
+   │   quality gate
+   │      ↓
+   │   CI again
+   │
+   ▼
+MERGEABILITY CHECK
+   │
+   ├── conflict
+   │      ↓
+   │   resolve conflict
+   │      ↓
+   │   full validation
+   │
+   ▼
+INDEPENDENT REVIEW
+   │
+   ├── findings
+   │      ↓
+   │ validate feedback
+   │      ↓
+   │ accepted fix
+   │      ↓
+   │ quality gate
+   │      ↓
+   │ CI
+   │      ↓
+   │ fresh review
+   │
+   ▼
+VALIDATE PR
+   │
+   ▼
+VERIFY:
 
-      <div class="pr-arrow">↓</div>
-
-      <div class="pr-level">
-        <div class="pr-step">5. TDD</div><div class="pr-arrow">→</div>
-        <div class="pr-step">6. Implementation</div><div class="pr-arrow">→</div>
-        <div class="pr-step">7. Local validation</div><div class="pr-arrow">→</div>
-        <div class="pr-step">8. Commit / push</div><div class="pr-arrow">→</div>
-        <div class="pr-step">9. Pull Request</div>
-      </div>
-
-      <div class="pr-arrow">↓</div>
-
-      <div class="pr-level">
-        <div class="pr-step">10. CI</div><div class="pr-arrow">→</div>
-        <div class="pr-step">11. Independent review</div><div class="pr-arrow">→</div>
-        <div class="pr-decision">12. Validation decision point</div>
-      </div>
-
-      <div class="pr-branch-row">
-        <div class="pr-branch-col">
-          <div class="pr-arrow">↙</div>
-          <div class="pr-branch-card">
-            <h5>Problem branch</h5>
-            <ul class="pr-mini-list">
-              <li>CI fail</li>
-              <li>review findings</li>
-              <li>merge conflict</li>
-            </ul>
-          </div>
-          <div class="pr-arrow">↓</div>
-          <div class="pr-step">13. Repair loop</div>
-          <div class="pr-arrow">↺</div>
-          <div class="pr-step">wróć do implementacji / walidacji</div>
-        </div>
-
-        <div class="pr-branch-col">
-          <div class="pr-arrow">↓</div>
-        </div>
-
-        <div class="pr-branch-col">
-          <div class="pr-arrow">↘</div>
-          <div class="pr-branch-card">
-            <h5>Ready branch</h5>
-            <ul class="pr-mini-list">
-              <li>evidence aktualne</li>
-              <li>CI green</li>
-              <li>review accepted</li>
-            </ul>
-          </div>
-          <div class="pr-arrow">↓</div>
-          <div class="pr-step">14. validate-pull-request</div>
-          <div class="pr-arrow">↓</div>
-          <div class="pr-step">15. Human merge</div>
-        </div>
-      </div>
+HEAD == CI SHA == REVIEW SHA
+   │
+   ▼
+READY_FOR_HUMAN_MERGE
+   │
+   ▼
+HUMAN MERGES</pre></div>
+    <div class="flow-caption">
+      Ten graf pokazuje pełny przebieg od <strong>promptu użytkownika</strong> do stanu
+      <strong>READY_FOR_HUMAN_MERGE</strong> i finalnego <strong>HUMAN MERGES</strong>.
+      Zawiera pętle naprawcze dla trzech głównych klas problemów:
+      <strong>mismatch względem specyfikacji</strong>, <strong>lokalne quality-gates</strong>,
+      oraz problemy po wypchnięciu zmian: <strong>CI failure</strong>, <strong>merge conflict</strong>
+      i <strong>review findings</strong>.
     </div>
   </div>`;
 }

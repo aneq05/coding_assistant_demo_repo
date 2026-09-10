@@ -228,10 +228,10 @@ interactive mode.
 - [x] GitHub integration capability audit
 - [x] Context-aware Copilot Code Review
 - [x] repository CI-triage agent configuration (operational exercise pending)
-- [ ] independent AI pull-request review
-- [ ] Figma MCP
-- [ ] Goal-based delegation
-- [ ] presentation-generation workflow
+- [x] independent AI pull-request review
+- [x] Figma MCP
+- [x] Goal-based delegation
+- [x] presentation-generation workflow
 
 ---
 
@@ -256,31 +256,31 @@ interactive mode.
 
 ## Harness evolution
 
-- [ ] Phase 7 — Harness retrospective
-- [ ] Phase 8 — Repository engineering knowledge
-- [ ] Phase 9 — Reusable engineering Skills
+- [x] Phase 7 — Harness retrospective
+- [x] Phase 8 — Repository engineering knowledge
+- [x] Phase 9 — Reusable engineering Skills
 
 ## GitHub engineering workflow
 
 - [x] Phase 4.5 — CI and repository synchronization
 - [x] Phase 4.6 — Context-aware Copilot Code Review
-- [ ] Phase 4.7 — GitHub CI Triage Agent operational exercise
+- [x] Phase 4.7 — GitHub CI Triage Agent operational exercise
 - [x] Phase 10 — GitHub Actions CI baseline
-- [ ] Phase 11 — GitHub MCP integration
+- [x] Phase 11 — GitHub MCP integration
 - [x] Phase 12 — Git activity feature through GitHub Issue
-- [ ] Phase 13 — Independent AI pull-request review
-- [ ] Phase 14 — AI review-feedback validation
+- [x] Phase 13 — Independent AI pull-request review
+- [x] Phase 14 — AI review-feedback validation
 
 ## Knowledge work and increased autonomy
 
-- [ ] Phase 15 — Figma MCP workflow documentation
-- [ ] Phase 16 — Bounded Goal-based delegation
+- [x] Phase 15 — Figma MCP workflow documentation
+- [x] Phase 16 — Bounded Goal-based delegation
 
 ## Interview preparation
 
-- [ ] Phase 17 — Reserved live-demo feature
-- [ ] Phase 18 — Generate interview presentation
-- [ ] Phase 19 — Final critical harness audit
+- [x] Phase 17 — Reserved live-demo feature
+- [x] Phase 18 — Generate interview presentation
+- [x] Phase 19 — Final critical harness audit
 
 ---
 

@@ -1,6 +1,6 @@
 ---
 name: feature-delivery
-description: Delivers one already-scoped GitHub Issue to a review-ready pull request
+description: Delivers one already-scoped GitHub Issue to a review-ready pull request through the repository Feature Delivery Graph
 tools: ["read", "search", "edit", "execute", "github/*"]
 disable-model-invocation: true
 user-invocable: true
@@ -10,10 +10,74 @@ Take one already-scoped GitHub Issue through the repository's engineering
 harness to a review-ready pull request. Read the Issue, `AGENTS.md`, relevant
 guidance, and affected code first. Do not create or expand product requirements.
 
-## Explicit graph orchestration
+## Mandatory Feature Delivery Graph entrypoint
 
-For end-to-end delivery of a scoped Issue, use the repository Feature Delivery
-Graph as the execution-order authority.
+For every feature-delivery task, the Feature Delivery Graph is the mandatory
+execution-order authority.
+
+A feature-delivery task is work that takes a scoped product requirement or
+GitHub Issue through implementation and one or more delivery stages such as
+specification validation, local quality gates, pull-request creation, CI,
+review, mergeability checks, or final readiness validation.
+
+The user does not need to explicitly request LangGraph or say "use the graph".
+When the task matches this definition, start or resume the graph before
+performing implementation work.
+
+The required execution loop is:
+
+```text
+detect feature-delivery task
+        ↓
+start / resume graph
+        ↓
+receive capability request
+        ↓
+execute exactly that requested capability
+        ↓
+resume graph with evidence-backed structured result
+        ↓
+repeat until terminal state
+```
+
+For a new run, use:
+
+```console
+uv run python -m ai_harness.feature_delivery.runner start   --run-id <run-id>   --issue <issue-number>   --implementation-model <model>
+```
+
+For every graph interrupt, execute exactly the requested Skill, specialist-agent
+capability, repository operation, or GitHub operation. Then resume the same
+graph thread with the structured result:
+
+```console
+uv run python -m ai_harness.feature_delivery.runner resume   --run-id <run-id>   --result-json '<structured-result>'
+```
+
+To inspect persisted graph state, use:
+
+```console
+uv run python -m ai_harness.feature_delivery.runner state   --run-id <run-id>
+```
+
+Never replace `resume` with a fresh `start` for an existing run. The same
+`run_id` is the LangGraph thread identifier and must remain stable for the
+entire delivery.
+
+Do not continue to the next delivery stage merely because a capability
+succeeded. Return its result to the graph and let graph routing decide the next
+step.
+
+Bypassing the graph is allowed only when:
+
+1. the task is clearly not feature delivery, or
+2. the human explicitly requests a manual/non-graph workflow.
+
+If graph startup, persistence, interrupt handling, or resume fails, stop and
+report the actual failure. Do not silently fall back to an un-orchestrated
+feature-delivery workflow.
+
+## Explicit graph orchestration
 
 Start or resume the graph using the matching `.ai/runs/` run ID. When the graph
 interrupts with a repository capability request, execute exactly the named
@@ -25,9 +89,27 @@ specification validation, merge-conflict routing, independent-review separation,
 or human gates.
 
 The graph owns execution order and state transitions. Existing Skills and
-specialist agents remain the authority for their procedures. `.ai/runs/`
-remains the canonical compact operational record, while LangGraph SQLite
-checkpoints are only technical execution state.
+specialist agents remain the authority for their procedures.
+
+Persistence responsibilities are intentionally separated:
+
+```text
+.ai/graph/checkpoints.sqlite3
+    -> technical LangGraph checkpoint state used for exact resumption
+
+.ai/runs/<run-id>.md
+    -> compact human-readable operational run state
+
+AI_WORKLOG.md
+    -> durable historical evidence
+```
+
+The SQLite checkpoint database is local runtime state and must remain ignored by
+Git. Do not commit it.
+
+For a real multi-stage feature-delivery run, use `manage-ai-run` to create or
+update the matching `.ai/runs/<run-id>.md` record. Do not duplicate the full
+LangGraph checkpoint state in that markdown file.
 
 Do not merge or enable auto-merge. The graph may finish only at a readiness
 state for human-controlled merge.
